@@ -9,7 +9,7 @@ resp = reqs.get(link)
 def clean(s):
     for l in s:
         if l == '&':
-            return ' '
+            return ''
         if ord(l) >= ord('A') and ord(l) <= ord('Z'):
             return l
     return ' '
@@ -43,16 +43,42 @@ matcher = re.compile("""<b>([A-Z]{4} (\d*[^<]*))|(
 # 5 = notes (sometimes a link to JS popup)
 # 6 = CRN
 # 7 = class number (01, T01, B01)
-# 8 = credit hours
-# 9 = link column (not sure to what)
-# 10 = if monday
-# 11 = if tuesday
-# 12 = if wednesday
-# 13 = if thursday
-# 14 = if friday
-# 15 = start time
-# 16 = end time
+# 8 = link column (for what???)
+# 9 = credit hours
+# 10 = ?
+# 11 = if monday
+# 12 = if tuesday
+# 13 = if wednesday
+# 14 = if thursday
+# 15 = if friday
+# 16 = start time
+# 17 = end time
 
+def time_setup(match, class_name):
+    """
+    Clean the regex up
+    
+    match = regex matching 
+    class_name is the name of the class, or the name of the class the lab belongs to
+    """
+    cached = {'name':class_name}
+    cached['type_'] = decode_type(match.group(4))
+    cached['crn'] = match.group(6)
+    cached['identifier'] = match.group(7)
+    cached['credit_hours'] = match.group(9)
+    
+    # Groups 11-15 are for the days
+    days = ''
+    for i in range(11, 16):
+        day = clean(match.group(i))
+        if day.lower() not in ['m', 't', 'w', 'r', 'f']:
+            continue
+        days += day 
+    cached['days'] =  days
+    
+    cached['start_time'] = match.group(16)
+    cached['end_time'] = match.group(17)
+    return cached
 
 class ClassInfo():
     """
@@ -60,9 +86,19 @@ class ClassInfo():
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
     
-    def __init__():
-        pass
-
+    def __init__(self, name, lectures, labs=None):
+        self.name = name
+        self.lectures = lectures
+        if labs is not None:
+            self.labs = labs
+        
+    def __str__(self):
+        s = f"{self.name}\n"
+        for class_ in self.lectures:
+            s += str(class_) + "\n"
+        for lab in self.labs:
+            s += str(lab) + "\n"
+        return s
 
 class Timeslot():
 
@@ -77,7 +113,10 @@ class Timeslot():
             self.end_time = end_time
 
     def __str__(self):
-        return f"{self.name} {self.type_} {self.crn} {self.days} {self.start_time}-{self.end_time}"
+        s = f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
+        if type(s) == type(None):
+            return f"broken"
+        return s
 
 class LabInfo(Timeslot):
     """
@@ -92,32 +131,11 @@ class LectureInfo(Timeslot):
     Class to represent a lecture timeslot. Contains information about its labs/tutorials (if it has any)
     """
     
-    def __init__(self, labs, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.labs = labs
     
-    def __str__(self):
-        print(super().__str__())
-        for lab in self.labs:
-            print(lab)
 
-def time_setup(match, class_name):
-    """
-    Clean the regex up
-    
-    match = regex matching 
-    class_name is the name of the class, or the name of the class the lab belongs to
-    """
-    cached = {'name':class_name}
-    cached['type_'] = decode_type(match.group(4))
-    cached['crn'] = match.group(6)
-    cached['identifier'] = match.group(7)
-    cached['credit_hours'] = match.group(8)
-    cached['days'] = f"{clean(match.group(10))}{clean(match.group(11))}{clean(match.group(12))}\
-    {clean(match.group(13))}{clean(match.group(14))}"
-    cached['start_time'] = match.group(15)
-    cached['end_time'] = match.group(16)
-    return cached
+
 
 
 #TODO: Multiple lectures
@@ -126,19 +144,19 @@ cached = {}
 for match in matcher.finditer(resp.text):
     if match.group(1):
         if cached != {}:
-            classes.append(LectureInfo(**cached))
+            classes.append(ClassInfo(**cached))
             cached = {}
         className = f"CSCI {match.group(2)}"
         cached['name'] = className
         cached['labs'] = []
+        cached['lectures'] = []
     else:
         if decode_type(match.group(4)) != 'lecture':
             lab = LabInfo(**time_setup(match, cached['name']))
             cached['labs'].append(lab)
         else:
-            # print(cached['labs'])
-            lecture = time_setup(match, cached['name'])
-            cached = {**lecture, **cached}
+            lecture = LectureInfo(**time_setup(match, cached['name']))
+            cached['lectures'].append(lecture)
 
 for class_ in classes:
     print(class_)
