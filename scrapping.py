@@ -1,9 +1,7 @@
 import requests as reqs
 import re
 import sys
-
-
-
+import selenium
 
 def clean(s):
     for l in s:
@@ -20,7 +18,7 @@ def decode_type(t):
     if t == 't':
         return 'tutorial'
 
-matcher = re.compile("""<b>([A-Z]{4} (\d*[^<]*))|(
+matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett(.)">(.*)</td>
 <td CLASS="dett."><b>(.*)</b></td>
 <td CLASS="dett.">(.*)</td>
@@ -36,22 +34,23 @@ matcher = re.compile("""<b>([A-Z]{4} (\d*[^<]*))|(
 
 # Match groups
 # 1 = match first regex
-# 2 = match class name (needs to change)
-# 3 = match second regex
-# 4 = match if its a lab, tutorial, or class
-# 5 = notes (sometimes a link to JS popup)
-# 6 = CRN
-# 7 = class number (01, T01, B01)
-# 8 = link column (for what???)
-# 9 = credit hours
-# 10 = ?
-# 11 = if monday
-# 12 = if tuesday
-# 13 = if wednesday
-# 14 = if thursday
-# 15 = if friday
-# 16 = start time
-# 17 = end time
+# 2 = match department code
+# 3 = match class name (needs to change)
+# 4 = match second regex
+# 5 = match if its a lab, tutorial, or class
+# 6 = notes (sometimes a link to JS popup)
+# 7 = CRN
+# 8 = class number (01, T01, B01)
+# 9 = link column (for what???)
+# 10 = credit hours
+# 11 = ?
+# 12 = if monday
+# 13 = if tuesday
+# 14 = if wednesday
+# 15 = if thursday
+# 16 = if friday
+# 17 = start time
+# 18 = end time
 
 def time_setup(match, class_name):
     """
@@ -61,22 +60,22 @@ def time_setup(match, class_name):
     class_name is the name of the class, or the name of the class the lab belongs to
     """
     cached = {'name':class_name}
-    cached['type_'] = decode_type(match.group(4))
-    cached['crn'] = match.group(6)
-    cached['identifier'] = match.group(7)
-    cached['credit_hours'] = match.group(9)
+    cached['type_'] = decode_type(match.group(5))
+    cached['crn'] = match.group(7)
+    cached['identifier'] = match.group(8)
+    cached['credit_hours'] = match.group(10)
     
-    # Groups 11-15 are for the days
+    # Groups 12-16 are for the days
     days = ''
-    for i in range(11, 16):
+    for i in range(12, 17):
         day = clean(match.group(i))
         if day.lower() not in ['m', 't', 'w', 'r', 'f']:
             continue
         days += day 
     cached['days'] =  days
     
-    cached['start_time'] = match.group(16)
-    cached['end_time'] = match.group(17)
+    cached['start_time'] = match.group(17)
+    cached['end_time'] = match.group(18)
     return cached
 
 class ClassInfo():
@@ -85,14 +84,15 @@ class ClassInfo():
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
     
-    def __init__(self, name, lectures, labs=None):
+    def __init__(self, name, lectures, department, labs=None):
         self.name = name
         self.lectures = lectures
+        self.department = department
         if labs is not None:
             self.labs = labs
         
     def __str__(self):
-        s = f"{self.name}\n"
+        s = f"{self.department} {self.name}\n"
         for class_ in self.lectures:
             s += str(class_) + "\n"
         for lab in self.labs:
@@ -134,9 +134,9 @@ class LectureInfo(Timeslot):
     
 
 def classes_on_pg(link):
-    resp = reqs.get(link)
-    # print(resp.text)
-    
+    #TODO: Remove any classes that are work terms (IE thesis, internship, coop, research project)
+
+    resp = reqs.get(link)    
     classes = []
     cached = {}
     for match in matcher.finditer(resp.text):
@@ -144,8 +144,8 @@ def classes_on_pg(link):
             if cached != {}:
                 classes.append(ClassInfo(**cached))
                 cached = {}
-            className = f"CSCI {match.group(2)}"
-            cached['name'] = className
+            cached['department'] = match.group(2)
+            cached['name'] = match.group(3)
             cached['labs'] = []
             cached['lectures'] = []
         else:
@@ -157,14 +157,36 @@ def classes_on_pg(link):
                 cached['lectures'].append(lecture)
     return classes
 
-classes = []
-for i in range(0, 5):
-    pg_num = 20*i + 1
-    link = r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=CSCI&s_numb=&n=" + f"{pg_num}" + r"&s_district=100"
-    print(link)
-    results = classes_on_pg(link)
-    for c in classes_on_pg(link):
-        classes.append(c)    
+def get_classes_by_dept(department):
+    classes = []
+    i = 0
+    while True:
+        pg_num = 20*i + 1
+        link = r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=" + f"{department}" + r"&s_numb=&n=" + f"{pg_num}" + r"&s_district=100"
+        print(link)
+        results = classes_on_pg(link)
+        if len(results) == 0:
+            break
+        for c in classes_on_pg(link):
+            classes.append(c) 
+        i += 1
+    return classes
 
-for class_ in classes:
+def get_all_dept():
+    
+    resp = reqs.get(r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule")
+    print(resp)
+    print(resp.text)
+
+    dept_matcher = re.compile("""<a href="fysktime.P_DisplaySchedule?s_term=202020&amp;s_subj=([A-Z]{4})&amp;s_district=100">(\d*[^<]*)""", re.MULTILINE)
+    
+    depts = {}
+    for match in dept_matcher.finditer(resp.text):
+        depts[match.group(1):match.group(2)]
+        
+    return depts
+
+
+# print(get_all_dept())
+for class_ in get_classes_by_dept("CSCI"):
     print(class_)
