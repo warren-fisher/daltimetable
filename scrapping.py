@@ -2,9 +2,8 @@ import requests as reqs
 import re
 import sys
 
-link = r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=CSCI&s_numb=&n=1&s_district=100"
 
-resp = reqs.get(link)
+
 
 def clean(s):
     for l in s:
@@ -113,14 +112,13 @@ class Timeslot():
             self.end_time = end_time
 
     def __str__(self):
-        s = f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
-        if type(s) == type(None):
-            return f"broken"
-        return s
+        return f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
+
 
 class LabInfo(Timeslot):
     """
     Class to represent a lab or tutorial. They can be treated exactly the same except when displaying their information.
+    #TODO: Possible to have a class and a lab ? CSCI 1107 example
     """
     
     def __init__(self, **kwargs):
@@ -135,28 +133,38 @@ class LectureInfo(Timeslot):
         super().__init__(**kwargs)
     
 
-
-
-
-#TODO: Multiple lectures
-classes = []
-cached = {}
-for match in matcher.finditer(resp.text):
-    if match.group(1):
-        if cached != {}:
-            classes.append(ClassInfo(**cached))
-            cached = {}
-        className = f"CSCI {match.group(2)}"
-        cached['name'] = className
-        cached['labs'] = []
-        cached['lectures'] = []
-    else:
-        if decode_type(match.group(4)) != 'lecture':
-            lab = LabInfo(**time_setup(match, cached['name']))
-            cached['labs'].append(lab)
+def classes_on_pg(link):
+    resp = reqs.get(link)
+    # print(resp.text)
+    
+    classes = []
+    cached = {}
+    for match in matcher.finditer(resp.text):
+        if match.group(1):
+            if cached != {}:
+                classes.append(ClassInfo(**cached))
+                cached = {}
+            className = f"CSCI {match.group(2)}"
+            cached['name'] = className
+            cached['labs'] = []
+            cached['lectures'] = []
         else:
-            lecture = LectureInfo(**time_setup(match, cached['name']))
-            cached['lectures'].append(lecture)
+            if decode_type(match.group(4)) != 'lecture':
+                lab = LabInfo(**time_setup(match, cached['name']))
+                cached['labs'].append(lab)
+            else:
+                lecture = LectureInfo(**time_setup(match, cached['name']))
+                cached['lectures'].append(lecture)
+    return classes
+
+classes = []
+for i in range(0, 5):
+    pg_num = 20*i + 1
+    link = r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=CSCI&s_numb=&n=" + f"{pg_num}" + r"&s_district=100"
+    print(link)
+    results = classes_on_pg(link)
+    for c in classes_on_pg(link):
+        classes.append(c)    
 
 for class_ in classes:
     print(class_)
