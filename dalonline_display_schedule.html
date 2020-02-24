@@ -1,0 +1,469 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
+<HTML lang="en">
+
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Pragma" name="Cache-Control" content="no-cache">
+    <meta http-equiv="Cache-Control" name="Cache-Control" content="no-cache">
+    <LINK REL="stylesheet" HREF="/css/web_black.css" TYPE="text/css">
+    <LINK REL="stylesheet" HREF="/dalhousie/css/web_defaultprint.css" TYPE="text/css" media="print">
+    <title>Dalhousie University: Academic Timetable</title>
+    <meta http-equiv="Content-Script-Type" name="Default_Script_Language" content="text/javascript">
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+        <!-- Hide JavaScript from older browsers 
+        window.onunload = function() {
+            submitcount = 0;
+        }
+        var submitcount = 0;
+
+        function checkSubmit() {
+            if (submitcount == 0) {
+                submitcount++;
+                return true;
+            } else {
+                alert("Your changes have already been submitted.");
+                return false;
+            }
+        }
+        //  End script hiding -->
+    </SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+        <!-- Hide JavaScript from older browsers 
+        //  Function to open a window
+        function windowOpen(window_url) {
+            helpWin = window.open(window_url, '', 'toolbar=yes,status=no,scrollbars=yes,menubar=yes,resizable=yes,directories=no,location=no,width=350,height=400');
+            if (document.images) {
+                if (helpWin) helpWin.focus()
+            }
+        }
+        //  End script hiding -->
+    </SCRIPT>
+</head>
+
+<body>
+    <div id="headerImage">
+        <img src="/wtlgifs/dal_logo_black.png" CLASS="headerImg" TITLE="" NAME=" DalOnlineHeader2016" HSPACE=46 VSPACE=0 BORDER=0 HEIGHT=54 WIDTH=162 />
+    </div>
+    <div class="headerwrapperdiv">
+        <div class="pageheaderdiv1">
+            <a href="#main_content" onMouseover="window.status='Go to Main Content'; return true" onMouseout="window.status=''; return true" OnFocus="window.status='Go to Main Content'; return true" onBlur="window.status=''; return true" class="skiplinks">Go to Main Content</a>
+            <h1>DAL ONLINE</h1>
+        </DIV>
+        <div class="headerlinksdiv">
+        </DIV>
+        <table CLASS="plaintable" SUMMARY="This table displays Menu Items and Banner Search textbox." WIDTH="100%">
+            <tr>
+                <TD CLASS="pldefault">
+                    <div class="headerlinksdiv2">
+                        &nbsp;
+                    </div>
+                </TD>
+                <TD CLASS="pldefault">
+                    <p class="rightaligntext" /p>
+                        <SPAN class="pageheaderlinks">
+<a href="/stuhelp/hyghttbl.html" accesskey="H" onClick="popup = window.open('/stuhelp/hyghttbl.html', 'PopupPage','height=768,width=1024,scrollbars=yes,resizable=yes'); return false" target="_blank" onMouseOver="window.status='';  return true" onMouseOut="window.status=''; return true"onFocus="window.status='';  return true" onBlur="window.status=''; return true"  class="submenulinktext2">HELP</a>
+|
+<a href="twbkwbis.P_Logout" accesskey="3" class="submenulinktext2">EXIT</a>
+</span>
+                </TD>
+            </tr>
+        </table>
+    </DIV>
+    <div class="pagetitlediv">
+        <table CLASS="plaintable" SUMMARY="This table displays title and static header displays." WIDTH="100%">
+            <tr>
+                <TD CLASS="pldefault">
+                    <h2>Academic Timetable</h2>
+                </TD>
+                <TD CLASS="pldefault">
+                    &nbsp;
+                </TD>
+                <TD CLASS="pldefault">
+                    <p class="rightaligntext" /p>
+                        <div class="staticheaders">
+                        </div>
+                </TD>
+            </tr>
+            <tr>
+                <TD class="bg3" width="100%" colSpan=3><img src="/wtlgifs/web_transparent.gif" alt="Transparent Image" CLASS="headerImg" TITLE="Transparent Image" NAME="web_transparent" HSPACE=0 VSPACE=0 BORDER=0 HEIGHT=3 WIDTH=10 /></TD>
+            </tr>
+        </table>
+        <a name="main_content"></a>
+    </DIV>
+    <div class="pagebodydiv">
+        <!--  ** END OF twbkwbis.P_OpenDoc **  -->
+        <form action="fysktime.P_DisplaySchedule" method="post">
+            <div class="infotextdiv">
+                <table CLASS="infotexttable" SUMMARY="This layout table contains information that may be helpful in understanding the content and functionality of this page.  It could be a brief set of instructions, a description of error messages, or other special information.">
+                    <tr>
+                        <td CLASS="indefault"><img src="/wtlgifs/web_info.gif" align="middle" alt="Information" CLASS="headerImg" TITLE="Information" NAME="Info" HSPACE=0 VSPACE=0 BORDER=0 HEIGHT=28 WIDTH=28 /></td>
+                        <td CLASS="indefault">
+                            <SPAN class="infotext"> <font size=3>Dalhousie offers courses at two main locations, Halifax and Truro. The Truro location is home to our Faculty of Agriculture and is located about 100 km from Halifax. Distance courses are delivered to students through a medium where students are not physically present in a traditional setting such as a classroom. "Other" refers to courses held at locations other than Halifax or Truro. The filter options can be used to search on a location or combination of locations e.g. Halifax and Distance will show all the Halifax or Distance courses offered for a subject.
+<p>
+The Faculty of Agriculture Technology Program courses are included in the timetable with course numbers between 0100-0299 and are only open to Technology students.
+
+<p>
+Use the radio buttons below to select a term and location.  Click submit to see the list of subjects.  Click on the subject link to view the courses offered.
+<p>
+<p>
+Periodically, the timetable may appear with all listings marked "C/D" (Consult Department). This occurs during a weekly refresh of scheduling information. Please check back in 10-15 minutes to view your timetable. </font>
+<p></SPAN>
+                        </td>
+                    </tr>
+                </table>
+            </DIV>
+            <p>
+                <div class="infotextdiv">
+                    <table CLASS="infotexttable" SUMMARY="This layout table contains information that may be helpful in understanding the content and functionality of this page.  It could be a brief set of instructions, a description of error messages, or other special information.">
+                        <tr>
+                            <td CLASS="indefault"><img src="/bangifs/web_help2.gif" align="middle" alt="Get help with this page. This link will open a new window." CLASS="headerImg" TITLE="Get help with this page. This link will open a new window." NAME="web_help" HSPACE=0
+                                    VSPACE=0 BORDER=0 HEIGHT=28 WIDTH=28 /></td>
+                            <td CLASS="indefault">
+                                <SPAN class="infotext"><A
+HREF="https://www.dal.ca/campus_life/academic-support/advising.html"/><font size="3">Need academic advising?</font></A></SPAN>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                </DIV>
+                <span style="font-size:11px"><a href="fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=&s_numb=&s_district=100"></a></span>
+                <b>Term:</b>
+                <br />
+                <input type="radio" name="s_term" value="202000" />
+                <SPAN class="fieldformattext">2019/2020 Medicine/Dentistry</SPAN>
+                <input type="radio" name="s_term" value="202010" />
+                <SPAN class="fieldformattext">2019/2020 Fall</SPAN>
+                <input type="radio" name="s_term" value="202010,202020" />
+                <SPAN class="fieldformattext">2019/2020 Fall and Winter</SPAN>
+                <input type="radio" name="s_term" value="202020" checked="checked" />
+                <SPAN class="fieldformattext">2019/2020 Winter</SPAN>
+                <input type="radio" name="s_term" value="202030" />
+                <SPAN class="fieldformattext">2019/2020 Summer</SPAN>
+                <br />
+                <br />
+                <b>Location:</b>
+                <br />
+                <input type="radio" name="s_district" value="All" />
+                <SPAN class="fieldformattext">All</SPAN>
+                <input type="radio" name="s_district" value="100" checked="checked" />
+                <SPAN class="fieldformattext">Halifax</SPAN>
+                <input type="radio" name="s_district" value="200" />
+                <SPAN class="fieldformattext">Truro</SPAN>
+                <input type="radio" name="s_district" value="300" />
+                <SPAN class="fieldformattext">Distance</SPAN>
+                <input type="radio" name="s_district" value="400" />
+                <SPAN class="fieldformattext">Other</SPAN>
+                <input type="radio" name="s_district" value="100D" />
+                <SPAN class="fieldformattext">Halifax and Distance</SPAN>
+                <input type="radio" name="s_district" value="200D" />
+                <SPAN class="fieldformattext">Truro and Distance</SPAN>
+                <input type="radio" name="s_district" value="400D" />
+                <SPAN class="fieldformattext">Other and Distance</SPAN>
+                <br />
+                <br />
+                <input type="submit" value="Submit" />
+                <p>
+                    <b>Subject Listing for 2019/2020 Winter in Locations(s) Halifax</b>
+                    <p>
+                        <table CLASS="dataentrytable" WIDTH=100%>
+                            <tr valign="TOP">
+                                <TD NOWRAP CLASS="dedefault">
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ACSC&s_district=100">Actuarial Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ANAT&s_district=100">Anatomy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ARBC&s_district=100">Arabic</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ARCH&s_district=100">Architecture</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ASSC&s_district=100">Arts & Social Sciences</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BIOC&s_district=100">Biochem & Molecular Biology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BIOE&s_district=100">Biological Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BIOL&s_district=100">Biology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BMNG&s_district=100">Biomedical Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BUSS&s_district=100">Business</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=BUSI&s_district=100">Business Admin</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CANA&s_district=100">Canadian Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CNLT&s_district=100">Centre for Learning & Teaching</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CHEE&s_district=100">Chemical Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CHEM&s_district=100">Chemistry</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CHIN&s_district=100">Chinese</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CIVL&s_district=100">Civil Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CLAS&s_district=100">Classics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=COMM&s_district=100">Commerce</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CMSD&s_district=100">Communication Sci & Disorders</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CH_E&s_district=100">Community Health&Epidemiology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CPST&s_district=100">Complementary Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CSCI&s_district=100">Computer Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CTMP&s_district=100">Contemporary Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=CRWR&s_district=100">Creative Writing</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=DEHY&s_district=100">Dental Hygiene</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=DENT&s_district=100">Dentistry</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=DMUT&s_district=100">Diag Med Ultrasound Tech</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=EMSP&s_district=100">Early Modern Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ERTH&s_district=100">Earth Sciences</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ECON&s_district=100">Economics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ECED&s_district=100">Electrical & Computer Engineer</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ECMM&s_district=100">Electronic Commerce</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENGI&s_district=100">Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=INWK&s_district=100">Engineering Internetworking</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENGM&s_district=100">Engineering Mathematics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENGL&s_district=100">English</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENSL&s_district=100">English Language (CE)</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENVE&s_district=100">Environmental Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENVS&s_district=100">Environmental Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ENVI&s_district=100">Environmental Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=EURO&s_district=100">European Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=FILM&s_district=100">Film Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=FIGS&s_district=100">First Year Interest Groups-Sci</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=FOSC&s_district=100">Food Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=FREN&s_district=100">French</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=GWST&s_district=100">Gender & Women's Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=GEOG&s_district=100">Geography</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=GERM&s_district=100">German</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HESA&s_district=100">Health Administration</a>
+                                    <br />
+                                </TD>
+                                <TD CLASS="dedefault">
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HINF&s_district=100">Health Informatics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HLTH&s_district=100">Health Professions</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HPRO&s_district=100">Health Promotion</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HSCE&s_district=100">Health Sciences Education</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HAHP&s_district=100">Health and Human Performance</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HSTC&s_district=100">Hist of Science & Technology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=HIST&s_district=100">History</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=INDG&s_district=100">Indigenous Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=IENG&s_district=100">Industrial Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=INFO&s_district=100">Information Management</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=INTE&s_district=100">Interdisc Studies (Graduate)</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=INTD&s_district=100">International Develop Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=IPHE&s_district=100">Interprofessional Health Educ</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ITAL&s_district=100">Italian</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=JOUR&s_district=100">Journalism</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=KINE&s_district=100">Kinesiology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=KING&s_district=100">King's Foundation Year Program</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=LAWS&s_district=100">Law</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=LJSO&s_district=100">Law, Justice, and Society</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=LEIS&s_district=100">Leisure Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MRIT&s_district=100">Magnetic Resonance Imag Tech</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MGMT&s_district=100">Management</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MARA&s_district=100">Marine Affairs</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MARI&s_district=100">Marine Biology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MATL&s_district=100">Materials Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MATH&s_district=100">Mathematics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MECH&s_district=100">Mechanical Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MDLT&s_district=100">Medical Lab Technology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MEDP&s_district=100">Medical Physics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MEDR&s_district=100">Medical Research</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MICI&s_district=100">Microbiology & Immunology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MINE&s_district=100">Mineral Resource Engineering</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=MUSC&s_district=100">Music</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=NESC&s_district=100">Neuroscience</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=NUMT&s_district=100">Nuclear Medicine Technology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=NURS&s_district=100">Nursing</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=OCCU&s_district=100">Occupational Therapy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=OCEA&s_district=100">Oceanography</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=ORAL&s_district=100">Oral Surgery</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHDP&s_district=100">PHD Program</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PATH&s_district=100">Pathology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PERF&s_district=100">Performance Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PERI&s_district=100">Periodontics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHAC&s_district=100">Pharmacology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHAR&s_district=100">Pharmacy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHIL&s_district=100">Philosophy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHYC&s_district=100">Physics & Atmospheric Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHYL&s_district=100">Physiology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PHYT&s_district=100">Physiotherapy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PLAN&s_district=100">Planning</a>
+                                    <br />
+                                </TD>
+                                <TD CLASS="dedefault">
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=POLI&s_district=100">Political Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PGPH&s_district=100">Post-Graduate Pharmacy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PEAS&s_district=100">Process Engineering & App Scie</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PROS&s_district=100">Prosthodontics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PSYR&s_district=100">Psychiatry</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PSYO&s_district=100">Psychology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=PUAD&s_district=100">Public Administration</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=RADT&s_district=100">Radiological Technology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=REGN&s_district=100">Registration Course-Graduate</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=RELS&s_district=100">Religious Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=RSPT&s_district=100">Respiratory Therapy</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=RUSN&s_district=100">Russian Studies</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=SCIE&s_district=100">Science</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=SLWK&s_district=100">Social Work</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=SOSA&s_district=100">Sociol & Social Anthropology</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=SPAN&s_district=100">Spanish & Latin American Stud</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=STAT&s_district=100">Statistics</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=SUST&s_district=100">Sustainability</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=THEA&s_district=100">Theatre</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=TYPR&s_district=100">Transition Year Program</a>
+                                    <br />
+                                    <a href="fysktime.P_DisplaySchedule?s_term=202020&s_subj=VISC&s_district=100">Vision Science</a>
+                                    <br />
+                                </TD>
+                            </tr>
+                        </table>
+
+                        <!--  ** START OF twbkwbis.P_CloseDoc **  -->
+                        <table CLASS="plaintable" SUMMARY="This is table displays line separator at end of the page." WIDTH="100%" cellSpacing=0 cellPadding=0 border=0>
+                            <tr>
+                                <TD class="bgtabon" width="100%" colSpan=2><img src="/wtlgifs/web_transparent.gif" alt="Transparent Image" CLASS="headerImg" TITLE="Transparent Image" NAME="web_transparent" HSPACE=0 VSPACE=0 BORDER=0 HEIGHT=3 WIDTH=10 /></TD>
+                            </tr>
+                        </table>
+                        <a href="#top" onMouseover="window.status='Skip to top of page'; return true" onMouseout="window.status=''; return true" OnFocus="window.status='Skip to top of page'; return true" onBlur="window.status=''; return true" class="skiplinks">Skip to top of page</a>
+    </DIV>
+    <div class="footerbeforediv">
+
+    </DIV>
+    <div class="footerlinksdiv">
+        <SPAN class="pagefooterlinks">
+<map name="Dalhousie_University:_Academic_Timetable_Links_F" title="Dalhousie University: Academic Timetable Links">
+<p>
+<a href="#skip_Dalhousie_University:_Academic_Timetable_Links_F" onMouseover="window.status='Skip Dalhousie University: Academic Timetable Links'; return true" onMouseout="window.status=''; return true" onFocus="window.status='Skip Dalhousie University: Academic Timetable Links'; return true" onBlur="window.status=''; return true"  class="skiplinks">Skip Dalhousie University: Academic Timetable Links</a>
+<P>[ <a href="/home.html">Dal Online Main Menu (Login)</a>
+ | <a href="http://www.dal.ca">Dalhousie Home Page</a>
+ ]
+</map>
+</SPAN>
+        <a name="skip_Dalhousie_University:_Academic_Timetable_Links_F"></a>
+    </DIV>
+    <div class="footerafterdiv">
+
+    </DIV>
+    <div class="globalafterdiv">
+
+    </DIV>
+    <div class="globalfooterdiv">
+
+    </DIV>
+    <div class="pagefooterdiv">
+        <SPAN class="releasetext">Release: 5.4.D2</SPAN>
+    </DIV>
+    <div class="poweredbydiv">
+    </DIV>
+    <DIV class="div1"></DIV>
+    <DIV class="div2"></DIV>
+    <DIV class="div3"></DIV>
+    <DIV class="div4"></DIV>
+    <DIV class="div5"></DIV>
+    <DIV class="div6"></DIV>
+    <div class="banner_copyright"> <br>
+        <h5>© 2020 Ellucian Company L.P. and its affiliates.<br></h5>
+    </div>
+</body>
+
+</html>

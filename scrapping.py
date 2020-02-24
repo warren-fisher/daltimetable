@@ -1,7 +1,7 @@
 import requests as reqs
 import re
 import sys
-import selenium
+import time
 
 def clean(s):
     for l in s:
@@ -174,19 +174,15 @@ def get_classes_by_dept(department):
 
 def get_all_dept():
     
-    resp = reqs.get(r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule")
-    print(resp)
-    print(resp.text)
-
-    dept_matcher = re.compile("""<a href="fysktime.P_DisplaySchedule?s_term=202020&amp;s_subj=([A-Z]{4})&amp;s_district=100">(\d*[^<]*)""", re.MULTILINE)
-    
+    text = open("dalonline_display_schedule.html", 'r').read()
+    dept_matcher = re.compile("""<a href="fysktime\.P_DisplaySchedule\?s_term=202020&s_subj=([A-Za-z]{4})&s_district=100">(.*)</a>""")
     depts = {}
-    for match in dept_matcher.finditer(resp.text):
-        depts[match.group(1):match.group(2)]
+    for match in dept_matcher.finditer(text):
+        depts[match.group(1)]=match.group(2)
         
     return depts
 
-
-# print(get_all_dept())
-for class_ in get_classes_by_dept("CSCI"):
-    print(class_)
+for dept in get_all_dept().keys():
+    for class_ in get_classes_by_dept(dept):
+        print(class_)
+    time.sleep(5)
