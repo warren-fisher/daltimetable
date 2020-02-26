@@ -17,6 +17,10 @@ def decode_type(t):
         return 'lecture'
     if t == 't':
         return 'tutorial'
+    if t == 'w':
+        return 'workterm'
+    if t == 's':
+        return 'study'
 
 matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett(.)">(.*)</td>
@@ -64,7 +68,7 @@ def time_setup(match, class_name):
     cached['crn'] = match.group(7)
     cached['identifier'] = match.group(8)
     cached['credit_hours'] = match.group(10)
-    
+
     # Groups 12-16 are for the days
     days = ''
     for i in range(12, 17):
@@ -73,7 +77,7 @@ def time_setup(match, class_name):
             continue
         days += day 
     cached['days'] =  days
-    
+
     cached['start_time'] = match.group(17)
     cached['end_time'] = match.group(18)
     return cached
@@ -83,14 +87,16 @@ class ClassInfo():
     Object to store all the lectures and tutorials/labs that a class has.
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
-    
-    def __init__(self, name, lectures, department, labs=None):
+
+    def __init__(self, name, lectures, department, labs=None, tutorials=None):
         self.name = name
         self.lectures = lectures
         self.department = department
         if labs is not None:
             self.labs = labs
-        
+        if tutorials is not None:
+            self.tutorials = tutorials
+
     def __str__(self):
         s = f"{self.department} {self.name}\n"
         for class_ in self.lectures:
@@ -118,9 +124,11 @@ class Timeslot():
 class LabInfo(Timeslot):
     """
     Class to represent a lab or tutorial. They can be treated exactly the same except when displaying their information.
+    It is perhaps possible for a class to have a lab and a tutorial, but that is fine they can both be the same class.
+    We will also treat worktemrs the same (for now?)
     #TODO: Possible to have a class and a lab ? CSCI 1107 example
     """
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -142,16 +150,25 @@ def classes_on_pg(link):
     for match in matcher.finditer(resp.text):
         if match.group(1):
             if cached != {}:
-                classes.append(ClassInfo(**cached))
-                cached = {}
+                # Get rid of any class that is a work/study term (it will have no lec/lab/tut)
+                if (len(cached['labs']) + len(cached['tutorials']) + len(cached['lectures'])) == 0:
+                    cached = {}
+                else:
+                    classes.append(ClassInfo(**cached))
+                    cached = {}
             cached['department'] = match.group(2)
             cached['name'] = match.group(3)
             cached['labs'] = []
+            cached['tutorials'] = []
             cached['lectures'] = []
-        else:
-            if decode_type(match.group(4)) != 'lecture':
+        elif match.group(4):
+            if (type_ := decode_type(match.group(5))) != 'lecture':
+                if type_ == None:
+                    continue
+                if type_ in ['workterm', 'study']:
+                    continue
                 lab = LabInfo(**time_setup(match, cached['name']))
-                cached['labs'].append(lab)
+                cached[type_ + 's'].append(lab)
             else:
                 lecture = LectureInfo(**time_setup(match, cached['name']))
                 cached['lectures'].append(lecture)
@@ -168,7 +185,7 @@ def get_classes_by_dept(department):
         if len(results) == 0:
             break
         for c in classes_on_pg(link):
-            classes.append(c) 
+            classes.append(c)
         i += 1
     return classes
 
@@ -179,7 +196,7 @@ def get_all_dept():
     depts = {}
     for match in dept_matcher.finditer(text):
         depts[match.group(1)]=match.group(2)
-        
+
     return depts
 
 for dept in get_all_dept().keys():
