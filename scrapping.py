@@ -3,6 +3,10 @@ import re
 import sys
 import time
 
+#TODO: classroom location data (building/campus)
+#TODO: professor data (link with rate my teacher?)
+#TODO: class size/spots open/waitlist spots open/waitlist size
+
 def clean(s):
     """
     Remove unnecesary junk from match eg. &agb&adfadsf that means nothing
@@ -65,14 +69,14 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 17 = start time
 # 18 = end time
 
-def time_setup(match, class_name):
+def time_setup(match, class_name, department):
     """
     Clean the regex up
 
     match = regex matching 
     class_name is the name of the class, or the name of the class the lab belongs to
     """
-    cached = {'name':class_name}
+    cached = {'name':class_name, 'department':department}
     cached['type_'] = decode_type(match.group(5))
     cached['crn'] = match.group(7)
     cached['identifier'] = match.group(8)
@@ -113,13 +117,18 @@ class ClassInfo():
         for lab in self.labs:
             s += str(lab) + "\n"
         return s
+    
+    def store(self):
+        #TODO: store labs/tut in database
+        for lecture in self.lectures:
+            lecture.store()
 
 class Timeslot():
     """
     Superclass for storing generic information about anything that may occupy a timeslot
     """
 
-    def __init__(self, name, type_, crn, identifier, credit_hours, days, start_time, end_time):
+    def __init__(self, name, type_, crn, identifier, credit_hours, days, start_time, end_time, department):
             self.name = name
             self.type_ = type_
             self.crn = crn
@@ -128,9 +137,14 @@ class Timeslot():
             self.days = days
             self.start_time = start_time
             self.end_time = end_time
+            self.department = department
 
     def __str__(self):
         return f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
+    
+    @staticmethod
+    def time_convert(time):
+        return f"TIME(STR_TO_DATE('{time}', '%k%i'))"
 
 
 class LabInfo(Timeslot):
@@ -149,7 +163,20 @@ class LectureInfo(Timeslot):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
+        
+    def _sql(self):
+        sql = f"""\nINSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
+        C_TIMEEND, C_CREDIT_HRS) VALUES ({self.crn}, '{self.department}', '{self.days}', 
+        {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours});\n"""
+        
+        sql += f"""INSERT INTO classes (C_CRN, C_NAME) VALUES ({self.crn}, '{self.name}');\n"""
+        
+        return sql
+        
+    def store(self):
+        with open('database.sql', 'a') as f:
+            f.write(self._sql())
+            
 
 def classes_on_pg(link):
     """
@@ -183,10 +210,10 @@ def classes_on_pg(link):
                 # These type of classes dont matter to us
                 if type_ in ['workterm', 'study', None]:
                     continue
-                lab = LabInfo(**time_setup(match, cached['name']))
+                lab = LabInfo(**time_setup(match, cached['name'], cached['department']))
                 cached[type_ + 's'].append(lab)
             else:
-                lecture = LectureInfo(**time_setup(match, cached['name']))
+                lecture = LectureInfo(**time_setup(match, cached['name'], cached['department']))
                 cached['lectures'].append(lecture)
     return classes
 
@@ -221,6 +248,10 @@ def get_all_dept():
     return depts
 
 for dept in get_all_dept().keys():
+    #TODO: insert all departments into the database
+    if dept != 'CSCI':
+        continue
     for class_ in get_classes_by_dept(dept):
         print(class_)
+        class_.store()
     time.sleep(5)
