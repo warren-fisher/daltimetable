@@ -4,13 +4,21 @@ import sys
 import time
 
 def clean(s):
+    """
+    Remove unnecesary junk from match eg. &agb&adfadsf that means nothing
+    Used for parsing the days a class is available (empty spots have this junk)
+    """
     for l in s:
         if l == '&':
             return ''
         if ord(l) >= ord('A') and ord(l) <= ord('Z'):
             return l
     return ' '
+
 def decode_type(t):
+    """
+    Match the <td CLASS="dett(.)"...> where (.) is a certain letter corresponding to the type of class
+    """
     if t == 'b':
         return 'lab'
     if t == 'l':
@@ -47,7 +55,8 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 8 = class number (01, T01, B01)
 # 9 = link column (for what???)
 # 10 = credit hours
-# 11 = ?
+#TODO: link column
+# 11 = link column (used if a class has labs/tutorials that match with specific lectures)
 # 12 = if monday
 # 13 = if tuesday
 # 14 = if wednesday
@@ -59,7 +68,7 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 def time_setup(match, class_name):
     """
     Clean the regex up
-    
+
     match = regex matching 
     class_name is the name of the class, or the name of the class the lab belongs to
     """
@@ -106,6 +115,9 @@ class ClassInfo():
         return s
 
 class Timeslot():
+    """
+    Superclass for storing generic information about anything that may occupy a timeslot
+    """
 
     def __init__(self, name, type_, crn, identifier, credit_hours, days, start_time, end_time):
             self.name = name
@@ -125,8 +137,6 @@ class LabInfo(Timeslot):
     """
     Class to represent a lab or tutorial. They can be treated exactly the same except when displaying their information.
     It is perhaps possible for a class to have a lab and a tutorial, but that is fine they can both be the same class.
-    We will also treat worktemrs the same (for now?)
-    #TODO: Possible to have a class and a lab ? CSCI 1107 example
     """
 
     def __init__(self, **kwargs):
@@ -142,12 +152,16 @@ class LectureInfo(Timeslot):
     
 
 def classes_on_pg(link):
-    #TODO: Remove any classes that are work terms (IE thesis, internship, coop, research project)
+    """
+    Get all the classes within a page (not including work/study terms)
+    """
 
-    resp = reqs.get(link)    
+    resp = reqs.get(link)
     classes = []
     cached = {}
     for match in matcher.finditer(resp.text):
+
+        # Match class name
         if match.group(1):
             if cached != {}:
                 # Get rid of any class that is a work/study term (it will have no lec/lab/tut)
@@ -161,11 +175,13 @@ def classes_on_pg(link):
             cached['labs'] = []
             cached['tutorials'] = []
             cached['lectures'] = []
+
+        # Match lecture/tutorial/lab info
         elif match.group(4):
             if (type_ := decode_type(match.group(5))) != 'lecture':
-                if type_ == None:
-                    continue
-                if type_ in ['workterm', 'study']:
+
+                # These type of classes dont matter to us
+                if type_ in ['workterm', 'study', None]:
                     continue
                 lab = LabInfo(**time_setup(match, cached['name']))
                 cached[type_ + 's'].append(lab)
@@ -175,6 +191,9 @@ def classes_on_pg(link):
     return classes
 
 def get_classes_by_dept(department):
+    """
+    Get all the classes (that are not work/study terms) from a specific department
+    """
     classes = []
     i = 0
     while True:
@@ -190,7 +209,9 @@ def get_classes_by_dept(department):
     return classes
 
 def get_all_dept():
-    
+    """
+    Get all the names and acronyms of the Dalhousie departments (Halifax campus only)
+    """
     text = open("dalonline_display_schedule.html", 'r').read()
     dept_matcher = re.compile("""<a href="fysktime\.P_DisplaySchedule\?s_term=202020&s_subj=([A-Za-z]{4})&s_district=100">(.*)</a>""")
     depts = {}
