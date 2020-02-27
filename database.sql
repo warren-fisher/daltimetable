@@ -41,7 +41,10 @@ CREATE TABLE labInfo (
 );
 
 
-INSERT INTO department VALUES ("CSCI", "Comp sci");
+############################################################
+######################Computer Science######################
+############################################################
+INSERT INTO department VALUES ('CSCI','Computer Science');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (20639, 'CSCI', 'TR', 
@@ -402,7 +405,3 @@ INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART,
         C_TIMEEND, C_CREDIT_HRS) VALUES (22845, 'CSCI', 'TR', 
         TIME(STR_TO_DATE('1135', '%k%i')), TIME(STR_TO_DATE('1255', '%k%i')), 0);
 INSERT INTO classes (C_CRN, C_NAME) VALUES (22845, '6999 Research Sem Computer Science');
-
-SELECT * FROM classes;
-SELECT * FROM classInfo;
-

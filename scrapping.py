@@ -247,10 +247,20 @@ def get_all_dept():
 
     return depts
 
-for dept in get_all_dept().keys():
+for dept, name in get_all_dept().items():
     #TODO: insert all departments into the database
     if dept != 'CSCI':
         continue
+    else:
+        s = f'###################### {name} ######################\n'
+        
+        sql = '\n'
+        sql += '#'*(len(s)-1) + '\n'
+        sql += s
+        sql += '#'*(len(s)-1) + '\n'
+        sql += f"INSERT INTO department VALUES ('{dept}','{name}');\n"
+        with open('database.sql', 'a') as f:
+            f.write(sql)
     for class_ in get_classes_by_dept(dept):
         print(class_)
         class_.store()
