@@ -123,6 +123,11 @@ class ClassInfo():
         for lecture in self.lectures:
             lecture.store()
 
+            for lab in self.labs:
+                lab.store(lecture.crn)
+            for tut in self.tutorials:
+                tut.store(lecture.crn)
+
 class Timeslot():
     """
     Superclass for storing generic information about anything that may occupy a timeslot
@@ -153,8 +158,30 @@ class LabInfo(Timeslot):
     It is perhaps possible for a class to have a lab and a tutorial, but that is fine they can both be the same class.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, tutorial=None, **kwargs):
+        if tutorial != None:
+            self.tutorial = tutorial
+        else:
+            self.tutorial = False
         super().__init__(**kwargs)
+
+
+    def _sql(self, other_crn):
+        if self.tutorial:
+            is_tutorial = 1
+        else:
+            is_tutorial = 0
+
+        sql = f"""\nINSERT INTO labInfo (L_CRN, L_DAYS, L_TIMESTART, L_TIMEEND, L_IS_TUTORIAL,
+        C_CRN) VALUES ({self.crn}, '{self.days}', {Timeslot.time_convert(self.start_time)},
+        {Timeslot.time_convert(self.end_time)}, {is_tutorial}, {other_crn});
+        """
+
+        return sql
+
+    def store(self, other_crn):
+        with open('database.sql', 'a') as f:
+            f.write(self._sql(other_crn))
 
 class LectureInfo(Timeslot):
     """
@@ -168,9 +195,9 @@ class LectureInfo(Timeslot):
         sql = f"""\nINSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES ({self.crn}, '{self.department}', '{self.days}', 
         {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours});\n"""
-        
+
         sql += f"""INSERT INTO classes (C_CRN, C_NAME) VALUES ({self.crn}, '{self.name}');\n"""
-        
+
         return sql
         
     def store(self):
@@ -210,7 +237,10 @@ def classes_on_pg(link):
                 # These type of classes dont matter to us
                 if type_ in ['workterm', 'study', None]:
                     continue
-                lab = LabInfo(**time_setup(match, cached['name'], cached['department']))
+                if type_ == 'tutorial':
+                    lab = LabInfo(True, **time_setup(match, cached['name'], cached['department']))
+                else:
+                    lab = LabInfo(**time_setup(match, cached['name'], cached['department']))
                 cached[type_ + 's'].append(lab)
             else:
                 lecture = LectureInfo(**time_setup(match, cached['name'], cached['department']))
@@ -247,20 +277,24 @@ def get_all_dept():
 
     return depts
 
+def dept_sql(dept, name):
+    """
+    Function for writing the department code and name to sql, along with adding a comment
+    so that the sql is easier to read.
+    """
+    s = f'###################### {name} ######################\n'
+    sql = '\n'
+    # Subtract one because of adding newline char at end
+    sql += '#'*(len(s)-1) + '\n'
+    sql += s
+    sql += '#'*(len(s)-1) + '\n'
+    sql += f"INSERT INTO department VALUES ('{dept}','{name}');\n"
+    return sql
+
+
 for dept, name in get_all_dept().items():
-    #TODO: insert all departments into the database
-    if dept != 'CSCI':
-        continue
-    else:
-        s = f'###################### {name} ######################\n'
-        
-        sql = '\n'
-        sql += '#'*(len(s)-1) + '\n'
-        sql += s
-        sql += '#'*(len(s)-1) + '\n'
-        sql += f"INSERT INTO department VALUES ('{dept}','{name}');\n"
-        with open('database.sql', 'a') as f:
-            f.write(sql)
+    with open('database.sql', 'a') as f:
+        f.write(dept_sql(dept, name))
     for class_ in get_classes_by_dept(dept):
         print(class_)
         class_.store()
