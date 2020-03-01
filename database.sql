@@ -39,7 +39,6 @@ CREATE TABLE labInfo (
     PRIMARY KEY (L_CRN),
     FOREIGN KEY (C_CRN) REFERENCES classInfo (C_CRN)
 );
-
 ###############################################################
 ###################### Actuarial Science ######################
 ###############################################################
@@ -5189,7 +5188,7 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (21002, '4020 Paradise Lost');
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21003, 'ENGL', 'TR', 
         TIME(STR_TO_DATE('1005', '%k%i')), TIME(STR_TO_DATE('1125', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (21003, '4024 James Joyce's Ulysses');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (21003, '4024 James Joyce\'s Ulysses');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21004, 'ENGL', 'MW', 
@@ -5632,10 +5631,10 @@ INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART,
         TIME(STR_TO_DATE('1735', '%k%i')), TIME(STR_TO_DATE('2025', '%k%i')), 3);
 INSERT INTO classes (C_CRN, C_NAME) VALUES (24387, '5930 Popular Literature');
 
-######################################################################
-###################### Gender & Women's Studies ######################
-######################################################################
-INSERT INTO department VALUES ('GWST','Gender & Women's Studies');
+#######################################################################
+###################### Gender & Women\'s Studies ######################
+#######################################################################
+INSERT INTO department VALUES ('GWST','Gender & Women\'s Studies');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21228, 'GWST', 'TR', 
@@ -6024,7 +6023,7 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (21218, '3010 Advanced Transl I: Germ
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (24081, 'GERM', 'MW', 
         TIME(STR_TO_DATE('1435', '%k%i')), TIME(STR_TO_DATE('1555', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (24081, '3056 Goeth's Faust I');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (24081, '3056 Goeth\'s Faust I');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (24182, 'GERM', 'MW', 
@@ -7456,10 +7455,10 @@ INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART,
         TIME(STR_TO_DATE('1405', '%k%i')), TIME(STR_TO_DATE('1555', '%k%i')), 3);
 INSERT INTO classes (C_CRN, C_NAME) VALUES (23035, '6000 Graduate Sem in Kinesiology');
 
-############################################################################
-###################### King's Foundation Year Program ######################
-############################################################################
-INSERT INTO department VALUES ('KING','King's Foundation Year Program');
+#############################################################################
+###################### King\'s Foundation Year Program ######################
+#############################################################################
+INSERT INTO department VALUES ('KING','King\'s Foundation Year Program');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (23533, 'KING', 'MWF', 
@@ -7881,7 +7880,7 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (23415, '2253 Class Act. Law & Proc. 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (24175, 'LAWS', 'W', 
         TIME(STR_TO_DATE('1235', '%k%i')), TIME(STR_TO_DATE('1425', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (24175, '2269 Taxation II: Int'l Law');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (24175, '2269 Taxation II: Int\'l Law');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (24164, 'LAWS', 'M', 
@@ -9774,7 +9773,7 @@ INSERT INTO labInfo (L_CRN, L_DAYS, L_TIMESTART, L_TIMEEND, L_IS_TUTORIAL,
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21811, 'MINE', 'WF', 
         TIME(STR_TO_DATE('1005', '%k%i')), TIME(STR_TO_DATE('1125', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (21811, '3612 Rock Penetrat'n & Fragmentat'n');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (21811, '3612 Rock Penetrat\'n & Fragmentat\'n');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21812, 'MINE', 'TR', 
@@ -9806,7 +9805,7 @@ INSERT INTO labInfo (L_CRN, L_DAYS, L_TIMESTART, L_TIMEEND, L_IS_TUTORIAL,
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21818, 'MINE', 'TR', 
         TIME(STR_TO_DATE('1305', '%k%i')), TIME(STR_TO_DATE('1425', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (21818, '4711 Mine Ventilat'n & Environ Crtl');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (21818, '4711 Mine Ventilat\'n & Environ Crtl');
 
 INSERT INTO labInfo (L_CRN, L_DAYS, L_TIMESTART, L_TIMEEND, L_IS_TUTORIAL,
         C_CRN) VALUES (21819, 'R', TIME(STR_TO_DATE('1535', '%k%i')),
@@ -9948,7 +9947,7 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (23608, '1271Y Keyboard Skills I');
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21845, 'MUSC', 'MW', 
         TIME(STR_TO_DATE('1605', '%k%i')), TIME(STR_TO_DATE('1725', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (21845, '2019 Rock'n Roll Era & Beyond');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (21845, '2019 Rock\'n Roll Era & Beyond');
 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (21846, 'MUSC', 'T', 
@@ -13649,7 +13648,7 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (24282, '5006 Adv Issues Crit Health 
 INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (23832, 'SOSA', 'F', 
         TIME(STR_TO_DATE('0835', '%k%i')), TIME(STR_TO_DATE('1125', '%k%i')), 3);
-INSERT INTO classes (C_CRN, C_NAME) VALUES (23832, '5200Y Master's Sem Soci & Soc Anthr');
+INSERT INTO classes (C_CRN, C_NAME) VALUES (23832, '5200Y Master\'s Sem Soci & Soc Anthr');
 
 ###########################################################################
 ###################### Spanish & Latin American Stud ######################
@@ -14398,8 +14397,8 @@ INSERT INTO classes (C_CRN, C_NAME) VALUES (23845, '2800Y Acting II');
 INSERT INTO labInfo (L_CRN, L_DAYS, L_TIMESTART, L_TIMEEND, L_IS_TUTORIAL,
         C_CRN) VALUES (23846, 'MW', TIME(STR_TO_DATE('1635', '%k%i')),
         TIME(STR_TO_DATE('1725', '%k%i')), 0, 23845);
-
-INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART,
+        
+INSERT INTO classInfo (C_CRN, D_CODE, C_DAYS, C_TIMESTART, 
         C_TIMEEND, C_CREDIT_HRS) VALUES (23847, 'THEA', 'MW', 
         TIME(STR_TO_DATE('1305', '%k%i')), TIME(STR_TO_DATE('1425', '%k%i')), 3);
 INSERT INTO classes (C_CRN, C_NAME) VALUES (23847, '2810Y Voice & Speech II');

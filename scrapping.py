@@ -3,6 +3,8 @@ import re
 import sys
 import time
 
+# from sql import connection
+
 #TODO: classroom location data (building/campus)
 #TODO: professor data (link with rate my teacher?)
 #TODO: class size/spots open/waitlist spots open/waitlist size
@@ -33,6 +35,9 @@ def decode_type(t):
         return 'workterm'
     if t == 's':
         return 'study'
+    
+def escape_sql(s):
+    return s.replace("'", "\\'")            
 
 matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett(.)">(.*)</td>
@@ -48,7 +53,7 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP>.*?(\d*)-(\d*)</td>)""", re.MULTILINE)
 
-# Match groups
+# Match groups for regex
 # 1 = match first regex
 # 2 = match department code
 # 3 = match class name (needs to change)
@@ -57,6 +62,7 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 6 = notes (sometimes a link to JS popup)
 # 7 = CRN
 # 8 = class number (01, T01, B01)
+#TODO: why two link columns? pre sure real one is #11
 # 9 = link column (for what???)
 # 10 = credit hours
 #TODO: link column
@@ -119,7 +125,6 @@ class ClassInfo():
         return s
     
     def store(self):
-        #TODO: store labs/tut in database
         for lecture in self.lectures:
             lecture.store()
 
@@ -134,15 +139,15 @@ class Timeslot():
     """
 
     def __init__(self, name, type_, crn, identifier, credit_hours, days, start_time, end_time, department):
-            self.name = name
-            self.type_ = type_
-            self.crn = crn
-            self.identifier = identifier
-            self.credit_hours = credit_hours
-            self.days = days
-            self.start_time = start_time
-            self.end_time = end_time
-            self.department = department
+            self.name = escape_sql(name)
+            self.type_ = escape_sql(type_)
+            self.crn = escape_sql(crn)
+            self.identifier = escape_sql(identifier)
+            self.credit_hours = escape_sql(credit_hours)
+            self.days = escape_sql(days)
+            self.start_time = escape_sql(start_time)
+            self.end_time = escape_sql(end_time)
+            self.department = escape_sql(department)
 
     def __str__(self):
         return f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
@@ -282,13 +287,13 @@ def dept_sql(dept, name):
     Function for writing the department code and name to sql, along with adding a comment
     so that the sql is easier to read.
     """
-    s = f'###################### {name} ######################\n'
+    s = f'###################### {escape_sql(name)} ######################\n'
     sql = '\n'
     # Subtract one because of adding newline char at end
     sql += '#'*(len(s)-1) + '\n'
     sql += s
     sql += '#'*(len(s)-1) + '\n'
-    sql += f"INSERT INTO department VALUES ('{dept}','{name}');\n"
+    sql += f"INSERT INTO department VALUES ('{escape_sql(dept)}','{escape_sql(name)}');\n"
     return sql
 
 
