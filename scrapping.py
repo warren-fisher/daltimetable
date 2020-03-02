@@ -3,8 +3,6 @@ import re
 import sys
 import time
 
-# from sql import connection
-
 #TODO: classroom location data (building/campus)
 #TODO: professor data (link with rate my teacher?)
 #TODO: class size/spots open/waitlist spots open/waitlist size
