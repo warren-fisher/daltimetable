@@ -18,11 +18,16 @@ classInfo = Base.classes.classInfo
 department = Base.classes.department
 labInfo = Base.classes.labInfo
 
-s = select([classInfo])
-res = engine.connect().execute(s)
-
-for s in res:
-    print(s)
+def crn_query(crn):
+    s = select([classInfo]).where(classInfo.C_CRN == crn)
+    result = engine.connect().execute(s)
+    for res in result:
+        d = {
+            'crn': res[0],
+            'department': res[1],
+            'dates': res[2],
+        }
+        return d
 
 # for class_ in Base.classes:
 #     print(class_)
