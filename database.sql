@@ -24,11 +24,12 @@ CREATE TABLE classInfo (
 CREATE TABLE classes (
     C_CRN SMALLINT(5),
     C_NAME VARCHAR(64),
+    PRIMARY KEY (C_CRN),
     FOREIGN KEY (C_CRN) REFERENCES classInfo (C_CRN)
 );
 
 CREATE TABLE labInfo (
-    L_CRN SMALLINT(5) UNIQUE,
+    L_CRN SMALLINT(5),
     L_DAYS VARCHAR(5),
     L_TIMESTART TIME,
     L_TIMEEND TIME,
@@ -36,7 +37,7 @@ CREATE TABLE labInfo (
     L_NUM_REGISTERED SMALLINT(3),
     L_IS_TUTORIAL TINYINT(1),
     C_CRN SMALLINT(5),
-    PRIMARY KEY (L_CRN),
+    PRIMARY KEY (L_CRN, C_CRN),
     FOREIGN KEY (C_CRN) REFERENCES classInfo (C_CRN)
 );
 ###############################################################
