@@ -13,7 +13,6 @@ engine = create_engine(
 Base.prepare(engine, reflect=True)
 
 #TODO: Fix classes table since it doesnt have primary key, maybe put it into classInfo table?
-# classes = Base.classes.classes
 classInfo = Base.classes.classInfo
 department = Base.classes.department
 labInfo = Base.classes.labInfo
@@ -22,12 +21,13 @@ def crn_query(crn):
     s = select([classInfo]).where(classInfo.C_CRN == crn)
     result = engine.connect().execute(s)
     for res in result:
+        print(res)
         d = {
             'crn': res[0],
-            'department': res[1],
-            'dates': res[2],
+            'name': res[1],
+            'department': res[2],
+            'dates': res[3],
+            'start_time': res[4].strftime('%H%M'),
+            'end_time': res[5].strftime('%H%M')
         }
         return d
-
-# for class_ in Base.classes:
-#     print(class_)
