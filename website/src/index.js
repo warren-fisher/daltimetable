@@ -12,7 +12,7 @@ function Square(props) {
         </button>
         );
     }
-  
+
 class Board extends React.Component {
     constructor(props) {
         super(props);
@@ -74,27 +74,35 @@ class Board extends React.Component {
   }
   
 class Game extends React.Component {
-    render() {
-      return (
-        <div className="game">
-          <div className="game-board">
-            <Board />
-          </div>
-          <div className="game-info">
-            <div>{/* status */}</div>
-            <ol>{/* TODO */}</ol>
-          </div>
+  render() {
+    return (
+      <div className="game">
+        <button type="submit" onClick={() => apiAction()}>Search</button>
+        <div className="game-board">
+          <Board />
         </div>
-      );
-    }
+        <div className="game-info">
+          <div>{/* status */}</div>
+          <ol>{/* TODO */}</ol>
+        </div>
+      </div>
+    );
   }
-  
-  // ========================================
-  
+}
+
 ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
+
+
+async function apiAction() {
+  const response = await fetch('http://127.0.0.1:5000/api/test/2000', {
+    method: 'GET',
+  });
+  const myjson = await response.json();
+  console.log(myjson);
+}
 
 function calculateWinner(squares) {
     const lines = [
