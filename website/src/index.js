@@ -2,6 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+class ClassInfo extends React.Component {
+  render() {
+    return (
+      <li id={this.props.info.crn}>CRN={this.props.info.crn} dept={this.props.info.department} name={this.props.info.name}</li>
+    )
+  }
+}
+
 class Search extends React.Component {
   constructor(props) {
     super(props);
@@ -27,6 +35,12 @@ class Search extends React.Component {
     }
   }
 
+  renderClass(d) {
+    return (
+      <ClassInfo info={d}/>
+    )
+  }
+
   render() {
     const data = this.state.classes
     return (
@@ -35,7 +49,7 @@ class Search extends React.Component {
       <div class="class">
         <ul>
           {data.map((d) => {
-              return <li key={d.crn}>{d.name}</li>
+            return this.renderClass(d);
               }
             )
           }
