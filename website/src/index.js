@@ -22,17 +22,26 @@ class Search extends React.Component {
   handleChange(e) {
     let val = e.target.value;
     if (val !== "") {
-      let resp = apiAction(val);
+      let resp = this.getSearch(val);
       resp.then(result => {
         if (result === null) {
           return
         }
-        let cls = this.state.classes.slice();
-        cls.push(result);
-        console.log(result);
+        let cls = []
+        let keys = Object.keys(result)
+        for (const name of keys) {
+          cls.push(result[name]);
+        }
         this.setState({classes: cls})
       }).catch(() => {console.log("fail")})
     }
+  }
+
+  async getSearch(search) {
+    const response = await fetch(`http://localhost:5000/api/search/${search}`, {
+      method: 'GET',
+    });
+    return await response.json();
   }
 
   renderClass(d) {
@@ -66,9 +75,9 @@ ReactDOM.render(
 );
 
 
-async function apiAction(crn) {
-  const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
-    method: 'GET',
-  });
-  return await response.json();
-}
+// async function apiAction(crn) {
+//   const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
+//     method: 'GET',
+//   });
+//   return await response.json();
+// }
