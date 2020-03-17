@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from sql import crn_query
+from sql import crn_query, name_query
 
 
 app = Flask(__name__)
@@ -15,13 +15,10 @@ def get_crn(crn):
     result = crn_query(crn)
     return jsonify(result)
 
-@app.route('/api/test/<int:crn>', methods=["GET"])
-def fake_data(crn):
-    data = {
-        'crn': 2000,
-        'name': 'test'
-    }
-    return jsonify(data)
+@app.route('/api/search/<string:search>', methods=["GET"])
+def get_search(search):
+    result = name_query(search)
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
