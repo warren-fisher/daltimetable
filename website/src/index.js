@@ -5,7 +5,7 @@ import './index.css';
 class ClassInfo extends React.Component {
   render() {
     return (
-      <li id={this.props.info.crn}>CRN={this.props.info.crn} dept={this.props.info.department} name={this.props.info.name}</li>
+      <div class="class_" id={this.props.info.crn}>CRN={this.props.info.crn} dept={this.props.info.department} name={this.props.info.name}</div>
     )
   }
 }
@@ -54,15 +54,13 @@ class Search extends React.Component {
     const data = this.state.classes
     return (
       <div id='main'>
-      <input type='text' className='input' placeholder='Search...' onChange={this.handleChange}/>
-      <div class="class">
-        <ul>
-          {data.map((d) => {
-            return this.renderClass(d);
-              }
-            )
-          }
-        </ul>
+      <input type='text' id="string-search" placeholder='Search...' onChange={this.handleChange}/>
+      <div class="all-classes">
+        {data.map((d) => {
+          return this.renderClass(d);
+            }
+          )
+        }
       </div>
       </div>
     )
