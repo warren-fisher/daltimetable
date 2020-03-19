@@ -53,7 +53,8 @@ class SearchState extends React.Component {
     const name = target.name;
     const val = target.value;
 
-    console.log(name, val)
+    console.log(name, val);
+    console.log(this.state);
 
     if (name=="string-search") {
       this.stringSearch(val);

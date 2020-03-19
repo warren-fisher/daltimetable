@@ -40,12 +40,24 @@ def timedelta_helper(t):
     return f"{hours}:{minutes}"
 
 def name_query(search):
-    data = {}
     search = '%' + search + '%'
     s = text("""SELECT C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
              C_CREDIT_HRS FROM classInfo WHERE C_NAME LIKE :x""")
     result = engine.connect().execute(s, x=search)
-    for res in result:
+    return raw_query_helper(result)
+
+def time_query(start_time, end_time):
+    start_time = '11:00:00'
+    end_time = '15:00:00'
+
+    s = text("""SELECT C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
+             C_CREDIT_HRS FROM classInfo WHERE C_TIMESTART > :x AND C_TIMEEND < :y""")
+    result = engine.connect().execute(s, x=start_time, y=end_time)
+    return raw_query_helper(result)
+
+def raw_query_helper(results):
+    data = {}
+    for res in results:
         print(res)
         d = {
             'crn': res[0],
@@ -57,6 +69,7 @@ def name_query(search):
         }
         data[d['name']] = d
     return data
+
 
 if __name__ == "__main__":
     name_query("Database")
