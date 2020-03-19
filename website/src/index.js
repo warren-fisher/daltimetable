@@ -26,8 +26,7 @@ class SearchState extends React.Component {
     }
   }
 
-  handleChange(e) {
-    let val = e.target.value;
+  stringSearch(val) {
     if (val !== "") {
       let resp = this.getSearch(val);
       resp.then(result => {
@@ -39,9 +38,28 @@ class SearchState extends React.Component {
         for (const name of keys) {
           cls.push(result[name]);
         }
+        // return cls;
         this.setState({classes: cls})
       }).catch(() => {console.log("fail")})
     }
+  }
+
+  timeSearch(val) {
+
+  }
+
+  handleChange(e) {
+    const target = e.target;
+    const name = target.name;
+    const val = target.value;
+
+    console.log(name, val)
+
+    if (name=="string-search") {
+      this.stringSearch(val);
+    }
+
+    this.setState({[name]: val});
   }
 
   async getSearch(search) {
@@ -57,12 +75,12 @@ class SearchState extends React.Component {
       <div id='main'>
       <form>
         <label for="string-search">Search by class for name</label>
-        <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={this.handleChange}/>
+        <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={this.handleChange} value={this.state.value}/>
 
         <label for="time">Search by class within time slot</label>
         <div id="time">
-          <input type='text' id='time-start' name='time-start' placeholder='start time'/>
-          <input type='text' id='time-end' name='time-end' placeholder='end time'/>
+          <input type='text' id='time-start' name='time-start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
+          <input type='text' id='time-end' name='time-end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
         </div>
       </form>
       <div class="all-classes">
