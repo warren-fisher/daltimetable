@@ -3,9 +3,20 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class ClassInfo extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  renderClass(d) {
+    return <div class="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name}</div>
+  }
+
   render() {
+    const data = this.props.results;
     return (
-      <div class="class_" id={this.props.info.crn}>CRN={this.props.info.crn} dept={this.props.info.department} name={this.props.info.name}</div>
+      data.map((d) => {
+        return this.renderClass(d);
+      })
     )
   }
 }
@@ -44,23 +55,13 @@ class Search extends React.Component {
     return await response.json();
   }
 
-  renderClass(d) {
-    return (
-      <ClassInfo info={d}/>
-    )
-  }
-
   render() {
     const data = this.state.classes
     return (
       <div id='main'>
       <input type='text' id="string-search" placeholder='Search...' onChange={this.handleChange}/>
       <div class="all-classes">
-        {data.map((d) => {
-          return this.renderClass(d);
-            }
-          )
-        }
+        <ClassInfo results={data}/>
       </div>
       </div>
     )
