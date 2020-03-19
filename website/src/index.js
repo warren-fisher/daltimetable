@@ -3,10 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class ClassInfo extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   renderClass(d) {
     return <div class="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name}</div>
   }
@@ -21,7 +17,7 @@ class ClassInfo extends React.Component {
   }
 }
 
-class Search extends React.Component {
+class SearchState extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
@@ -59,7 +55,16 @@ class Search extends React.Component {
     const data = this.state.classes
     return (
       <div id='main'>
-      <input type='text' id="string-search" placeholder='Search...' onChange={this.handleChange}/>
+      <form>
+        <label for="string-search">Search by class for name</label>
+        <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={this.handleChange}/>
+
+        <label for="time">Search by class within time slot</label>
+        <div id="time">
+          <input type='text' id='time-start' name='time-start' placeholder='start time'/>
+          <input type='text' id='time-end' name='time-end' placeholder='end time'/>
+        </div>
+      </form>
       <div class="all-classes">
         <ClassInfo results={data}/>
       </div>
@@ -69,7 +74,7 @@ class Search extends React.Component {
 }
 
 ReactDOM.render(
-    <Search />,
+    <SearchState />,
     document.getElementById('root')
 );
 
