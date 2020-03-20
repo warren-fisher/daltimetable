@@ -25,5 +25,10 @@ def get_time(timestart, timeend):
     result = sql.time_query(timestart, timeend)
     return jsonify(result)
 
+@app.route('/api/search_time/<string:search>/<string:timestart>/<string:timeend>')
+def get_time_and_search(search, timestart, timeend):
+    result = sql.time_and_search_query(search, timestart, timeend)
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)
