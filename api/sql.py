@@ -75,6 +75,57 @@ def time_and_search_query(search, start_time, end_time):
     result = engine.connect().execute(s, x=start_time, y=end_time, z=search)
     return raw_query_helper(result)
 
+def master_query(name, crn, dept, days, start, end):
+    """
+    A master raw SQL query for matching by class name, crn, department code or name, the days and classtime.
+    """
+    name_search = '%' + name + '%'
+    start_time = time_helper(start)
+    end_time = time_helper(end)
+    crn_search = '%' + str(crn) + '%'
+    dept_search = '%' + dept + '%'
+    days_query, matches = permute_days(days)
+
+    sql_text = """SELECT C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
+            C_CREDIT_HRS FROM classInfo JOIN department USING(D_CODE) WHERE
+            C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e AND """ + days_query
+    s = text(sql_text)
+
+    result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time, e=end_time, **matches)
+    return raw_query_helper(result)
+
+def permute_days(days):
+    """
+    Helper function to return a raw SQL string matching possible day combinations.
+    The SQL matches anything that only contains the specified days.
+    """
+
+    possible_days = ['M', 'T', 'W', 'R', 'F']
+    desired_days = list(days)
+
+    # Variables and the corresponding sql portion to input using SQL alchemy textual sql
+    variables_to_use = ['q', 'r', 's', 't', 'u']
+    matches = {}
+
+    # Return string
+    s = "NOT ("
+
+    # Reusable SQL
+    sql = 'C_DAYS LIKE'
+
+    i = 0
+    for day in possible_days:
+        if day not in desired_days:
+            day_search = '%' + day + '%'
+            matches[variables_to_use[i]] = day_search
+            if i != 0:
+                s += f" OR {sql} :{variables_to_use[i]}"
+            else:
+                s += f"{sql} :{variables_to_use[i]}"
+            i += 1
+    s += ")"
+    return (s, matches)
+
 def time_helper(time):
     """
     Helper function to format time in the form of HH:MM:SS for MySQL raw query.
@@ -105,4 +156,5 @@ def raw_query_helper(results):
     return data
 
 if __name__ == "__main__":
-    name_query("Database")
+    s = master_query('hi', 2, "", "MWF", '9', '11')
+    print(s)
