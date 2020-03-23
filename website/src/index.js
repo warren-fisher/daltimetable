@@ -35,28 +35,7 @@ class SearchState extends React.Component {
     for (const name of keys) {
       cls.push(result[name]);
     }
-    this.setState({classes: cls})
-  }
-
-  stringSearch(val) {
-    if (val !== "") {
-      let resp = this.getSearch(val);
-      resp.then(result => {
-        this.apiResponseState(result);
-      }).catch(() => {console.log("fail")})
-    }
-  }
-
-  timeSearch() {
-    // const start = this.state.time-start;
-    // const end = this.state.time-end;
-    const start = 1;
-    const end = 12;
-
-    let resp = this.getTime(start, end);
-    resp.then(result => {
-      this.apiResponseState(result);
-    }).catch(() => {console.log("fail")})
+    this.setState({classes: cls});
   }
 
   handleChange(e) {
@@ -65,14 +44,50 @@ class SearchState extends React.Component {
     const val = target.value;
     this.setState({[name]: val});
 
-    console.log(name, val);
-    console.log(this.state);
+    let [search, start, end, days, crn, dept] = this.getApiState();
 
-    if (name=="string-search") {
-      let str_cls = this.stringSearch(val);
-    } else if (name=='time-start' || name=='time-end') {
-      this.timeSearch();
+    if (name == 'string_search') {
+      search = this.isNull(val);
     }
+
+    if (name == 'time_start') {
+      start = this.isNull(val);
+    }
+
+    if (name == 'time_end') {
+      end = this.isNull(val);
+    }
+
+    console.log(search, start, end, days, crn, dept);
+
+    let resp = this.masterQuery(search, crn, dept, days, start, end);
+    resp.then(result => {
+      this.apiResponseState(result);
+    }).catch(() => {console.log('fail')})
+  }
+
+  getApiState(){
+    let search = this.isNull(this.state.string_search);
+    let start = this.isNull(this.state.time_start);
+    let end = this.isNull(this.state.time_end);
+    let days = this.isNull(this.state.days);
+    let crn = this.isNull(this.state.crn);
+    let dept = this.isNull(this.state.dept);
+    return [search, start, end, days, crn, dept];
+  }
+
+  isNull(v) {
+    if (v == null || v == '' || v == undefined || (isNaN(v) && typeof v != 'string')) {
+      return '!'
+    }
+    return v
+  }
+
+  async masterQuery(search, crn, dept, days, start, end) {
+    const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}`, {
+      method: 'GET',
+    });
+    return await response.json();
   }
 
   async getTime(start, end) {
@@ -95,12 +110,12 @@ class SearchState extends React.Component {
       <div id='main'>
       <form>
         <label for="string-search">Search by class for name</label>
-        <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={this.handleChange} value={this.state.value}/>
+        <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value}/>
 
         <label for="time">Search by class within time slot</label>
         <div id="time">
-          <input type='text' id='time-start' name='time-start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
-          <input type='text' id='time-end' name='time-end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
+          <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
+          <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
         </div>
       </form>
       <div class="all-classes">
@@ -115,11 +130,3 @@ ReactDOM.render(
     <SearchState />,
     document.getElementById('root')
 );
-
-
-// async function apiAction(crn) {
-//   const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
-//     method: 'GET',
-//   });
-//   return await response.json();
-// }

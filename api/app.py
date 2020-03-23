@@ -30,7 +30,7 @@ def get_time_and_search(search, timestart, timeend):
     result = sql.time_and_search_query(search, timestart, timeend)
     return jsonify(result)
 
-@app.route('/api/get/master/<string:name>/<int:crn>/<string:dept>/<string:days>/<string:starttime>/<string:endtime>')
+@app.route('/api/get/master/<string:name>/<string:crn>/<string:dept>/<string:days>/<string:starttime>/<string:endtime>')
 def get_master_search(name, crn, dept, days, starttime, endtime):
     result = sql.master_query(name, crn, dept, days, starttime, endtime)
     return jsonify(result)
