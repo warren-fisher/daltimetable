@@ -155,7 +155,7 @@ def time_helper(time):
     if size == 1:
         return "0" + time + ":00:00"
     if size == 4:
-        return time[0:1] + ":" + time[2:3] + ":00"
+        return time[0:2] + ":" + time[2:4] + ":00"
     return None
 
 def raw_query_helper(results):
