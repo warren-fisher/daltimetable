@@ -27,3 +27,12 @@ form {
     flex-direction: row;
     width: 80vw;
 }
+
+#days {
+    display: flex;
+    flex-direction: column;
+}
+
+#days input {
+    width: 20px;
+}

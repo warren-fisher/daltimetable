@@ -73,7 +73,13 @@ class SearchState extends React.Component {
     let days = this.isNull(this.state.days);
     let crn = this.isNull(this.state.crn);
     let dept = this.isNull(this.state.dept);
+    this.getDaysState();
     return [search, start, end, days, crn, dept];
+  }
+
+  getDaysState(){
+    console.log("hi")
+    console.log(`${this.state.monday} ${this.state.friday}`)
   }
 
   isNull(v) {
@@ -116,6 +122,28 @@ class SearchState extends React.Component {
         <div id="time">
           <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
           <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
+        </div>
+        <div id="days">
+          <div class='day-checkbox'>
+            <input type='checkbox' id='monday' name='monday' onChange={this.handleChange} value={this.state.value}/>
+            <label for='monday'>Monday</label>
+          </div>
+          <div class='day-checkbox'>
+            <input type='checkbox' id='tuesday' name='tuesday' onChange={this.handleChange} value={this.state.value}/>
+            <label for='tuesday'>Tuesday</label>
+          </div>
+          <div class='day-checkbox'>
+            <input type='checkbox' id='wednesday' name='wednesday' onChange={this.handleChange} value={this.state.value}/>
+            <label for='wednesday'>Wednesday</label>
+          </div>
+          <div class='day-checkbox'>
+            <input type='checkbox' id='thursday' name='thursday' onChange={this.handleChange} value={this.state.value}/>
+            <label for='thursday'>Thursday</label>
+          </div>
+          <div class='day-checkbox'>
+            <input type='checkbox' id='friday' name='friday' onChange={this.handleChange} value={this.state.value}/>
+            <label for='friday'>Friday</label>
+          </div>
         </div>
       </form>
       <div class="all-classes">
