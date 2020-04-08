@@ -7,16 +7,16 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 class Checkbox extends React.Component {
   render() {
     const data = this.props;
-    return <div class='day-checkbox'>
+    return <div className='day-checkbox'>
             <input type='checkbox' name={data.day} onChange={data.handleChange} checked={data.checked}/>
-            <label for={data.day}>{data.day}</label>
+            <label htmlFor={data.day}>{data.day}</label>
     </div>
   }
 }
 
 class ClassInfo extends React.Component {
   renderClass(d) {
-    return <div class="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time}</div>
+    return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time}</div>
   }
 
   render() {
@@ -55,39 +55,22 @@ class SearchState extends React.Component {
     this.setState({classes: cls});
   }
 
-  handleCheckbox(day) {
-    this.setState({checkboxes: {...this.state.checkboxes,
-    [day]: !this.state.checkboxes[day]}})
-  }
-
   handleChange(e) {
     const target = e.target;
     const name = target.name;
     const val = target.value;
-    console.log(target, name, val)
 
     if (DAYS.includes(name)) {
-      this.handleCheckbox(name);
+      const day = name;
+      this.setState({checkboxes: {...this.state.checkboxes,
+        [day]: !this.state.checkboxes[day]}}, this.handleUpdate);
     } else {
-      this.setState({[name]: val});
+      this.setState({[name]: val}, this.handleUpdate);
     }
+  }
 
+  handleUpdate() {
     let [search, start, end, days, crn, dept] = this.getApiState();
-
-    if (name == 'string_search') {
-      search = this.isNull(val);
-    }
-
-    if (name == 'time_start') {
-      start = this.isNull(val);
-    }
-
-    if (name == 'time_end') {
-      end = this.isNull(val);
-    }
-
-    console.log(search, start, end, days, crn, dept);
-
     let resp = this.masterQuery(search, crn, dept, days, start, end);
     resp.then(result => {
       this.apiResponseState(result);
@@ -153,14 +136,13 @@ class SearchState extends React.Component {
 
   render() {
     const data = this.state.classes;
-    const checkboxes = this.state.checkboxes;
     return (
       <div id='main'>
       <form>
-        <label for="string-search">Search by class for name</label>
+        <label htmlFor="string-search">Search by class for name</label>
         <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value}/>
 
-        <label for="time">Search by class within time slot</label>
+        <label htmlFor="time">Search by class within time slot</label>
         <div id="time">
           <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
           <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
@@ -174,7 +156,7 @@ class SearchState extends React.Component {
           )}
         </div>
       </form>
-      <div class="all-classes">
+      <div className="classes">
         <ClassInfo results={data}/>
       </div>
       </div>
