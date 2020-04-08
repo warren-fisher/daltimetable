@@ -2,6 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+class Checkbox extends React.Component {
+  render() {
+    const data = this.props;
+    return <div class='day-checkbox'>
+            <input type='checkbox' name={data.day} onChange={data.handleChange} checked={data.checked}/>
+            <label for={data.day}>{data.day}</label>
+    </div>
+  }
+}
+
 class ClassInfo extends React.Component {
   renderClass(d) {
     return <div class="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time}</div>
@@ -22,7 +34,10 @@ class SearchState extends React.Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      classes: []
+      classes: [],
+      checkboxes: DAYS.reduce((option) => ({
+        [option]: false
+      }))
     }
   }
 
@@ -111,7 +126,8 @@ class SearchState extends React.Component {
   }
 
   render() {
-    const data = this.state.classes
+    const data = this.state.classes;
+    const checkboxes = this.state.checkboxes;
     return (
       <div id='main'>
       <form>
@@ -123,27 +139,13 @@ class SearchState extends React.Component {
           <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
           <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
         </div>
+
         <div id="days">
-          <div class='day-checkbox'>
-            <input type='checkbox' id='monday' name='monday' onChange={this.handleChange} value={this.state.value}/>
-            <label for='monday'>Monday</label>
-          </div>
-          <div class='day-checkbox'>
-            <input type='checkbox' id='tuesday' name='tuesday' onChange={this.handleChange} value={this.state.value}/>
-            <label for='tuesday'>Tuesday</label>
-          </div>
-          <div class='day-checkbox'>
-            <input type='checkbox' id='wednesday' name='wednesday' onChange={this.handleChange} value={this.state.value}/>
-            <label for='wednesday'>Wednesday</label>
-          </div>
-          <div class='day-checkbox'>
-            <input type='checkbox' id='thursday' name='thursday' onChange={this.handleChange} value={this.state.value}/>
-            <label for='thursday'>Thursday</label>
-          </div>
-          <div class='day-checkbox'>
-            <input type='checkbox' id='friday' name='friday' onChange={this.handleChange} value={this.state.value}/>
-            <label for='friday'>Friday</label>
-          </div>
+        {DAYS.map((day) => {
+          let checked = this.state.checkboxes[day];
+          return <Checkbox day={day} checked={checked} handleChange={this.handleChange}/>
+          }
+          )}
         </div>
       </form>
       <div class="all-classes">
