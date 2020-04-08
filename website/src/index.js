@@ -35,9 +35,11 @@ class SearchState extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       classes: [],
-      checkboxes: DAYS.reduce((option) => ({
-        [option]: false
-      }))
+      checkboxes: DAYS.reduce((options, option) => ({
+        [option]: false,
+        ...options,
+      }),
+      {})
     }
   }
 
@@ -53,11 +55,22 @@ class SearchState extends React.Component {
     this.setState({classes: cls});
   }
 
+  handleCheckbox(day) {
+    this.setState({checkboxes: {...this.state.checkboxes,
+    [day]: !this.state.checkboxes[day]}})
+  }
+
   handleChange(e) {
     const target = e.target;
     const name = target.name;
     const val = target.value;
-    this.setState({[name]: val});
+    console.log(target, name, val)
+
+    if (DAYS.includes(name)) {
+      this.handleCheckbox(name);
+    } else {
+      this.setState({[name]: val});
+    }
 
     let [search, start, end, days, crn, dept] = this.getApiState();
 
@@ -85,16 +98,29 @@ class SearchState extends React.Component {
     let search = this.isNull(this.state.string_search);
     let start = this.isNull(this.state.time_start);
     let end = this.isNull(this.state.time_end);
-    let days = this.isNull(this.state.days);
+    let days = this.isNull(this.getDaysState());
     let crn = this.isNull(this.state.crn);
     let dept = this.isNull(this.state.dept);
-    this.getDaysState();
+    console.log(days);
     return [search, start, end, days, crn, dept];
   }
 
   getDaysState(){
-    console.log("hi")
-    console.log(`${this.state.monday} ${this.state.friday}`)
+    const conv = {
+      "Mo": "M",
+      "Tu": "T",
+      "We": "W",
+      "Th": "R",
+      "Fr": "F"
+    }
+    let s = "";
+    for (let day of DAYS) {
+      let val = this.state.checkboxes[day];
+      if (val) {
+        s += conv[day.slice(0, 2)];
+      }
+    }
+    return s;
   }
 
   isNull(v) {
