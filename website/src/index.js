@@ -4,14 +4,13 @@ import './index.css';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-class Checkbox extends React.Component {
-  render() {
-    const data = this.props;
-    return <div className='day-checkbox'>
-            <input type='checkbox' name={data.day} onChange={data.handleChange} checked={data.checked}/>
-            <label htmlFor={data.day}>{data.day}</label>
-    </div>
-  }
+function Checkbox(props) {
+    return (
+        <div className='day-checkbox'>
+            <input type='checkbox' name={props.day} onChange={props.handleChange} checked={props.checked}/>
+            <label htmlFor={props.day}>{props.day}</label>
+        </div>
+    );
 }
 
 class ClassInfo extends React.Component {
@@ -26,6 +25,12 @@ class ClassInfo extends React.Component {
         return this.renderClass(d);
       })
     )
+  }
+}
+
+class DisplayState extends React.Component {
+  render() {
+    return <div></div>
   }
 }
 
@@ -147,6 +152,8 @@ class SearchState extends React.Component {
           <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value}/>
           <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
         </div>
+
+        <DisplayState />
 
         <div id="days">
         {DAYS.map((day) => {
