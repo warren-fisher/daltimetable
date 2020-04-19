@@ -147,7 +147,7 @@ def permute_days(days):
 def time_helper(time):
     """
     Helper function to format time in the form of HH:MM:SS for MySQL raw query.
-    Expects a user input of HH, H or HHMM
+    Expects a user input of HH, H, HMM or HHMM
     """
     size = len(time)
     if size == 2:
@@ -156,6 +156,8 @@ def time_helper(time):
         return "0" + time + ":00:00"
     if size == 4:
         return time[0:2] + ":" + time[2:4] + ":00"
+    if size == 3:
+        return "0" + time[0:1] + ":" + time[1:3] + ":00"
     return None
 
 def raw_query_helper(results):
