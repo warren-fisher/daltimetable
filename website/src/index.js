@@ -15,7 +15,7 @@ function Checkbox(props) {
 
 class ClassInfo extends React.Component {
   renderClass(d) {
-    return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time}</div>
+    return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}</div>
   }
 
   render() {
