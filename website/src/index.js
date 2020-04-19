@@ -13,25 +13,13 @@ function Checkbox(props) {
     );
 }
 
-class ClassInfo extends React.Component {
-  renderClass(d) {
-    return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}</div>
-  }
-
-  render() {
-    const data = this.props.results;
-    return (
-      data.map((d) => {
-        return this.renderClass(d);
-      })
-    )
-  }
+function ClassInfo(props) {
+  const d = props.data;
+  return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}</div>
 }
 
-class DisplayState extends React.Component {
-  render() {
-    return <div></div>
-  }
+function DisplayState(props) {
+  return <div></div>
 }
 
 class SearchState extends React.Component {
@@ -153,8 +141,6 @@ class SearchState extends React.Component {
           <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value}/>
         </div>
 
-        <DisplayState />
-
         <div id="days">
         {DAYS.map((day) => {
           let checked = this.state.checkboxes[day];
@@ -163,8 +149,12 @@ class SearchState extends React.Component {
           )}
         </div>
       </form>
+
+      <DisplayState />
       <div className="classes">
-        <ClassInfo results={data}/>
+      {data.map((cls) => {
+        return <ClassInfo data={cls}/>
+      })}
       </div>
       </div>
     )
