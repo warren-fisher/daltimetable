@@ -35,11 +35,16 @@ class SearchState extends React.Component {
     const target = e.target;
     const name = target.name;
     const val = target.value;
+    console.log(name);
 
     if (DAYS.includes(name)) {
       const day = name;
       this.setState({checkboxes: {...this.state.checkboxes,
         [day]: !this.state.checkboxes[day]}}, this.handleUpdate);
+    } else if (!isNaN(name)) {
+      this.setState({classesSelected: {...this.state.classesSelected,
+      [name]: !this.state.classesSelected[name]
+      }})
     } else {
       this.setState({[name]: val}, this.handleUpdate);
     }
@@ -136,7 +141,8 @@ class SearchState extends React.Component {
       <DisplayState />
       <div className="classes">
       {data.map((cls) => {
-        return <ClassInfo data={cls}/>
+        return <ClassInfo data={cls} handleChange={this.handleChange}
+          checked={this.state.classesSelected[cls.crn]}/>
       })}
       </div>
       </div>
