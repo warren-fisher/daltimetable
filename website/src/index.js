@@ -1,27 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import {CheckboxDay, DisplayState, ClassInfo} from './other_components.js';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-function Checkbox(props) {
-    return (
-        <div className='day-checkbox'>
-            <input type='checkbox' name={props.day} onChange={props.handleChange} checked={props.checked}/>
-            <label htmlFor={props.day}>{props.day}</label>
-        </div>
-    );
-}
-
-function ClassInfo(props) {
-  const d = props.data;
-  return <div className="class_" id={d.crn}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}</div>
-}
-
-function DisplayState(props) {
-  return <div></div>
-}
-
 class SearchState extends React.Component {
   constructor(props) {
     super(props);
@@ -32,7 +14,8 @@ class SearchState extends React.Component {
         [option]: false,
         ...options,
       }),
-      {})
+      {}),
+      classesSelected: {}
     }
   }
 
@@ -144,7 +127,7 @@ class SearchState extends React.Component {
         <div id="days">
         {DAYS.map((day) => {
           let checked = this.state.checkboxes[day];
-          return <Checkbox day={day} checked={checked} handleChange={this.handleChange}/>
+          return <CheckboxDay day={day} checked={checked} handleChange={this.handleChange}/>
           }
           )}
         </div>
