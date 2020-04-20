@@ -138,7 +138,7 @@ class SearchState extends React.Component {
         </div>
       </form>
 
-      <DisplayState />
+      <DisplayState classes={this.state.classesSelected}/>
       <div className="classes">
       {data.map((cls) => {
         return <ClassInfo data={cls} handleChange={this.handleChange}
