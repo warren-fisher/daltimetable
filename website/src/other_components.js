@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
 
 export function CheckboxDay(props) {
@@ -34,8 +33,4 @@ export function DisplayState(props) {
         return crn;
     })}
     </div>);
-}
-
-export function CheckboxClass(props) {
-
 }
