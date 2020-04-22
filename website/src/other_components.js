@@ -24,13 +24,13 @@ export function DisplayState(props) {
     const classes = [];
     console.log(props.classes)
     for (let crn in props.classes) {
-        if (props.classes[crn] == true) {
-            classes.push(crn);
+        if (!!props.classes[crn]) {
+            classes.push(props.classes[crn]);
         }
     }
     return (<div>
-    {classes.map((crn) => {
-        return crn;
+    {classes.map((cls) => {
+        return cls['crn'];
     })}
     </div>);
 }
