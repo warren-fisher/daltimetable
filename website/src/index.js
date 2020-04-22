@@ -38,14 +38,24 @@ class SearchState extends React.Component {
     console.log(name);
 
     if (DAYS.includes(name)) {
+      // If this is a selection box for a day you want
       const day = name;
       this.setState({checkboxes: {...this.state.checkboxes,
         [day]: !this.state.checkboxes[day]}}, this.handleUpdate);
     } else if (!isNaN(name)) {
+      // If this is a selection box for a class
+      if (!this.state.classesSelected[name]) {
+        let resp = this.getCRN(name);
+        resp.then(result => {
+          this.setState({classesSelected: {...this.state.classesSelected,
+            [name]: result}})
+        }).catch(() => {console.log('fail')})
+      } else {
       this.setState({classesSelected: {...this.state.classesSelected,
-      [name]: !this.state.classesSelected[name]
-      }})
+        [name]: !this.state.classesSelected[name]}})
+      }
     } else {
+      // Other search query updates
       this.setState({[name]: val}, this.handleUpdate);
     }
   }
@@ -110,6 +120,13 @@ class SearchState extends React.Component {
 
   async getSearch(search) {
     const response = await fetch(`http://localhost:5000/api/search/${search}`, {
+      method: 'GET',
+    });
+    return await response.json();
+  }
+
+  async getCRN(crn) {
+    const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
       method: 'GET',
     });
     return await response.json();
