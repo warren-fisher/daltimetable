@@ -20,17 +20,23 @@ export function ClassInfo(props) {
     );
 }
 
-export function DisplayState(props) {
-    const classes = [];
-    console.log(props.classes)
-    for (let crn in props.classes) {
-        if (!!props.classes[crn]) {
-            classes.push(props.classes[crn]);
-        }
+export class DisplayState extends React.Component {
+    constructor(props) {
+        super(props);
     }
-    return (<div>
-    {classes.map((cls) => {
-        return cls['crn'];
-    })}
-    </div>);
+
+    render() {
+        const classes = [];
+        console.log(this.props.classes)
+        for (let crn in this.props.classes) {
+            if (!!this.props.classes[crn]) {
+                classes.push(this.props.classes[crn]);
+            }
+        }
+        return (<div>
+        {classes.map((cls) => {
+            return cls['crn'];
+        })}
+        </div>);
+    }
 }
