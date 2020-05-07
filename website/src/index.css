@@ -40,3 +40,8 @@ form {
 .class_ input {
     width: 20px;
 }
+
+#canvas {
+    border: 1px dashed red;
+    display: block;
+}
