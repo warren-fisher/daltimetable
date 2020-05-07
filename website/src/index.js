@@ -15,8 +15,34 @@ class SearchState extends React.Component {
         ...options,
       }),
       {}),
-      classesSelected: {}
+      classesSelected: {},
+      size: {width: 1, height: 1}
     }
+  }
+
+  /**
+   * Calculate and update the viewport size
+   */
+  updateDimensions() {
+    let new_width = window.innerWidth;
+    let new_height = window.innerHeight;
+
+    this.setState({size:{width: new_width, height: new_height}})
+  }
+
+  /**
+   * Add event listener for window resize
+   */
+  componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+  }
+
+  /**
+   * Remove event listener for window resize
+   */
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
   apiResponseState(result) {
@@ -155,7 +181,7 @@ class SearchState extends React.Component {
         </div>
       </form>
 
-      <DisplayState classes={this.state.classesSelected}/>
+      <DisplayState classes={this.state.classesSelected} size={this.state.size}/>
       <div className="classes">
       {data.map((cls) => {
         return <ClassInfo data={cls} handleChange={this.handleChange}
