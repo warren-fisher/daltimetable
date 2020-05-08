@@ -26,7 +26,19 @@ export class DisplayState extends React.Component {
         this.canvas = React.createRef();
     }
 
+    /**
+     * Initial generation of the component
+     */
     componentDidMount() {
+        let ctx = this.canvas.current.getContext('2d');
+        ctx.fillStyle = 'rgb(200,0,0)';
+        ctx.fillRect(10, 10, 55, 50);
+    }
+
+    /**
+     * Drawn every time the component updates
+     */
+    componentDidUpdate() {
         let ctx = this.canvas.current.getContext('2d');
         ctx.fillStyle = 'rgb(200,0,0)';
         ctx.fillRect(10, 10, 55, 50);
@@ -47,8 +59,8 @@ export class DisplayState extends React.Component {
         <canvas
             id="canvas"
             ref={this.canvas}
-            width={this.props.size.width*0.2}
-            height={this.props.size.height*0.2}
+            width={this.props.size.width*0.65}
+            height={this.props.size.height*0.35}
         />
         </div>
         );
