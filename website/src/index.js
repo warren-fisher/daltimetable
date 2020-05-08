@@ -45,6 +45,11 @@ class SearchState extends React.Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
+  /**
+   * Update the state of classes based on the search query.
+   *
+   * @param {json} result
+   */
   apiResponseState(result) {
     let cls = []
     if (result === null) {
@@ -57,6 +62,11 @@ class SearchState extends React.Component {
     this.setState({classes: cls});
   }
 
+  /**
+   * Master event listener for all changes to the form.
+   *
+   * @param {event} e
+   */
   handleChange(e) {
     const target = e.target;
     const name = target.name;
@@ -86,6 +96,10 @@ class SearchState extends React.Component {
     }
   }
 
+  /**
+   * Callback function to update search after the search state is updated.
+   * If not used then it would search with outdated information.
+   */
   handleUpdate() {
     let [search, start, end, days, crn, dept] = this.getApiState();
     let resp = this.masterQuery(search, crn, dept, days, start, end);
@@ -94,6 +108,9 @@ class SearchState extends React.Component {
     }).catch(() => {console.log('fail')})
   }
 
+  /**
+   * Get isNull state of every parameter in the search query.
+   */
   getApiState(){
     let search = this.isNull(this.state.string_search);
     let start = this.isNull(this.state.time_start);
@@ -105,6 +122,10 @@ class SearchState extends React.Component {
     return [search, start, end, days, crn, dept];
   }
 
+  /**
+   * Return a string formatted with the letters MTWRF based on which days are selected
+   * for the search query.
+   */
   getDaysState(){
     const conv = {
       "Mo": "M",
@@ -123,6 +144,12 @@ class SearchState extends React.Component {
     return s;
   }
 
+  /**
+   * Helper function to determine if an input is null or not.
+   * If null returns an exclamation point for input into the master query.
+   *
+   * @param {any} v
+   */
   isNull(v) {
     if (v == null || v == '' || v == undefined || (isNaN(v) && typeof v != 'string')) {
       return '!'
@@ -130,6 +157,17 @@ class SearchState extends React.Component {
     return v
   }
 
+  /**
+   * A master query that can query the database based on many different inputs.
+   * If a input is an exclamation point it is ignored in the query based on the API.
+   *
+   * @param {string} search
+   * @param {number} crn
+   * @param {string} dept
+   * @param {string} days
+   * @param {string} start
+   * @param {string} end
+   */
   async masterQuery(search, crn, dept, days, start, end) {
     const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}`, {
       method: 'GET',
@@ -137,6 +175,14 @@ class SearchState extends React.Component {
     return await response.json();
   }
 
+  /**
+   * Query the database based on a start and end time.
+   * Refer to api/sql.py for acceptable string formats.
+   * !not used
+   *
+   * @param {string} start
+   * @param {string} end
+   */
   async getTime(start, end) {
     const response = await fetch(`http://localhost:5000/api/time/${start}/${end}`, {
       method: 'GET',
@@ -144,6 +190,12 @@ class SearchState extends React.Component {
     return await response.json();
   }
 
+  /**
+   * Query the database based on a string query.
+   * !not used
+   *
+   * @param {string} search
+   */
   async getSearch(search) {
     const response = await fetch(`http://localhost:5000/api/search/${search}`, {
       method: 'GET',
@@ -151,6 +203,11 @@ class SearchState extends React.Component {
     return await response.json();
   }
 
+  /**
+   * Query the database based on the Course Registration Number.
+   *
+   * @param {number} crn
+   */
   async getCRN(crn) {
     const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
       method: 'GET',
