@@ -24,6 +24,8 @@ export class DisplayState extends React.Component {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
+        this.widthFactor = 0.65;
+        this.heightFactor = 0.35;
     }
 
     /**
@@ -31,8 +33,6 @@ export class DisplayState extends React.Component {
      */
     componentDidMount() {
         let ctx = this.canvas.current.getContext('2d');
-        ctx.fillStyle = 'rgb(200,0,0)';
-        ctx.fillRect(10, 10, 55, 50);
     }
 
     /**
@@ -40,8 +40,11 @@ export class DisplayState extends React.Component {
      */
     componentDidUpdate() {
         let ctx = this.canvas.current.getContext('2d');
-        ctx.fillStyle = 'rgb(200,0,0)';
-        ctx.fillRect(10, 10, 55, 50);
+
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'green';
+        ctx.strokeRect(0, 0, this.props.size.width*this.widthFactor,
+            this.props.size.height*this.heightFactor);
     }
 
     render() {
@@ -59,8 +62,8 @@ export class DisplayState extends React.Component {
         <canvas
             id="canvas"
             ref={this.canvas}
-            width={this.props.size.width*0.65}
-            height={this.props.size.height*0.35}
+            width={this.props.size.width*this.widthFactor}
+            height={this.props.size.height*this.heightFactor}
         />
         </div>
         );
