@@ -238,7 +238,10 @@ class SearchState extends React.Component {
         </div>
       </form>
 
-      <DisplayState classes={this.state.classesSelected} size={this.state.size}/>
+      <DisplayState
+        classes={this.state.classesSelected}
+         width={this.state.size.width}
+         height={this.state.size.height}/>
       <div className="classes">
       {data.map((cls) => {
         return <ClassInfo data={cls} handleChange={this.handleChange}

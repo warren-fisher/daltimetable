@@ -43,8 +43,10 @@ export class DisplayState extends React.Component {
 
         ctx.lineWidth = 5;
         ctx.strokeStyle = 'green';
-        ctx.strokeRect(0, 0, this.props.size.width*this.widthFactor,
-            this.props.size.height*this.heightFactor);
+        ctx.strokeRect(0, 0, this.props.width*this.widthFactor,
+            this.props.height*this.heightFactor);
+
+
     }
 
     render() {
@@ -62,8 +64,8 @@ export class DisplayState extends React.Component {
         <canvas
             id="canvas"
             ref={this.canvas}
-            width={this.props.size.width*this.widthFactor}
-            height={this.props.size.height*this.heightFactor}
+            width={this.props.width*this.widthFactor}
+            height={this.props.height*this.heightFactor}
         />
         </div>
         );
