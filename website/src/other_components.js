@@ -72,11 +72,19 @@ export class DisplayState extends React.Component {
 
         let keys = Object.keys(this.props.classes);
         for (const name of keys) {
+            if (this.props.classes[name] === false) {
+                continue;
+            }
             this.drawClass(ctx, this.props.classes[name]);
         }
     }
 
-    // Calculate based on a first block of 830
+    /**
+     * Calculate a vertical location on the canvas where a time occurs.
+     * Used for determining where to draw the time slot rectangle.
+     *
+     * @param {string} time
+     */
     timeY(time) {
         const blockSize = this.props.height * this.heightFactor / 24;
         const hr = time.slice(0, 2);
@@ -91,9 +99,20 @@ export class DisplayState extends React.Component {
         return y;
     }
 
+    /**
+     * Draw a rectangle around the time a class occurs
+     *
+     * !TODO: consider the appropriate days, and add the class name to the block
+     * !FIXME: unselecting a class remove the rectangle
+     *
+     * @param {canvas ctx object} ctx
+     * @param {object} cls
+     */
     drawClass(ctx, cls) {
         const start = cls.start_time;
         const end = cls.end_time;
+
+        console.log(start, end);
 
         let startY = this.timeY(start);
         let endY = this.timeY(end);
