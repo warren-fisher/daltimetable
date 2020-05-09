@@ -40,13 +40,68 @@ export class DisplayState extends React.Component {
      */
     componentDidUpdate() {
         let ctx = this.canvas.current.getContext('2d');
+        const width = this.props.width*this.widthFactor;
+        const height = this.props.height*this.heightFactor;
 
+        // Rectangular outline
         ctx.lineWidth = 5;
         ctx.strokeStyle = 'green';
-        ctx.strokeRect(0, 0, this.props.width*this.widthFactor,
-            this.props.height*this.heightFactor);
+        ctx.strokeRect(0, 0, width,
+            height);
 
+        // Vertical lines
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'gray';
+        ctx.beginPath();
+        // There are four lines equally spaced
+        for (let i = 1; i < 5; i++) {
+            let x = width*i/5;
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+        }
 
+        // Horizontal lines
+        // There are 24 lines equally spaced
+        for (let i = 1; i < 24; i++) {
+            let y = height*i/24;
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y)
+            ctx.stroke();
+        }
+
+        let keys = Object.keys(this.props.classes);
+        for (const name of keys) {
+            this.drawClass(ctx, this.props.classes[name]);
+        }
+    }
+
+    // Calculate based on a first block of 830
+    timeY(time) {
+        const blockSize = this.props.height * this.heightFactor / 24;
+        const hr = time.slice(0, 2);
+        const min = time.slice(2, 4);
+
+        // Calculate what block the class is in
+        // Subtract one because that is equivalent to 30 minutes, and the table
+        // starts at 830 and not 8 like expected in (hr - 8)
+        let blockNum = (hr - 8) * 2 + min / 30 - 1;
+        let y = blockNum * blockSize;
+
+        return y;
+    }
+
+    drawClass(ctx, cls) {
+        const start = cls.start_time;
+        const end = cls.end_time;
+
+        let startY = this.timeY(start);
+        let endY = this.timeY(end);
+
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'yellow';
+        ctx.strokeRect(0, startY, this.props.width*this.widthFactor,
+            endY - startY);
     }
 
     render() {
