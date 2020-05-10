@@ -154,6 +154,7 @@ export class DisplayState extends React.Component {
 
             // Fill in middle
             // TODO: Fix cutting off weird spots
+            ctx.fillStyle = 'white';
             ctx.fillRect(xStart, yStart, xEnd - xStart,
                 yEnd - yStart)
 
