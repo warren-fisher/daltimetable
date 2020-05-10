@@ -140,8 +140,8 @@ export class DisplayState extends React.Component {
 
         // Each class has a single time irrespective of day
         // so the y position is the same for all days
-        let startY = this.timeY(start);
-        let endY = this.timeY(end);
+        let yStart = this.timeY(start);
+        let yEnd = this.timeY(end);
 
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'yellow';
@@ -149,19 +149,19 @@ export class DisplayState extends React.Component {
         // Each day has its own x position
         for (let day of cls.dates.split('')) {
             const [xStart, xEnd] = this.dayX(day);
-            ctx.strokeRect(xStart, startY, xEnd - xStart,
-                endY - startY);
+            ctx.strokeRect(xStart, yStart, xEnd - xStart,
+                yEnd - yStart);
 
             // Fill in middle
             // TODO: Fix cutting off weird spots
-            ctx.fillRect(xStart, startY, xEnd - xStart,
-                endY - startY)
+            ctx.fillRect(xStart, yStart, xEnd - xStart,
+                yEnd - yStart)
 
             // Text
             // !TODO: dynamic font size, allow for multiline text
             ctx.fillStyle = 'black';
             ctx.font = '14px georgia';
-            ctx.fillText(cls.name, xStart + 2, (startY + endY)/2);
+            ctx.fillText(cls.name, xStart + 2, (yStart + yEnd)/2);
         }
     }
 
