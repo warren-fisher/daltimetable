@@ -43,6 +43,10 @@ export class DisplayState extends React.Component {
         const width = this.props.width*this.widthFactor;
         const height = this.props.height*this.heightFactor;
 
+        // Reset to blank slate (erases any unselected classes)
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, width, height);
+
         // Rectangular outline
         ctx.lineWidth = 5;
         ctx.strokeStyle = 'green';
@@ -53,7 +57,7 @@ export class DisplayState extends React.Component {
         ctx.lineWidth = 1;
         ctx.strokeStyle = 'gray';
         ctx.beginPath();
-        // There are four lines equally spaced
+        // There are five horizontal spaces (so 4 lines)
         for (let i = 1; i < 5; i++) {
             let x = width*i/5;
             ctx.moveTo(x, 0);
@@ -62,7 +66,7 @@ export class DisplayState extends React.Component {
         }
 
         // Horizontal lines
-        // There are 24 lines equally spaced
+        // There are 24 vertical spaces (so 23 lines)
         for (let i = 1; i < 24; i++) {
             let y = height*i/24;
             ctx.moveTo(0, y);
