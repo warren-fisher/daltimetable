@@ -24,8 +24,8 @@ export class DisplayState extends React.Component {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
-        this.widthFactor = 0.65;
-        this.heightFactor = 0.35;
+        this.widthFactor = 0.75;
+        this.heightFactor = 0.5;
     }
 
     /**
@@ -104,9 +104,31 @@ export class DisplayState extends React.Component {
     }
 
     /**
+     * Calculate the starting and ending horizontal position based on the day.
+     *
+     * @param {char} day
+     */
+    dayX(day) {
+        const blockSize = this.props.width * this.widthFactor / 5;
+        const dayConv = {
+            'M': 0,
+            'T': 1,
+            'W': 2,
+            'R': 3,
+            'F': 4,
+        }
+
+        let blockNum = dayConv[day];
+        // Left side of day
+        let xStart = blockNum * blockSize;
+        // Right side of day
+        let xEnd = (blockNum + 1) * blockSize;
+        return [xStart, xEnd];
+    }
+
+    /**
      * Draw a rectangle around the time a class occurs
      *
-     * !TODO: consider the appropriate days, and add the class name to the block
      * !FIXME: unselecting a class remove the rectangle
      *
      * @param {canvas ctx object} ctx
@@ -116,15 +138,31 @@ export class DisplayState extends React.Component {
         const start = cls.start_time;
         const end = cls.end_time;
 
-        console.log(start, end);
-
+        // Each class has a single time irrespective of day
+        // so the y position is the same for all days
         let startY = this.timeY(start);
         let endY = this.timeY(end);
 
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = 'yellow';
-        ctx.strokeRect(0, startY, this.props.width*this.widthFactor,
-            endY - startY);
+
+        // Each day has its own x position
+        for (let day of cls.dates.split('')) {
+            const [xStart, xEnd] = this.dayX(day);
+            ctx.strokeRect(xStart, startY, xEnd - xStart,
+                endY - startY);
+
+            // Fill in middle
+            // TODO: Fix cutting off weird spots
+            ctx.fillRect(xStart, startY, xEnd - xStart,
+                endY - startY)
+
+            // Text
+            // !TODO: dynamic font size, allow for multiline text
+            ctx.fillStyle = 'black';
+            ctx.font = '14px georgia';
+            ctx.fillText(cls.name, xStart + 2, (startY + endY)/2);
+        }
     }
 
     render() {
