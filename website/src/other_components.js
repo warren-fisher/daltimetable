@@ -129,8 +129,6 @@ export class DisplayState extends React.Component {
     /**
      * Draw a rectangle around the time a class occurs
      *
-     * !FIXME: unselecting a class remove the rectangle
-     *
      * @param {canvas ctx object} ctx
      * @param {object} cls
      */
@@ -149,19 +147,19 @@ export class DisplayState extends React.Component {
         // Each day has its own x position
         for (let day of cls.dates.split('')) {
             const [xStart, xEnd] = this.dayX(day);
-            ctx.strokeRect(xStart, yStart, xEnd - xStart,
+            ctx.strokeRect(xStart +3, yStart, xEnd - xStart -6,
                 yEnd - yStart);
 
             // Fill in middle
             // TODO: Fix cutting off weird spots
             ctx.fillStyle = 'white';
-            ctx.fillRect(xStart, yStart, xEnd - xStart,
+            ctx.fillRect(xStart +2, yStart, xEnd - xStart - 5,
                 yEnd - yStart)
 
             // Text
-            // !TODO: dynamic font size, allow for multiline text
+            // !TODO: allow for multiline text
             ctx.fillStyle = 'black';
-            ctx.font = '14px georgia';
+            ctx.font = '1vw georgia';
             ctx.fillText(cls.name, xStart + 2, (yStart + yEnd)/2);
         }
     }
