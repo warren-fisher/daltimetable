@@ -109,6 +109,20 @@ class SearchState extends React.Component {
   }
 
   /**
+   * Helper function to determine if an input is null or not.
+   * If null returns an exclamation point for input into the master query.
+   * Else returns the input.
+   *
+   * @param {any} v
+   */
+  isNull(v) {
+    if (v == null || v == '' || v == undefined || (isNaN(v) && typeof v != 'string')) {
+      return '!'
+    }
+    return v
+  }
+
+  /**
    * Get isNull state of every parameter in the search query.
    */
   getApiState(){
@@ -142,19 +156,6 @@ class SearchState extends React.Component {
       }
     }
     return s;
-  }
-
-  /**
-   * Helper function to determine if an input is null or not.
-   * If null returns an exclamation point for input into the master query.
-   *
-   * @param {any} v
-   */
-  isNull(v) {
-    if (v == null || v == '' || v == undefined || (isNaN(v) && typeof v != 'string')) {
-      return '!'
-    }
-    return v
   }
 
   /**

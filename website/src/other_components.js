@@ -55,7 +55,8 @@ export class DisplayState extends React.Component {
 
         // Vertical lines
         ctx.lineWidth = 1;
-        ctx.strokeStyle = 'gray';
+        // Light grey
+        ctx.strokeStyle = '#b7b7b7';
         ctx.beginPath();
         // There are five horizontal spaces (so 4 lines)
         for (let i = 1; i < 5; i++) {
@@ -141,8 +142,9 @@ export class DisplayState extends React.Component {
         let yStart = this.timeY(start);
         let yEnd = this.timeY(end);
 
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 5;
+        // Dark blue
+        ctx.strokeStyle = '#0d5af9';
 
         // Each day has its own x position
         for (let day of cls.dates.split('')) {
@@ -153,14 +155,14 @@ export class DisplayState extends React.Component {
             // Fill in middle
             // TODO: Fix cutting off weird spots
             ctx.fillStyle = 'white';
-            ctx.fillRect(xStart +2, yStart, xEnd - xStart - 5,
+            ctx.fillRect(xStart + 3, yStart, xEnd - xStart - 6,
                 yEnd - yStart)
 
             // Text
             // !TODO: allow for multiline text
             ctx.fillStyle = 'black';
             ctx.font = '1vw georgia';
-            ctx.fillText(cls.name, xStart + 2, (yStart + yEnd)/2);
+            ctx.fillText(cls.name, xStart + 6, (yStart + yEnd)/2);
         }
     }
 
