@@ -26,6 +26,9 @@ export class DisplayState extends React.Component {
         this.canvas = React.createRef();
         this.widthFactor = 0.75;
         this.heightFactor = 0.5;
+        // Pixel offsets for time / date text
+        this.xOffset = 50;
+        this.yOffset = 50;
     }
 
     /**
@@ -98,7 +101,14 @@ export class DisplayState extends React.Component {
      * @param {string} time
      */
     timeY(time) {
-        const blockSize = this.props.height * this.heightFactor / 24;
+        // How much to offset the table for times/days
+        const yOffset = this.xOffset;
+        // Width and Height of the entire table (does not include offset)
+        const tHeight = this.props.height*this.heightFactor;
+        // Width and height of the table (not including offset)
+        const height = tHeight - yOffset;
+
+        const blockSize = height / 24;
         const hr = time.slice(0, 2);
         const min = time.slice(2, 4);
 
@@ -106,7 +116,7 @@ export class DisplayState extends React.Component {
         // Subtract one because that is equivalent to 30 minutes, and the table
         // starts at 830 and not 8 like expected in (hr - 8)
         let blockNum = (hr - 8) * 2 + min / 30 - 1;
-        let y = blockNum * blockSize;
+        let y = blockNum * blockSize + yOffset;
 
         return y;
     }
@@ -117,7 +127,14 @@ export class DisplayState extends React.Component {
      * @param {char} day
      */
     dayX(day) {
-        const blockSize = this.props.width * this.widthFactor / 5;
+        // How much to offset the table for times/days
+        const xOffset = this.yOffset;
+        // Width and Height of the entire table (does not include offset)
+        const tWidth = this.props.width*this.widthFactor;
+        // Width and height of the table (not including offset)
+        const width = tWidth - xOffset;
+
+        const blockSize = width / 5;
         const dayConv = {
             'M': 0,
             'T': 1,
@@ -128,9 +145,9 @@ export class DisplayState extends React.Component {
 
         let blockNum = dayConv[day];
         // Left side of day
-        let xStart = blockNum * blockSize;
+        let xStart = blockNum * blockSize + xOffset;
         // Right side of day
-        let xEnd = (blockNum + 1) * blockSize;
+        let xEnd = (blockNum + 1) * blockSize + xOffset;
         return [xStart, xEnd];
     }
 
