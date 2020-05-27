@@ -40,18 +40,25 @@ export class DisplayState extends React.Component {
      */
     componentDidUpdate() {
         let ctx = this.canvas.current.getContext('2d');
-        const width = this.props.width*this.widthFactor;
-        const height = this.props.height*this.heightFactor;
+        // How much to offset the table for times/days
+        const xOffset = 50;
+        const yOffset = 50;
+        // Width and Height of the entire table (does not include offset)
+        const tWidth = this.props.width*this.widthFactor;
+        const tHeight = this.props.height*this.heightFactor;
+        // Width and height of the table (not including offset)
+        const width = tWidth - xOffset;
+        const height = tHeight - yOffset;
 
         // Reset to blank slate (erases any unselected classes)
         ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 0, tWidth, tHeight);
 
         // Rectangular outline
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 6;
         ctx.strokeStyle = 'green';
-        ctx.strokeRect(0, 0, width,
-            height);
+        // Green line is 6px wide, so we must add +- 3px or +- 6px sometimes to align correctly
+        ctx.strokeRect(xOffset, yOffset, width-3, height-3);
 
         // Vertical lines
         ctx.lineWidth = 1;
@@ -61,8 +68,8 @@ export class DisplayState extends React.Component {
         // There are five horizontal spaces (so 4 lines)
         for (let i = 1; i < 5; i++) {
             let x = width*i/5;
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
+            ctx.moveTo(x+xOffset, yOffset+3);
+            ctx.lineTo(x+xOffset, tHeight-6);
             ctx.stroke();
         }
 
@@ -70,8 +77,8 @@ export class DisplayState extends React.Component {
         // There are 24 vertical spaces (so 23 lines)
         for (let i = 1; i < 24; i++) {
             let y = height*i/24;
-            ctx.moveTo(0, y);
-            ctx.lineTo(width, y)
+            ctx.moveTo(xOffset+3, y+yOffset);
+            ctx.lineTo(tWidth-6, y+yOffset)
             ctx.stroke();
         }
 
