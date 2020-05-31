@@ -282,18 +282,29 @@ async function getCRN(crn) {
   return await response.json();
 }
 
-function RenderTable(props) {
-  let { id } = useParams();
-  let classesSelected = {};
+function getClasses(id) {
+  var classesSelected = {};
 
   let resp = getCRN(id);
   resp.then(result => {
     console.log(result);
-    console.log(id);
-    let classesSelected = {[id]: result};
+    classesSelected = {...classesSelected, [id]: result};
+    return classesSelected
   }).catch(() => {console.log('fail')})
+}
+
+// TODO: pass ID as state instead so you dont have async problems causing crashes
+
+function RenderTable(props) {
+  let { id } = useParams();
+  let classesSelected =  getClasses(id);
+
 
   console.log(classesSelected);
+  if (classesSelected == undefined) {
+    console.log('hi');
+    classesSelected = {};
+  }
 
   return (
   <div>
