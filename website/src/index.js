@@ -1,4 +1,5 @@
 import React from 'react';
+import {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {CheckboxDay, DisplayState, ClassInfo} from './other_components.js';
@@ -216,7 +217,7 @@ class SearchState extends React.Component {
    *
    * @param {number} crn
    */
-  async getCRN(crn) {
+  static async getCRN(crn) {
     const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
       method: 'GET',
     });
@@ -275,42 +276,25 @@ class SearchState extends React.Component {
   }
 }
 
-async function getCRN(crn) {
-  const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
-    method: 'GET',
-  });
-  return await response.json();
-}
-
-function getClasses(id) {
-  var classesSelected = {};
-
-  let resp = getCRN(id);
-  resp.then(result => {
-    console.log(result);
-    classesSelected = {...classesSelected, [id]: result};
-    return classesSelected
-  }).catch(() => {console.log('fail')})
-}
-
-// TODO: pass ID as state instead so you dont have async problems causing crashes
-
 function RenderTable(props) {
   let { id } = useParams();
-  let classesSelected =  getClasses(id);
+  const [classes, setClasses] = useState({});
 
-
-  console.log(classesSelected);
-  if (classesSelected == undefined) {
-    console.log('hi');
-    classesSelected = {};
-  }
+  useEffect(() => {
+    async function getClass() {
+      const cls_ = await SearchState.getCRN(id);
+      const classesSelected = {...classes, [id]: cls_};
+      setClasses(classesSelected);
+    }
+    getClass();
+  },
+  [])
 
   return (
   <div>
     <h3>ID: {id}</h3>
     <DisplayState
-              classes={classesSelected}
+              classes={classes}
               width={props.width}
               height={props.height}/>
 
