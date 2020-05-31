@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import {CheckboxDay, DisplayState, ClassInfo} from './other_components.js';
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useParams,
+} from "react-router-dom";
+
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 class SearchState extends React.Component {
   constructor(props) {
@@ -219,6 +226,7 @@ class SearchState extends React.Component {
   render() {
     const data = this.state.classes;
     return (
+      <Router>
       <div id='main'>
       <form>
         <label htmlFor="string-search">Search by class for name</label>
@@ -239,10 +247,22 @@ class SearchState extends React.Component {
         </div>
       </form>
 
-      <DisplayState
-        classes={this.state.classesSelected}
-         width={this.state.size.width}
-         height={this.state.size.height}/>
+      <Switch>
+          <Route exact path="/">
+            <DisplayState
+              classes={this.state.classesSelected}
+              width={this.state.size.width}
+              height={this.state.size.height}/>
+          </Route>
+
+          <Route path="/:id" children={
+          <RenderTable
+              width={this.state.size.width}
+              height={this.state.size.height}/>
+              } />
+
+      </Switch>
+
       <div className="classes">
       {data.map((cls) => {
         return <ClassInfo data={cls} handleChange={this.handleChange}
@@ -250,8 +270,41 @@ class SearchState extends React.Component {
       })}
       </div>
       </div>
+      </Router>
     )
   }
+}
+
+async function getCRN(crn) {
+  const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
+    method: 'GET',
+  });
+  return await response.json();
+}
+
+function RenderTable(props) {
+  let { id } = useParams();
+  let classesSelected = {};
+
+  let resp = getCRN(id);
+  resp.then(result => {
+    console.log(result);
+    console.log(id);
+    let classesSelected = {[id]: result};
+  }).catch(() => {console.log('fail')})
+
+  console.log(classesSelected);
+
+  return (
+  <div>
+    <h3>ID: {id}</h3>
+    <DisplayState
+              classes={classesSelected}
+              width={props.width}
+              height={props.height}/>
+
+  </div>
+  );
 }
 
 ReactDOM.render(
