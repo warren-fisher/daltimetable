@@ -276,15 +276,51 @@ class SearchState extends React.Component {
   }
 }
 
+function storeClassesAsId(classes) {
+  let str = '';
+  for (let cls_ of classes) {
+    let hex = (cls_).toString(16);
+    str += hex;
+  }
+  return str;
+}
+
+function getClassesFromId(id) {
+  let classes = [];
+  let length = id.length;
+
+  if (length % 4 != 0) {
+    return [];
+  }
+
+  const splitString = index => x => [x.slice(0, 4*index), x.slice(4*index)];
+
+  for(let i = 1; i < (length/4); i++) {
+    let [hex, extra] = splitString(i)(id);
+    let num = parseInt(hex, 16);
+    classes.push(num);
+
+    id = extra;
+  }
+  let num = parseInt(id, 16);
+  classes.push(num);
+
+  return classes;
+}
+
 function RenderTable(props) {
   let { id } = useParams();
   const [classes, setClasses] = useState({});
 
   useEffect(() => {
     async function getClass() {
-      const cls_ = await SearchState.getCRN(id);
-      const classesSelected = {...classes, [id]: cls_};
-      setClasses(classesSelected);
+      let all_crns = getClassesFromId(id);
+      console.log(all_crns)
+      for (let crn of all_crns) {
+        const cls_ = await SearchState.getCRN(crn);
+        const classesSelected = {...classes, [crn]: cls_};
+        setClasses(classesSelected);
+      }
     }
     getClass();
   },
