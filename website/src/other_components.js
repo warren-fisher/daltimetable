@@ -199,9 +199,6 @@ export class DisplayState extends React.Component {
             }
         }
         return (<div>
-        {classes.map((cls) => {
-            return cls['crn'];
-        })}
         <canvas
             id="canvas"
             ref={this.canvas}

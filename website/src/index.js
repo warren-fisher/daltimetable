@@ -89,7 +89,7 @@ class SearchState extends React.Component {
     } else if (!isNaN(name)) {
       // If this is a selection box for a class
       if (!this.state.classesSelected[name]) {
-        let resp = this.getCRN(name);
+        let resp = SearchState.getCRN(name);
         resp.then(result => {
           this.setState({classesSelected: {...this.state.classesSelected,
             [name]: result}})
@@ -226,6 +226,8 @@ class SearchState extends React.Component {
 
   render() {
     const data = this.state.classes;
+    const selectedCRNs = Object.keys(this.state.classesSelected);
+    const hexCode = storeClassesAsId(selectedCRNs);
     return (
       <Router>
       <div id='main'>
@@ -250,6 +252,7 @@ class SearchState extends React.Component {
 
       <Switch>
           <Route exact path="/">
+            <strong>{hexCode}</strong>
             <DisplayState
               classes={this.state.classesSelected}
               width={this.state.size.width}
@@ -279,6 +282,7 @@ class SearchState extends React.Component {
 function storeClassesAsId(classes) {
   let str = '';
   for (let cls_ of classes) {
+    cls_ = Number(cls_);
     let hex = (cls_).toString(16);
     str += hex;
   }
