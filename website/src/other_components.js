@@ -4,7 +4,7 @@ import './index.css';
 export function CheckboxDay(props) {
     return (
         <div className='day-checkbox'>
-            <input type='checkbox' name={props.day} onChange={props.handleChange} checked={props.checked}/>
+            <input type='checkbox' name={props.day} onChange={props.handleChange} checked={props.checked} />
             <label htmlFor={props.day}>{props.day}</label>
         </div>
     );
@@ -13,10 +13,10 @@ export function CheckboxDay(props) {
 export function ClassInfo(props) {
     const d = props.data;
     return (
-    <div className="class_" id={d.crn}>
-        <input type='checkbox' name={d.crn} onChange={props.handleChange} checked={props.checked}/>
+        <div className="class_" id={d.crn}>
+            <input type='checkbox' name={d.crn} onChange={props.handleChange} checked={props.checked} />
         CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}
-    </div>
+        </div>
     );
 }
 
@@ -47,8 +47,8 @@ export class DisplayState extends React.Component {
         const xOffset = 50;
         const yOffset = 50;
         // Width and Height of the entire table (does not include offset)
-        const tWidth = this.props.width*this.widthFactor;
-        const tHeight = this.props.height*this.heightFactor;
+        const tWidth = this.props.width * this.widthFactor;
+        const tHeight = this.props.height * this.heightFactor;
         // Width and height of the table (not including offset)
         const width = tWidth - xOffset;
         const height = tHeight - yOffset;
@@ -61,7 +61,7 @@ export class DisplayState extends React.Component {
         ctx.lineWidth = 6;
         ctx.strokeStyle = 'green';
         // Green line is 6px wide, so we must add +- 3px or +- 6px sometimes to align correctly
-        ctx.strokeRect(xOffset, yOffset, width-3, height-3);
+        ctx.strokeRect(xOffset, yOffset, width - 3, height - 3);
 
         // Vertical lines
         ctx.lineWidth = 1;
@@ -70,18 +70,18 @@ export class DisplayState extends React.Component {
         ctx.beginPath();
         // There are five horizontal spaces (so 4 lines)
         for (let i = 1; i < 5; i++) {
-            let x = width*i/5;
-            ctx.moveTo(x+xOffset, yOffset+3);
-            ctx.lineTo(x+xOffset, tHeight-6);
+            let x = width * i / 5;
+            ctx.moveTo(x + xOffset, yOffset + 3);
+            ctx.lineTo(x + xOffset, tHeight - 6);
             ctx.stroke();
         }
 
         // Horizontal lines
         // There are 24 vertical spaces (so 23 lines)
         for (let i = 1; i < 24; i++) {
-            let y = height*i/24;
-            ctx.moveTo(xOffset+3, y+yOffset);
-            ctx.lineTo(tWidth-6, y+yOffset)
+            let y = height * i / 24;
+            ctx.moveTo(xOffset + 3, y + yOffset);
+            ctx.lineTo(tWidth - 6, y + yOffset)
             ctx.stroke();
         }
 
@@ -104,7 +104,7 @@ export class DisplayState extends React.Component {
         // How much to offset the table for times/days
         const yOffset = this.xOffset;
         // Width and Height of the entire table (does not include offset)
-        const tHeight = this.props.height*this.heightFactor;
+        const tHeight = this.props.height * this.heightFactor;
         // Width and height of the table (not including offset)
         const height = tHeight - yOffset;
 
@@ -130,7 +130,7 @@ export class DisplayState extends React.Component {
         // How much to offset the table for times/days
         const xOffset = this.yOffset;
         // Width and Height of the entire table (does not include offset)
-        const tWidth = this.props.width*this.widthFactor;
+        const tWidth = this.props.width * this.widthFactor;
         // Width and height of the table (not including offset)
         const width = tWidth - xOffset;
 
@@ -173,7 +173,7 @@ export class DisplayState extends React.Component {
         // Each day has its own x position
         for (let day of cls.dates.split('')) {
             const [xStart, xEnd] = this.dayX(day);
-            ctx.strokeRect(xStart +3, yStart, xEnd - xStart -6,
+            ctx.strokeRect(xStart + 3, yStart, xEnd - xStart - 6,
                 yEnd - yStart);
 
             // Fill in middle
@@ -186,7 +186,7 @@ export class DisplayState extends React.Component {
             // !TODO: allow for multiline text
             ctx.fillStyle = 'black';
             ctx.font = '1vw georgia';
-            ctx.fillText(cls.name, xStart + 6, (yStart + yEnd)/2);
+            ctx.fillText(cls.name, xStart + 6, (yStart + yEnd) / 2);
         }
     }
 
@@ -199,12 +199,12 @@ export class DisplayState extends React.Component {
             }
         }
         return (<div>
-        <canvas
-            id="canvas"
-            ref={this.canvas}
-            width={this.props.width*this.widthFactor}
-            height={this.props.height*this.heightFactor}
-        />
+            <canvas
+                id="canvas"
+                ref={this.canvas}
+                width={this.props.width * this.widthFactor}
+                height={this.props.height * this.heightFactor}
+            />
         </div>
         );
     }
