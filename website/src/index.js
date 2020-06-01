@@ -315,12 +315,17 @@ function RenderTable(props) {
   useEffect(() => {
     async function getClass() {
       let all_crns = getClassesFromId(id);
-      console.log(all_crns)
+      let all_class_info = [];
       for (let crn of all_crns) {
         const cls_ = await SearchState.getCRN(crn);
-        const classesSelected = {...classes, [crn]: cls_};
-        setClasses(classesSelected);
+        all_class_info.push(cls_);
       }
+
+      let classesSelected = {...classes};
+      for (let class_info of all_class_info) {
+        classesSelected = {...classesSelected, [class_info['crn']]: class_info}
+      }
+      setClasses(classesSelected);
     }
     getClass();
   },
