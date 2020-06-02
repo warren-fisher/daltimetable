@@ -68,12 +68,27 @@ export class DisplayState extends React.Component {
         // Light grey
         ctx.strokeStyle = '#b7b7b7';
         ctx.beginPath();
+
+        // What to label each day
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         // There are five horizontal spaces (so 4 lines)
-        for (let i = 1; i < 5; i++) {
+        // We label every day, but skip the first line
+        for (let i = 0; i < 5; i++) {
             let x = width * i / 5;
-            ctx.moveTo(x + xOffset, yOffset + 3);
-            ctx.lineTo(x + xOffset, tHeight - 6);
-            ctx.stroke();
+            let x_right = width * (i+1) / 5;
+            let x_center = ((x + xOffset) + (width * (i + 1) / 5))/2
+
+            // The i = 0 line is the left hand side of table, already coloured in by outline
+            if (i != 0) {
+                ctx.moveTo(x + xOffset, yOffset + 3);
+                ctx.lineTo(x + xOffset, tHeight - 6);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = 'black';
+            ctx.font = '2vw georgia';
+            // For some reason x position of avg of LHS and center works well
+            ctx.fillText(days[i], (x+x_center)/2, yOffset/2, x_right - x);
         }
 
         // Horizontal lines
@@ -83,6 +98,13 @@ export class DisplayState extends React.Component {
             ctx.moveTo(xOffset + 3, y + yOffset);
             ctx.lineTo(tWidth - 6, y + yOffset)
             ctx.stroke();
+
+            const time = index => `${Math.floor((index + 1) / 2) + 8}:${((index + 1) % 2) * 30}`
+            ctx.fillStyle = 'black';
+            ctx.font = '1vw georgia';
+            // Append a zero to the string if  neccesary
+            let str = (i % 2) == 0 ? time(i) : time(i) + '0';
+            ctx.fillText(str, 10, y + yOffset, xOffset - 10);
         }
 
         let keys = Object.keys(this.props.classes);
