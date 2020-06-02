@@ -93,6 +93,7 @@ export class DisplayState extends React.Component {
 
         // Horizontal lines
         // There are 24 vertical spaces (so 23 lines)
+        // We label all times from 9:00 to 20:00
         for (let i = 1; i < 24; i++) {
             let y = height * i / 24;
             ctx.moveTo(xOffset + 3, y + yOffset);
@@ -102,7 +103,7 @@ export class DisplayState extends React.Component {
             const time = index => `${Math.floor((index + 1) / 2) + 8}:${((index + 1) % 2) * 30}`
             ctx.fillStyle = 'black';
             ctx.font = '1vw georgia';
-            // Append a zero to the string if  neccesary
+            // Append a zero to the string if neccesary since the calculation returns 9:0 not 9:00
             let str = (i % 2) == 0 ? time(i) : time(i) + '0';
             ctx.fillText(str, 10, y + yOffset, xOffset - 10);
         }
