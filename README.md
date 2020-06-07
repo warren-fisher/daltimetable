@@ -13,9 +13,11 @@ It supports searching / filtering classes (which the academic timetable does not
 - Search by location / professor
 - Add the ability to compare schedules with your friends in a 'compare' mode
 
-
 ## Bugs to fix
 - Class names not fitting properly within class 'box'
+- Size of text (glitched when fullscreen)
+- Responsiveness (how to get the schedule img to be responsive)
+- Accessibility (is it even possible?)
 
 ## Dependancies
 Dependancies are incomplete. Planning to fix later
