@@ -9,6 +9,7 @@ import {
     Switch,
     Route,
     useParams,
+    Link,
 } from "react-router-dom";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -242,6 +243,20 @@ class SearchState extends React.Component {
         const hexCode = storeClassesAsId(selectedCRNs);
         return (
             <Router>
+                <header>
+                    <h2>Dalhousie Timetable Remastered</h2>
+                    <h2><Link to={{
+                        pathname: "/",
+                    }}>Pick your classes</Link></h2>
+
+                    <h2><Link to={{
+                        pathname: "/faq",
+                    }}>FAQ</Link></h2>
+                    <h2><Link to={{
+                        pathname: "/contribute",
+                    }}>Contribute</Link></h2>
+                </header>
+
                 <div id='main'>
                     <Switch>
                     <Route exact path="/">
@@ -263,6 +278,18 @@ class SearchState extends React.Component {
                             )}
                         </div>
                     </form>
+                    <strong>{hexCode}</strong>
+                    <DisplayState
+                        classes={this.state.classesSelected}
+                        width={this.state.size.width}
+                        height={this.state.size.height} />
+
+                    <div className="classes">
+                        {data.map((cls) => {
+                            return <ClassInfo data={cls} handleChange={this.handleChange}
+                                checked={this.state.classesSelected[cls.crn]} />
+                        })}
+                    </div>
                     </Route>
 
                     <Route exact path="/FAQ">
@@ -273,31 +300,13 @@ class SearchState extends React.Component {
                         <p>Any help is appreciated</p>
                     </Route>
 
-                    </Switch>
-
-                    <Switch>
-                        <Route exact path="/">
-                            <strong>{hexCode}</strong>
-                            <DisplayState
-                                classes={this.state.classesSelected}
-                                width={this.state.size.width}
-                                height={this.state.size.height} />
-                        </Route>
-
-                        <Route path="/share/:id" children={
-                            <RenderTable
-                                width={this.state.size.width}
-                                height={this.state.size.height} />
-                        } />
+                    <Route path="/share/:id" children={
+                        <RenderTable
+                            width={this.state.size.width}
+                            height={this.state.size.height} />
+                    } />
 
                     </Switch>
-
-                    <div className="classes">
-                        {data.map((cls) => {
-                            return <ClassInfo data={cls} handleChange={this.handleChange}
-                                checked={this.state.classesSelected[cls.crn]} />
-                        })}
-                    </div>
                 </div>
             </Router>
         )
