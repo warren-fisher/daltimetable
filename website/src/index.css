@@ -44,3 +44,29 @@ form {
 #canvas {
     display: block;
 }
+
+body {
+    margin: 0;
+}
+
+/* Header */
+
+:root {
+    --header-color: #1F2016;
+    --header-text: #E2E3C5;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 15px;
+    margin: 0px 0px 15px 0px;
+    background-color: var(--header-color);
+    color: var(--header-text);
+}
+
+header a {
+    text-decoration: none;
+    color: var(--header-text);
+}

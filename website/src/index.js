@@ -271,7 +271,7 @@ class SearchState extends React.Component {
                                 height={this.state.size.height} />
                         </Route>
 
-                        <Route path="/:id" children={
+                        <Route path="/share/:id" children={
                             <RenderTable
                                 width={this.state.size.width}
                                 height={this.state.size.height} />
