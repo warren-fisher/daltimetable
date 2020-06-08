@@ -243,6 +243,8 @@ class SearchState extends React.Component {
         return (
             <Router>
                 <div id='main'>
+                    <Switch>
+                    <Route exact path="/">
                     <form>
                         <label htmlFor="string-search">Search by class for name</label>
                         <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value} />
@@ -261,6 +263,8 @@ class SearchState extends React.Component {
                             )}
                         </div>
                     </form>
+                    </Route>
+                    </Switch>
 
                     <Switch>
                         <Route exact path="/">
