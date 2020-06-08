@@ -264,6 +264,15 @@ class SearchState extends React.Component {
                         </div>
                     </form>
                     </Route>
+
+                    <Route exact path="/FAQ">
+                        <p>Hello</p>
+                    </Route>
+
+                    <Route exact path="/Contribute">
+                        <p>Any help is appreciated</p>
+                    </Route>
+
                     </Switch>
 
                     <Switch>
