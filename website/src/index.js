@@ -9,13 +9,16 @@ import {
     Switch,
     Route,
     useParams,
-    Link,
+    Link
 } from "react-router-dom";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 class SearchState extends React.Component {
     constructor(props) {
         super(props);
+
+        // console.log("state", this.props.location.state);
+        this.history = this.props.history;
         this.handleChange = this.handleChange.bind(this);
         this.state = {
             classes: [],
@@ -26,6 +29,11 @@ class SearchState extends React.Component {
                 {}),
             classesSelected: {},
             size: { width: 1, height: 1 }
+        }
+
+        if (this.props.location.state !== undefined) {
+            console.log('hi');
+            this.state = this.props.location.state;
         }
     }
 
@@ -52,6 +60,7 @@ class SearchState extends React.Component {
      */
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateDimensions.bind(this));
+        // this.history.push('/', this.state);
     }
 
     /**
@@ -241,74 +250,40 @@ class SearchState extends React.Component {
         const data = this.state.classes;
         const selectedCRNs = Object.keys(this.state.classesSelected);
         const hexCode = storeClassesAsId(selectedCRNs);
+        const state = this.state;
         return (
-            <Router>
-                <header>
-                    <h2>Dalhousie Timetable Remastered</h2>
-                    <h2><Link to={{
-                        pathname: "/",
-                    }}>Pick your classes</Link></h2>
+            <div id='main'>
+                <form>
+                    <label htmlFor="string-search">Search by class for name</label>
+                    <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value} />
 
-                    <h2><Link to={{
-                        pathname: "/faq",
-                    }}>FAQ</Link></h2>
-                    <h2><Link to={{
-                        pathname: "/contribute",
-                    }}>Contribute</Link></h2>
-                </header>
-
-                <div id='main'>
-                    <Switch>
-                    <Route exact path="/">
-                    <form>
-                        <label htmlFor="string-search">Search by class for name</label>
-                        <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value} />
-
-                        <label htmlFor="time">Search by class within time slot</label>
-                        <div id="time">
-                            <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value} />
-                            <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value} />
-                        </div>
-
-                        <div id="days">
-                            {DAYS.map((day) => {
-                                let checked = this.state.checkboxes[day];
-                                return <CheckboxDay day={day} checked={checked} handleChange={this.handleChange} />
-                            }
-                            )}
-                        </div>
-                    </form>
-                    <strong>{hexCode}</strong>
-                    <DisplayState
-                        classes={this.state.classesSelected}
-                        width={this.state.size.width}
-                        height={this.state.size.height} />
-
-                    <div className="classes">
-                        {data.map((cls) => {
-                            return <ClassInfo data={cls} handleChange={this.handleChange}
-                                checked={this.state.classesSelected[cls.crn]} />
-                        })}
+                    <label htmlFor="time">Search by class within time slot</label>
+                    <div id="time">
+                        <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value} />
+                        <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value} />
                     </div>
-                    </Route>
 
-                    <Route exact path="/FAQ">
-                        <p>Hello</p>
-                    </Route>
+                    <div id="days">
+                        {DAYS.map((day) => {
+                            let checked = this.state.checkboxes[day];
+                            return <CheckboxDay day={day} checked={checked} handleChange={this.handleChange} />
+                        }
+                        )}
+                    </div>
+                </form>
+                <strong>{hexCode}</strong>
+                <DisplayState
+                    classes={this.state.classesSelected}
+                    width={this.state.size.width}
+                    height={this.state.size.height} />
 
-                    <Route exact path="/Contribute">
-                        <p>Any help is appreciated</p>
-                    </Route>
-
-                    <Route path="/share/:id" children={
-                        <RenderTable
-                            width={this.state.size.width}
-                            height={this.state.size.height} />
-                    } />
-
-                    </Switch>
+                <div className="classes">
+                    {data.map((cls) => {
+                        return <ClassInfo data={cls} handleChange={this.handleChange}
+                            checked={this.state.classesSelected[cls.crn]} />
+                    })}
                 </div>
-            </Router>
+            </div>
         )
     }
 }
@@ -354,6 +329,77 @@ function getClassesFromId(id) {
     return classes;
 }
 
+class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            size: {width: 1, height: 1}
+        }
+    }
+
+    /**
+     * Calculate and update the viewport size
+     */
+    updateDimensions() {
+        let new_width = window.innerWidth;
+        let new_height = window.innerHeight;
+
+        this.setState({ size: { width: new_width, height: new_height } })
+    }
+
+    /**
+     * Add event listener for window resize
+     */
+    componentDidMount() {
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    render() {
+    return (
+        <Router>
+            <header>
+                <h2>Dalhousie Timetable Remastered</h2>
+
+                <h2><Link to={{
+                    pathname: "/",
+                }}>Pick your classes</Link></h2>
+
+                <h2><Link to={{
+                    pathname: "/faq",
+                }}>FAQ</Link></h2>
+
+                <h2><Link to={{
+                    pathname: "/contribute",
+                }}>Contribute</Link></h2>
+            </header>
+
+            <div id='main'>
+                <Switch>
+                    <Route exact path="/" component={SearchState}/>
+
+                    <Route exact path="/FAQ">
+
+                        <p>Hello</p>
+                    </Route>
+
+                    <Route exact path="/Contribute">
+                        <p>Any help is appreciated</p>
+                    </Route>
+
+                    <Route path="/share/:id" children={
+                        <RenderTable
+                            width={this.state.size.width}
+                            height={this.state.size.height} />
+                    } />
+
+                </Switch>
+            </div>
+        </Router>
+    )
+    }
+}
+
 /**
  * Intermediary function used by react-router to render DisplayState without setting the SearchState
  */
@@ -394,6 +440,6 @@ function RenderTable(props) {
 }
 
 ReactDOM.render(
-    <SearchState />,
+    <Home />,
     document.getElementById('root')
 );

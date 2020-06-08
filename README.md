@@ -18,7 +18,7 @@ It supports searching / filtering classes (which the academic timetable does not
 - Size of text (glitched when fullscreen)
 - Responsiveness (how to get the schedule img to be responsive)
 - Accessibility (is it even possible?)
-- Clicking 'pick your classes' does not render the Display
+- Saving state of class selection when navigating pages
 
 ## Dependancies
 Dependancies are incomplete. Planning to fix later
