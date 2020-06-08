@@ -13,12 +13,96 @@ import {
 } from "react-router-dom";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-class SearchState extends React.Component {
+
+function SearchState(props) {
+    const data = props.classes;
+
+    let selectedCRNs = [];
+    if (props.classesSelected != undefined) {
+        selectedCRNs = Object.keys(props.classesSelected);
+    }
+    const hexCode = storeClassesAsId(selectedCRNs);
+
+    return (
+        <div id='main'>
+            <form>
+                <label htmlFor="string-search">Search by class for name</label>
+                <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
+
+                <label htmlFor="time">Search by class within time slot</label>
+                <div id="time">
+                    <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={props.handleChange} value={props.value} />
+                    <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={props.handleChange} value={props.value} />
+                </div>
+
+                <div id="days">
+                    {DAYS.map((day) => {
+                        let checked = props.checkboxes[day];
+                        return <CheckboxDay day={day} checked={checked} handleChange={props.handleChange} />
+                    }
+                    )}
+                </div>
+            </form>
+            <strong>{hexCode}</strong>
+            <DisplayState
+                classes={props.classesSelected}
+                width={props.size.width}
+                height={props.size.height} />
+
+            <div className="classes">
+                {data.map((cls) => {
+                    return <ClassInfo data={cls} handleChange={props.handleChange}
+                        checked={props.classesSelected[cls.crn]} />
+                })}
+            </div>
+        </div>
+    )
+}
+
+/**
+ * Extract the CRNs from the hexstring
+ *
+ * @param {arr} CRNs from classes chosen
+ * @return {str} formatted as a hexstring for links
+ */
+function storeClassesAsId(classes) {
+    let str = '';
+    for (let cls_ of classes) {
+        cls_ = Number(cls_);
+        let hex = (cls_).toString(16);
+        str += hex;
+    }
+    return str;
+}
+
+/**
+ * Extract the CRNs from the hexstring
+ *
+ * @param {hex} id from the link
+ * @return {array} of CRNs
+ */
+function getClassesFromId(id) {
+    let classes = [];
+    let length = id.length;
+
+    if (length % 4 != 0) {
+        return [];
+    }
+
+    const splitString = index => x => x.slice(4 * (index - 1), 4 * index);
+
+    console.log(length / 4);
+    for (let i = 1; i <= (length / 4); i++) {
+        let hex = splitString(i)(id);
+        let num = parseInt(hex, 16);
+        classes.push(num);
+    }
+    return classes;
+}
+
+class Home extends React.Component {
     constructor(props) {
         super(props);
-
-        // console.log("state", this.props.location.state);
-        this.history = this.props.history;
         this.handleChange = this.handleChange.bind(this);
         this.state = {
             classes: [],
@@ -29,11 +113,6 @@ class SearchState extends React.Component {
                 {}),
             classesSelected: {},
             size: { width: 1, height: 1 }
-        }
-
-        if (this.props.location.state !== undefined) {
-            console.log('hi');
-            this.state = this.props.location.state;
         }
     }
 
@@ -60,14 +139,13 @@ class SearchState extends React.Component {
      */
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateDimensions.bind(this));
-        // this.history.push('/', this.state);
     }
 
     /**
-     * Update the state of classes based on the search query.
-     *
-     * @param {json} result
-     */
+ * Update the state of classes based on the search query.
+ *
+ * @param {json} result
+ */
     apiResponseState(result) {
         let cls = []
         if (result === null) {
@@ -103,7 +181,7 @@ class SearchState extends React.Component {
         } else if (!isNaN(name)) {
             // If this is a selection box for a class
             if (!this.state.classesSelected[name]) {
-                let resp = SearchState.getCRN(name);
+                let resp = Home.getCRN(name);
                 resp.then(result => {
                     this.setState({
                         classesSelected: {
@@ -247,115 +325,6 @@ class SearchState extends React.Component {
     }
 
     render() {
-        const data = this.state.classes;
-        const selectedCRNs = Object.keys(this.state.classesSelected);
-        const hexCode = storeClassesAsId(selectedCRNs);
-        const state = this.state;
-        return (
-            <div id='main'>
-                <form>
-                    <label htmlFor="string-search">Search by class for name</label>
-                    <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={this.handleChange} value={this.state.value} />
-
-                    <label htmlFor="time">Search by class within time slot</label>
-                    <div id="time">
-                        <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={this.handleChange} value={this.state.value} />
-                        <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={this.handleChange} value={this.state.value} />
-                    </div>
-
-                    <div id="days">
-                        {DAYS.map((day) => {
-                            let checked = this.state.checkboxes[day];
-                            return <CheckboxDay day={day} checked={checked} handleChange={this.handleChange} />
-                        }
-                        )}
-                    </div>
-                </form>
-                <strong>{hexCode}</strong>
-                <DisplayState
-                    classes={this.state.classesSelected}
-                    width={this.state.size.width}
-                    height={this.state.size.height} />
-
-                <div className="classes">
-                    {data.map((cls) => {
-                        return <ClassInfo data={cls} handleChange={this.handleChange}
-                            checked={this.state.classesSelected[cls.crn]} />
-                    })}
-                </div>
-            </div>
-        )
-    }
-}
-
-/**
- * Extract the CRNs from the hexstring
- *
- * @param {arr} CRNs from classes chosen
- * @return {str} formatted as a hexstring for links
- */
-function storeClassesAsId(classes) {
-    let str = '';
-    for (let cls_ of classes) {
-        cls_ = Number(cls_);
-        let hex = (cls_).toString(16);
-        str += hex;
-    }
-    return str;
-}
-
-/**
- * Extract the CRNs from the hexstring
- *
- * @param {hex} id from the link
- * @return {array} of CRNs
- */
-function getClassesFromId(id) {
-    let classes = [];
-    let length = id.length;
-
-    if (length % 4 != 0) {
-        return [];
-    }
-
-    const splitString = index => x => x.slice(4 * (index - 1), 4 * index);
-
-    console.log(length / 4);
-    for (let i = 1; i <= (length / 4); i++) {
-        let hex = splitString(i)(id);
-        let num = parseInt(hex, 16);
-        classes.push(num);
-    }
-    return classes;
-}
-
-class Home extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            size: {width: 1, height: 1}
-        }
-    }
-
-    /**
-     * Calculate and update the viewport size
-     */
-    updateDimensions() {
-        let new_width = window.innerWidth;
-        let new_height = window.innerHeight;
-
-        this.setState({ size: { width: new_width, height: new_height } })
-    }
-
-    /**
-     * Add event listener for window resize
-     */
-    componentDidMount() {
-        this.updateDimensions();
-        window.addEventListener("resize", this.updateDimensions.bind(this));
-    }
-
-    render() {
     return (
         <Router>
             <header>
@@ -376,7 +345,14 @@ class Home extends React.Component {
 
             <div id='main'>
                 <Switch>
-                    <Route exact path="/" component={SearchState}/>
+                    <Route exact path="/"
+                        render={(props) => (<SearchState
+                            handleChange={this.handleChange}
+                            classes={this.state.classes}
+                            classesSelected={this.state.classesSelected}
+                            checkboxes={this.state.checkboxes}
+                            size={this.state.size}
+                            />)}/>
 
                     <Route exact path="/FAQ">
 
@@ -401,7 +377,7 @@ class Home extends React.Component {
 }
 
 /**
- * Intermediary function used by react-router to render DisplayState without setting the SearchState
+ * Intermediary function used by react-router to render DisplayState without setting the state
  */
 function RenderTable(props) {
     let { id } = useParams();
@@ -413,7 +389,7 @@ function RenderTable(props) {
             console.log(all_crns);
             let all_class_info = [];
             for (let crn of all_crns) {
-                const cls_ = await SearchState.getCRN(crn);
+                const cls_ = await Home.getCRN(crn);
                 all_class_info.push(cls_);
             }
 
