@@ -142,10 +142,10 @@ class Home extends React.Component {
     }
 
     /**
- * Update the state of classes based on the search query.
- *
- * @param {json} result
- */
+     * Update the state of classes based on the search query.
+     *
+     * @param {json} result
+     */
     apiResponseState(result) {
         let cls = []
         if (result === null) {
@@ -325,54 +325,54 @@ class Home extends React.Component {
     }
 
     render() {
-    return (
-        <Router>
-            <header>
-                <h2>Dalhousie Timetable Remastered</h2>
+        return (
+            <Router>
+                <header>
+                    <h2>Dalhousie Timetable Remastered</h2>
 
-                <h2><Link to={{
-                    pathname: "/",
-                }}>Pick your classes</Link></h2>
+                    <h2><Link to={{
+                        pathname: "/",
+                    }}>Pick your classes</Link></h2>
 
-                <h2><Link to={{
-                    pathname: "/faq",
-                }}>FAQ</Link></h2>
+                    <h2><Link to={{
+                        pathname: "/faq",
+                    }}>FAQ</Link></h2>
 
-                <h2><Link to={{
-                    pathname: "/contribute",
-                }}>Contribute</Link></h2>
-            </header>
+                    <h2><Link to={{
+                        pathname: "/contribute",
+                    }}>Contribute</Link></h2>
+                </header>
 
-            <div id='main'>
-                <Switch>
-                    <Route exact path="/"
-                        render={(props) => (<SearchState
-                            handleChange={this.handleChange}
-                            classes={this.state.classes}
-                            classesSelected={this.state.classesSelected}
-                            checkboxes={this.state.checkboxes}
-                            size={this.state.size}
-                            />)}/>
+                <div id='main'>
+                    <Switch>
+                        <Route exact path="/"
+                            render={(props) => (<SearchState
+                                handleChange={this.handleChange}
+                                classes={this.state.classes}
+                                classesSelected={this.state.classesSelected}
+                                checkboxes={this.state.checkboxes}
+                                size={this.state.size}
+                                />)}/>
 
-                    <Route exact path="/FAQ">
+                        <Route exact path="/FAQ">
 
-                        <p>Hello</p>
-                    </Route>
+                            <p>Hello</p>
+                        </Route>
 
-                    <Route exact path="/Contribute">
-                        <p>Any help is appreciated</p>
-                    </Route>
+                        <Route exact path="/Contribute">
+                            <p>Any help is appreciated</p>
+                        </Route>
 
-                    <Route path="/share/:id" children={
-                        <RenderTable
-                            width={this.state.size.width}
-                            height={this.state.size.height} />
-                    } />
+                        <Route path="/share/:id" children={
+                            <RenderTable
+                                width={this.state.size.width}
+                                height={this.state.size.height} />
+                        } />
 
-                </Switch>
-            </div>
-        </Router>
-    )
+                    </Switch>
+                </div>
+            </Router>
+        )
     }
 }
 
