@@ -32,16 +32,24 @@ export class DisplayState extends React.Component {
     }
 
     /**
-     * Initial generation of the component
+     * Initial generation of the component. Must draw the entire table because react-router
+     * does not cause an inital update of the component when navigating back to 'pick your classes'.
      */
     componentDidMount() {
-        let ctx = this.canvas.current.getContext('2d');
+        this.drawAll();
     }
 
     /**
-     * Drawn every time the component updates
+     * Drawn every time the component updates.
      */
     componentDidUpdate() {
+        this.drawAll();
+    }
+
+    /**
+     * Main function to draw all of the timetable.
+     */
+    drawAll() {
         let ctx = this.canvas.current.getContext('2d');
         // How much to offset the table for times/days
         const xOffset = 50;
@@ -75,8 +83,8 @@ export class DisplayState extends React.Component {
         // We label every day, but skip the first line
         for (let i = 0; i < 5; i++) {
             let x = width * i / 5;
-            let x_right = width * (i+1) / 5;
-            let x_center = ((x + xOffset) + (width * (i + 1) / 5))/2
+            let x_right = width * (i + 1) / 5;
+            let x_center = ((x + xOffset) + (width * (i + 1) / 5)) / 2
 
             // The i = 0 line is the left hand side of table, already coloured in by outline
             if (i != 0) {
@@ -88,7 +96,7 @@ export class DisplayState extends React.Component {
             ctx.fillStyle = 'black';
             ctx.font = '2vw georgia';
             // For some reason x position of avg of LHS and center works well
-            ctx.fillText(days[i], (x+x_center)/2, yOffset/2, x_right - x);
+            ctx.fillText(days[i], (x + x_center) / 2, yOffset / 2, x_right - x);
         }
 
         // Horizontal lines
@@ -116,6 +124,7 @@ export class DisplayState extends React.Component {
             this.drawClass(ctx, this.props.classes[name]);
         }
     }
+
 
     /**
      * Calculate a vertical location on the canvas where a time occurs.
@@ -217,6 +226,7 @@ export class DisplayState extends React.Component {
         const classes = [];
         console.log(this.props.classes)
         for (let crn in this.props.classes) {
+            // Sometimes props.classes[crn] may be undefined, !!undefined === false
             if (!!this.props.classes[crn]) {
                 classes.push(this.props.classes[crn]);
             }
