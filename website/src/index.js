@@ -2,7 +2,9 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { CheckboxDay, DisplayState, ClassInfo } from './other_components.js';
+import { DisplayState } from './DisplayState.js';
+import { SearchState } from './SearchState.js';
+import { DAYS, storeClassesAsId, getClassesFromId} from './helpers.js'
 
 import {
     BrowserRouter as Router,
@@ -12,94 +14,11 @@ import {
     Link
 } from "react-router-dom";
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-function SearchState(props) {
-    const data = props.classes;
-
-    let selectedCRNs = [];
-    if (props.classesSelected != undefined) {
-        selectedCRNs = Object.keys(props.classesSelected);
-    }
-    const hexCode = storeClassesAsId(selectedCRNs);
-
-    return (
-        <div id='main'>
-            <form>
-                <label htmlFor="string-search">Search by class for name</label>
-                <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
-
-                <label htmlFor="time">Search by class within time slot</label>
-                <div id="time">
-                    <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={props.handleChange} value={props.value} />
-                    <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={props.handleChange} value={props.value} />
-                </div>
-
-                <div id="days">
-                    {DAYS.map((day) => {
-                        let checked = props.checkboxes[day];
-                        return <CheckboxDay day={day} checked={checked} handleChange={props.handleChange} />
-                    }
-                    )}
-                </div>
-            </form>
-            <strong>{hexCode}</strong>
-            <DisplayState
-                classes={props.classesSelected}
-                width={props.size.width}
-                height={props.size.height} />
-
-            <div className="classes">
-                {data.map((cls) => {
-                    return <ClassInfo data={cls} handleChange={props.handleChange}
-                        checked={props.classesSelected[cls.crn]} />
-                })}
-            </div>
-        </div>
-    )
-}
 
 /**
- * Extract the CRNs from the hexstring
- *
- * @param {arr} CRNs from classes chosen
- * @return {str} formatted as a hexstring for links
+ * Main react component that governs state of the form, as well as navigation of the app.
  */
-function storeClassesAsId(classes) {
-    let str = '';
-    for (let cls_ of classes) {
-        cls_ = Number(cls_);
-        let hex = (cls_).toString(16);
-        str += hex;
-    }
-    return str;
-}
-
-/**
- * Extract the CRNs from the hexstring
- *
- * @param {hex} id from the link
- * @return {array} of CRNs
- */
-function getClassesFromId(id) {
-    let classes = [];
-    let length = id.length;
-
-    if (length % 4 != 0) {
-        return [];
-    }
-
-    const splitString = index => x => x.slice(4 * (index - 1), 4 * index);
-
-    console.log(length / 4);
-    for (let i = 1; i <= (length / 4); i++) {
-        let hex = splitString(i)(id);
-        let num = parseInt(hex, 16);
-        classes.push(num);
-    }
-    return classes;
-}
-
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -377,9 +296,13 @@ class Home extends React.Component {
 }
 
 /**
- * Intermediary function used by react-router to render DisplayState without setting the state
+ * Intermediary function used by react-router to render DisplayState without setting the state of the form.
+ *
+ * @param {num} props.width Horizontal width of the users screen
+ * @param {num} props.height Vertical height of the users screen
  */
 function RenderTable(props) {
+    // Get the dynamic portion of the URL
     let { id } = useParams();
     const [classes, setClasses] = useState({});
 
