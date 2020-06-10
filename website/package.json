@@ -14,7 +14,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy:prod": "rsync -a build/ root@ubuntu-vps:~/sites/test.warrenfisher.net"
   },
   "eslintConfig": {
     "extends": "react-app"
