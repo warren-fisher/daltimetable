@@ -75,9 +75,14 @@ def time_and_search_query(search, start_time, end_time):
     result = engine.connect().execute(s, x=start_time, y=end_time, z=search)
     return raw_query_helper(result)
 
-def master_query(name, crn, dept, days, start, end):
+convert = {'S': 'Summer',
+           'F': 'Fall',
+           'W': 'Winter'}
+
+
+def master_query(name, crn, dept, days, start, end, year, term):
     """
-    A master raw SQL query for matching by class name, crn, department code or name, the days and classtime.
+    A master raw SQL query for matching by class name, crn, department code or name, the days, semester and classtime.
     """
     # Set default values if a ! is detected
     if name == '!':
@@ -92,6 +97,10 @@ def master_query(name, crn, dept, days, start, end):
         start = '1'
     if end == '!':
         end = '23'
+    if term == '!':
+        term = '%'
+    if year == '!':
+        year = '%'
 
     # Set search parameters
     name_search = '%' + name + '%'
@@ -103,10 +112,12 @@ def master_query(name, crn, dept, days, start, end):
 
     sql_text = """SELECT C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS FROM classInfo JOIN department USING(D_CODE) WHERE
-            C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e """ + days_query
+            C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e
+            AND C_YEAR LIKE :f AND C_TERM LIKE :g """ + days_query
     s = text(sql_text)
 
-    result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time, e=end_time, **matches)
+    result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time,
+                                      e=end_time, f=year, g=term, **matches)
     return raw_query_helper(result)
 
 def permute_days(days):
