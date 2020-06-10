@@ -9,7 +9,7 @@ import time
 
 def clean(s):
     """
-    Remove unnecesary junk from match eg. &agb&adfadsf that means nothing
+    Remove unnecesary junk from match (eg. &agb&adfadsf) that means nothing
     Used for parsing the days a class is available (empty spots have this junk)
     """
     for l in s:
@@ -108,14 +108,14 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 21 = number registered
 # 22 = spaces left
 
-def time_setup(match, class_name, department):
+def time_setup(match, code, class_name, department):
     """
     Clean the regex up
 
     match = regex matching 
     class_name is the name of the class, or the name of the class the lab belongs to
     """
-    cached = {'name':class_name, 'department':department}
+    cached = {'name':class_name, 'department':department, 'code':code}
     cached['type_'] = decode_type(match.group(5))
     cached['crn'] = match.group(7)
     cached['identifier'] = match.group(8)
@@ -140,8 +140,9 @@ class ClassInfo():
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
 
-    def __init__(self, name, lectures, department, labs=None, tutorials=None):
+    def __init__(self, name, code, lectures, department, labs=None, tutorials=None):
         self.name = name
+        self.code = code
         self.lectures = lectures
         self.department = department
         if labs is not None:
@@ -150,7 +151,7 @@ class ClassInfo():
             self.tutorials = tutorials
 
     def __str__(self):
-        s = f"{self.department} {self.name}\n"
+        s = f"{self.department} {self.code} {self.name}\n"
         for class_ in self.lectures:
             s += str(class_) + "\n"
         for lab in self.labs:
@@ -171,8 +172,9 @@ class Timeslot():
     Superclass for storing generic information about anything that may occupy a timeslot
     """
 
-    def __init__(self, name, type_, crn, identifier, credit_hours, days, start_time, end_time, department):
+    def __init__(self, name, code, type_, crn, identifier, credit_hours, days, start_time, end_time, department):
             self.name = escape_sql(name)
+            self.code = escape_sql(code)
             self.type_ = escape_sql(type_)
             self.crn = escape_sql(crn)
             self.identifier = escape_sql(identifier)
@@ -183,7 +185,7 @@ class Timeslot():
             self.department = escape_sql(department)
 
     def __str__(self):
-        return f"{self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
+        return f"{self.department=} {self.code=} {self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
     
     @staticmethod
     def time_convert(time):
@@ -192,8 +194,8 @@ class Timeslot():
 
 class LabInfo(Timeslot):
     """
-    Class to represent a lab or tutorial. They can be treated exactly the same except when displaying their information.
-    It is perhaps possible for a class to have a lab and a tutorial, but that is fine they can both be the same class.
+    Class to represent a lab or tutorial. They can be treated identically except when displaying whether it is a lab or tutorial.
+    It is perhaps possible for a class to have a lab and a tutorial, but that is probably fine.
     """
 
     def __init__(self, tutorial=None, **kwargs):
@@ -217,9 +219,9 @@ class LabInfo(Timeslot):
 
         return sql
 
-    def store(self, other_crn):
+    def store(self, crn_of_lecture):
         with open('database.sql', 'a') as f:
-            f.write(self._sql(other_crn))
+            f.write(self._sql(crn_of_lecture))
 
 class LectureInfo(Timeslot):
     """
@@ -230,8 +232,8 @@ class LectureInfo(Timeslot):
         super().__init__(**kwargs)
         
     def _sql(self):
-        sql = f"""\nINSERT INTO classInfo (C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, 
-        C_TIMEEND, C_CREDIT_HRS) VALUES ({self.crn}, '{self.name}', '{self.department}', '{self.days}', 
+        sql = f"""\nINSERT INTO classInfo (C_CRN, C_CODE, C_NAME, D_CODE, C_DAYS, C_TIMESTART, 
+        C_TIMEEND, C_CREDIT_HRS) VALUES ({self.crn}, {self.code}, '{self.name}', '{self.department}', '{self.days}', 
         {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours});\n"""
 
         return sql
@@ -251,17 +253,21 @@ def classes_on_pg(link):
     cached = {}
     for match in matcher.finditer(resp.text):
 
-        # Match class name
+        # Match first group containing department and name
         if match.group(1):
+            
+            # Process the previous cached class (if there is one)
             if cached != {}:
-                # Get rid of any class that is a work/study term (it will have no lec/lab/tut)
+                # If it has no labs/tutorials/lectures then we dont need to consider this class (such as a work/study term)
                 if (len(cached['labs']) + len(cached['tutorials']) + len(cached['lectures'])) == 0:
                     cached = {}
                 else:
                     classes.append(ClassInfo(**cached))
                     cached = {}
             cached['department'] = match.group(2)
-            cached['name'] = match.group(3)
+            code, name = match.group(3).split(maxsplit=1)
+            cached['name'] = name
+            cached['code'] = code
             cached['labs'] = []
             cached['tutorials'] = []
             cached['lectures'] = []
@@ -274,12 +280,12 @@ def classes_on_pg(link):
                 if type_ in ['workterm', 'study', None]:
                     continue
                 if type_ == 'tutorial':
-                    lab = LabInfo(True, **time_setup(match, cached['name'], cached['department']))
+                    lab = LabInfo(True, **time_setup(match, cached['code'], cached['name'], cached['department']))
                 else:
-                    lab = LabInfo(**time_setup(match, cached['name'], cached['department']))
+                    lab = LabInfo(**time_setup(match, cached['code'], cached['name'], cached['department']))
                 cached[type_ + 's'].append(lab)
             else:
-                lecture = LectureInfo(**time_setup(match, cached['name'], cached['department']))
+                lecture = LectureInfo(**time_setup(match, cached['code'], cached['name'], cached['department']))
                 cached['lectures'].append(lecture)
     return classes
 
