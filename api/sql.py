@@ -17,13 +17,17 @@ department = Base.classes.department
 labInfo = Base.classes.labInfo
 
 def class_helper(res):
+    print(res[6])
     return {
             'crn': res[0],
-            'name': res[1],
-            'department': res[2],
-            'dates': res[3],
-            'start_time': res[4].strftime('%H%M'),
-            'end_time': res[5].strftime('%H%M')
+            'year': res[1],
+            'term': res[2],
+            'name': res[3],
+            'code': res[4],
+            'department': res[5],
+            'dates': res[6],
+            'start_time': res[7].strftime('%H%M'),
+            'end_time': res[8].strftime('%H%M')
         }
 
 def crn_query(crn):
