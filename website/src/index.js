@@ -14,8 +14,6 @@ import {
     Link
 } from "react-router-dom";
 
-
-
 /**
  * Main react component that governs state of the form, as well as navigation of the app.
  */
@@ -88,8 +86,8 @@ class Home extends React.Component {
         const val = target.value;
         console.log(name);
 
+        // If this is a selection box for a day you want
         if (DAYS.includes(name)) {
-            // If this is a selection box for a day you want
             const day = name;
             this.setState({
                 checkboxes: {
@@ -97,8 +95,8 @@ class Home extends React.Component {
                     [day]: !this.state.checkboxes[day]
                 }
             }, this.handleUpdate);
+        // If this is a selection box for a class, because classes have their name as their CRN
         } else if (!isNaN(name)) {
-            // If this is a selection box for a class
             if (!this.state.classesSelected[name]) {
                 let resp = Home.getCRN(name);
                 resp.then(result => {
@@ -117,8 +115,8 @@ class Home extends React.Component {
                     }
                 })
             }
+        // Catches all other generic query updates
         } else {
-            // Other search query updates
             this.setState({ [name]: val }, this.handleUpdate);
         }
     }
