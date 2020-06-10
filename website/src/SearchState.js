@@ -18,8 +18,10 @@ export function SearchState(props) {
     const data = props.classes;
 
     let selectedCRNs = [];
-    if (props.classesSelected != undefined) {
-        selectedCRNs = Object.keys(props.classesSelected);
+    for (let cls_ in props.classesSelected) {
+        if (props.classesSelected[cls_] !== false) {
+            selectedCRNs.push(cls_);
+        }
     }
     const hexCode = storeClassesAsId(selectedCRNs);
 
