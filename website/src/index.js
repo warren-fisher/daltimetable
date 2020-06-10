@@ -126,8 +126,8 @@ class Home extends React.Component {
      * If not used then it would search with outdated information.
      */
     handleUpdate() {
-        let [search, start, end, days, crn, dept] = this.getApiState();
-        let resp = this.masterQuery(search, crn, dept, days, start, end);
+        let [search, start, end, days, crn, dept, year, term] = this.getApiState();
+        let resp = this.masterQuery(search, crn, dept, days, start, end, year, term);
         resp.then(result => {
             this.apiResponseState(result);
         }).catch(() => { console.log('fail') })
@@ -157,8 +157,10 @@ class Home extends React.Component {
         let days = this.isNull(this.getDaysState());
         let crn = this.isNull(this.state.crn);
         let dept = this.isNull(this.state.dept);
+        let year = this.isNull(this.state.year);
+        let term = this.isNull(this.state.term);
         console.log(days);
-        return [search, start, end, days, crn, dept];
+        return [search, start, end, days, crn, dept, year, term];
     }
 
     /**
@@ -194,8 +196,8 @@ class Home extends React.Component {
      * @param {string} start
      * @param {string} end
      */
-    async masterQuery(search, crn, dept, days, start, end) {
-        const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}`, {
+    async masterQuery(search, crn, dept, days, start, end, year, term) {
+        const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${year}/${term}`, {
             method: 'GET',
         });
         return await response.json();
