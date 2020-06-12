@@ -342,7 +342,7 @@ def dept_sql(dept, name):
     sql += f"INSERT INTO department VALUES ('{escape_sql(dept)}','{escape_sql(name)}');\n"
     return sql
 
-terms = {"2020 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202020&s_crn=&s_subj=",
+terms = {"2020 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202030&s_crn=&s_subj=",
         "2020 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202110&s_subj=",
         "2021 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202120&s_subj="}
 
