@@ -17,7 +17,6 @@ department = Base.classes.department
 labInfo = Base.classes.labInfo
 
 def class_helper(res):
-    print(res[6])
     return {
             'crn': res[0],
             'year': res[1],
@@ -115,9 +114,10 @@ def master_query(name, crn, dept, days, start, end, year, term):
     days_query, matches = permute_days(days)
 
     sql_text = """SELECT C_CRN, C_NAME, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS FROM classInfo JOIN department USING(D_CODE) WHERE
+            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+            JOIN terms USING(T_CODE) WHERE
             C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e
-            AND C_YEAR LIKE :f AND C_TERM LIKE :g """ + days_query
+            AND YR LIKE :f AND TERM LIKE :g """ + days_query
     s = text(sql_text)
 
     result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time,
@@ -185,7 +185,9 @@ def raw_query_helper(results):
             'department': res[2],
             'dates': res[3],
             'start_time': timedelta_helper(res[4]),
-            'end_time': timedelta_helper(res[5])
+            'end_time': timedelta_helper(res[5]),
+            'year': res[7],
+            'term': res[8],
         }
         data[d['name']] = d
     return data

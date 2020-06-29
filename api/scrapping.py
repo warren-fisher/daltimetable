@@ -51,7 +51,7 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-<td CLASS="dett."NOWRAP>.*?(\d*)-(\d*)</td>)""", re.MULTILINE)
+<td CLASS="dett."NOWRAP>((.*?(\d*)-(\d*))|(C/D))</td>)""", re.MULTILINE)
 
 #TODO: better matcher
 # matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
@@ -100,8 +100,10 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 14 = if wednesday
 # 15 = if thursday
 # 16 = if friday
-# 17 = start time
-# 18 = end time
+# 17 = match either times or asynchronous class
+# 18 = start time
+# 19 = end time
+# 20 = matches asynchronous class therefore has no time
 
 #TODO: these
 # 19 = location
@@ -131,8 +133,13 @@ def time_setup(match, code, class_name, department, term_code):
         days += day 
     cached['days'] =  days
 
-    cached['start_time'] = match.group(17)
-    cached['end_time'] = match.group(18)
+    if match.group(18):
+        cached['start_time'] = match.group(18)
+        cached['end_time'] = match.group(19)
+    else:
+        print('hi')
+        cached['start_time'] = '0001'
+        cached['end_time'] = '2359'
     return cached
 
 class ClassInfo():
@@ -264,7 +271,7 @@ class LectureInfo(Timeslot):
 def get_term_code(yr, term):
     term_ids = {'Winter':0, 'Summer': 1, 'Fall':2}
 
-    # Can store up to 32 years past 2019 in the future in 2 digits, (2051 - 2019) * 3 = 96
+    # Can store up to 32 years past 2019 in the future in 2 digits, (2051 - 2019) * 3 = 96 + 2
     term_code = (int(yr) - 2019) * 3 + term_ids[term]
     return term_code
 
