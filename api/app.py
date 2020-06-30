@@ -3,6 +3,7 @@ from flask_cors import CORS
 import sql
 
 
+#TODO: standardize API, simplify and slim down to base neccesary endpoints
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
@@ -20,7 +21,7 @@ def get_search(search):
     result = sql.name_query(search)
     return jsonify(result)
 
-@app.route('/api/time/<int:timestart>/<int:timeend>')
+@app.route('/api/time/<string:timestart>/<string:timeend>')
 def get_time(timestart, timeend):
     result = sql.time_query(timestart, timeend)
     return jsonify(result)
