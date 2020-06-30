@@ -129,8 +129,9 @@ export class DisplayState extends React.Component {
         const height = tHeight - yOffset;
 
         const blockSize = height / 24;
+        // Time in HH:MM format, so we dont care about the :
         const hr = time.slice(0, 2);
-        const min = time.slice(2, 4);
+        const min = time.slice(3, 5);
 
         // Calculate what block the class is in
         // Subtract one because that is equivalent to 30 minutes, and the table
@@ -181,10 +182,13 @@ export class DisplayState extends React.Component {
         const start = cls.start_time;
         const end = cls.end_time;
 
+
         // Each class has a single time irrespective of day
         // so the y position is the same for all days
         let yStart = this.timeY(start);
         let yEnd = this.timeY(end);
+
+        console.log(yStart, yEnd);
 
         ctx.lineWidth = 5;
         // Dark blue

@@ -29,7 +29,11 @@ def crn_query(crn):
 
     result = engine.connect().execute(s, x=crn)
 
-    return raw_query_helper (result)
+    # TODO: should be no duplicates, except for SOMETIMES there is identical CRNs over diff term
+    for res in result:
+        d = format_class(res)
+
+    return d
 
 def timedelta_helper(t):
     hours = t.seconds//3600
@@ -177,11 +181,8 @@ def time_helper(time):
         return "0" + time[0:1] + ":" + time[1:3] + ":00"
     return None
 
-def raw_query_helper(results):
-    data = {}
-    for res in results:
-        print(res)
-        d = {
+def format_class(res):
+    return {
             'crn': res[0],
             'name': res[1],
             'class_code': res[2],
@@ -192,6 +193,12 @@ def raw_query_helper(results):
             'year': res[8],
             'term': res[9],
         }
+
+def raw_query_helper(results):
+    data = {}
+    for res in results:
+        d = format_class(res)
+        # TODO: d['name'] can have duplicates (even crn could)
         data[d['name']] = d
     return data
 
