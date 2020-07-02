@@ -130,6 +130,20 @@ def master_query(name, crn, dept, days, start, end, year, term):
                                       e=end_time, f=year, g=term, **matches)
     return raw_query_helper(result)
 
+def get_terms():
+    sql_text = """SELECT T_CODE, YR, TERM FROM terms"""
+    s = text(sql_text)
+
+    result = engine.connect().execute(s)
+
+    all_terms = {}
+
+    for res in result:
+        term_code, year, term = res
+        all_terms[term_code] = f"{term} {year}"
+
+    return all_terms
+
 def permute_days(days):
     """
     Helper function to return a raw SQL string matching possible day combinations.
@@ -203,5 +217,5 @@ def raw_query_helper(results):
     return data
 
 if __name__ == "__main__":
-    s = master_query('hi', 2, "", "MWF", '9', '11')
+    s = get_terms()
     print(s)
