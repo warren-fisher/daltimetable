@@ -36,5 +36,10 @@ def get_master_search(name, crn, dept, days, starttime, endtime, year, term):
     result = sql.master_query(name, crn, dept, days, starttime, endtime, year, term)
     return jsonify(result)
 
+@app.route('/api/get/terms')
+def get_terms():
+    result = sql.get_terms()
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)

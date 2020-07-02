@@ -29,7 +29,8 @@ class Home extends React.Component {
             }),
                 {}),
             classesSelected: {},
-            size: { width: 1, height: 1 }
+            size: { width: 1, height: 1 },
+            terms: {}
         }
     }
 
@@ -44,11 +45,22 @@ class Home extends React.Component {
     }
 
     /**
-     * Add event listener for window resize
+     * Add event listener for window resize. Also gets the terms with their associated codes
+     * using the API
      */
     componentDidMount() {
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions.bind(this));
+
+        let resp = this.getTerms();
+        resp.then(result => {
+            let terms = {}
+            for (let term_code in result) {
+                let name = result[term_code]
+                terms[name] = term_code
+            }
+            this.setState({terms: terms});
+        }).catch(() => { console.log('fail') })
     }
 
     /**
@@ -198,6 +210,13 @@ class Home extends React.Component {
      */
     async masterQuery(search, crn, dept, days, start, end, year, term) {
         const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${year}/${term}`, {
+            method: 'GET',
+        });
+        return await response.json();
+    }
+
+    async getTerms() {
+        const response = await fetch('http://localhost:5000/api/get/terms', {
             method: 'GET',
         });
         return await response.json();
