@@ -54,12 +54,14 @@ class Home extends React.Component {
 
         let resp = this.getTerms();
         resp.then(result => {
-            let terms = {}
+            let terms = {};
+            let termsSelected = {};
             for (let term_code in result) {
-                let name = result[term_code]
-                terms[name] = term_code
+                let name = result[term_code];
+                terms[name] = term_code;
+                termsSelected[name] = false;
             }
-            this.setState({terms: terms});
+            this.setState({terms: terms, termsSelected: termsSelected});
         }).catch(() => { console.log('fail') })
     }
 
@@ -80,7 +82,7 @@ class Home extends React.Component {
         if (result === null) {
             console.log("no results");
         }
-        let keys = Object.keys(result)
+        let keys = Object.keys(result);
         for (const name of keys) {
             cls.push(result[name]);
         }
@@ -96,6 +98,7 @@ class Home extends React.Component {
         const target = e.target;
         const name = target.name;
         const val = target.value;
+        const terms = Object.keys(this.state.terms);
         console.log(name);
 
         // If this is a selection box for a day you want
@@ -107,6 +110,20 @@ class Home extends React.Component {
                     [day]: !this.state.checkboxes[day]
                 }
             }, this.handleUpdate);
+        // If this a selection box for the term you want
+        // TODO: can probably optimize this
+        } else if (terms.includes(name)) {
+            let termsSelected = {};
+            for (let term of terms) {
+                if (term == name) {
+                    // Allows toggling selection between no term and a term
+                    termsSelected[term] = !this.state.termsSelected[term];
+                } else {
+                    // Only one term should be selected at a time
+                    termsSelected[term] = false;
+                }
+            }
+            this.setState({termsSelected: termsSelected});
         // If this is a selection box for a class, because classes have their name as their CRN
         } else if (!isNaN(name)) {
             if (!this.state.classesSelected[name]) {
@@ -290,6 +307,7 @@ class Home extends React.Component {
                                 classesSelected={this.state.classesSelected}
                                 checkboxes={this.state.checkboxes}
                                 size={this.state.size}
+                                terms={this.state.termsSelected}
                                 />)}/>
 
                         <Route exact path="/FAQ">

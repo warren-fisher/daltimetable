@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import { CheckboxDay, ClassInfo } from './other_components.js';
+import { CheckboxDay, ClassInfo, TermSelector } from './other_components.js';
 import { DisplayState } from './DisplayState.js'
 import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 
@@ -11,6 +11,7 @@ import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
  * @param {arr} props.classes all classes to display due to the users search
  * @param {obj} props.classesSelected all classes the user has selected
  * @param {func} props.handleChange onChange function to update state
+ * @param {obj} props.terms all terms to select from and their truthy/falsy state
  * @param {obj} props.checkboxes state of each checkbox in the form (so that it can be a 'controlled' form)
  * @param {obj} props.size of the users screen
  */
@@ -57,6 +58,8 @@ export function SearchState(props) {
                         checked={props.classesSelected[cls.crn]} />
                 })}
             </div>
+
+            <TermSelector handleChange={props.handleChange} terms={props.terms}/>
         </div>
     )
 }

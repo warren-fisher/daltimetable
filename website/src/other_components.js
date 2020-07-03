@@ -32,3 +32,27 @@ export function ClassInfo(props) {
         </div>
     );
 }
+
+/**
+ * Functional component representing a toggle switch with three options
+ *
+ * @param {obj} props.terms all terms to select from and their truthy/falsy state
+ * @param {func} props.handleChange onChange function to update state
+ */
+export function TermSelector(props) {
+    console.log(props.terms, 'hi');
+    if (props.terms === undefined) {
+        return null;
+    } else {
+        const terms = Object.keys(props.terms);
+        return (<div>
+            {terms.map((term) =>
+                <div>
+                <input type='checkbox' name={term} onChange={props.handleChange}
+                    checked={props.terms[term]} />
+                <p>{term}</p>
+                </div>
+            )}
+        </div>);
+    }
+}
