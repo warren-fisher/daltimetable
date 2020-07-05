@@ -89,7 +89,7 @@ convert = {'S': 'Summer',
            'W': 'Winter'}
 
 
-def master_query(name, crn, dept, days, start, end, year, term):
+def master_query(name, crn, dept, days, start, end, term_code):
     """
     A master raw SQL query for matching by class name, crn, department code or name, the days, semester and classtime.
     """
@@ -106,10 +106,8 @@ def master_query(name, crn, dept, days, start, end, year, term):
         start = '1'
     if end == '!':
         end = '23'
-    if term == '!':
-        term = '%'
-    if year == '!':
-        year = '%'
+    if term_code == '!':
+        term_code = '%'
 
     # Set search parameters
     name_search = '%' + name + '%'
@@ -123,11 +121,11 @@ def master_query(name, crn, dept, days, start, end, year, term):
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE
             C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e
-            AND YR LIKE :f AND TERM LIKE :g """ + days_query
+            AND T_CODE LIKE :f """ + days_query
     s = text(sql_text)
 
     result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time,
-                                      e=end_time, f=year, g=term, **matches)
+                                      e=end_time, f=term_code, **matches)
     return raw_query_helper(result)
 
 def get_terms():

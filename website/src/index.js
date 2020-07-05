@@ -123,8 +123,10 @@ class Home extends React.Component {
                     termsSelected[term] = false;
                 }
             }
-            this.setState({termsSelected: termsSelected});
+            this.setState({ termsSelected: termsSelected }, this.handleUpdate);
         // If this is a selection box for a class, because classes have their name as their CRN
+        // The setState calls here do not need a handleUpdate callback because they did not change
+        // the search parameters.
         } else if (!isNaN(name)) {
             if (!this.state.classesSelected[name]) {
                 let resp = Home.getCRN(name);
@@ -155,8 +157,8 @@ class Home extends React.Component {
      * If not used then it would search with outdated information.
      */
     handleUpdate() {
-        let [search, start, end, days, crn, dept, year, term] = this.getApiState();
-        let resp = this.masterQuery(search, crn, dept, days, start, end, year, term);
+        let [search, start, end, days, crn, dept, term_code] = this.getApiState();
+        let resp = this.masterQuery(search, crn, dept, days, start, end, term_code);
         resp.then(result => {
             this.apiResponseState(result);
         }).catch(() => { console.log('fail') })
@@ -186,10 +188,20 @@ class Home extends React.Component {
         let days = this.isNull(this.getDaysState());
         let crn = this.isNull(this.state.crn);
         let dept = this.isNull(this.state.dept);
-        let year = this.isNull(this.state.year);
-        let term = this.isNull(this.state.term);
-        console.log(days);
-        return [search, start, end, days, crn, dept, year, term];
+        let term_code = this.isNull(this.getTermState());
+        return [search, start, end, days, crn, dept, term_code];
+    }
+
+    /**
+     * Return the term code of the term selected, or null if no term is selected.
+     */
+    getTermState() {
+        for (let term of Object.keys(this.state.termsSelected)) {
+            if (this.state.termsSelected[term] == true) {
+                return this.state.terms[term];
+            }
+        }
+        return null;
     }
 
     /**
@@ -225,8 +237,8 @@ class Home extends React.Component {
      * @param {string} start
      * @param {string} end
      */
-    async masterQuery(search, crn, dept, days, start, end, year, term) {
-        const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${year}/${term}`, {
+    async masterQuery(search, crn, dept, days, start, end, term_code) {
+        const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
             method: 'GET',
         });
         return await response.json();
