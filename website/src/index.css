@@ -70,3 +70,21 @@ header a {
     text-decoration: none;
     color: var(--header-text);
 }
+
+#term-selector {
+    display: flex;
+    flex-direction: row;
+}
+
+.term {
+    padding: 20px;
+    margin: 10px;
+}
+
+.mark-selected {
+    background-color: green;
+}
+
+.mark-deselected {
+    background-color: red;
+}
