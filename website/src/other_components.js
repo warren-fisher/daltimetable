@@ -45,11 +45,12 @@ export function TermSelector(props) {
         return null;
     } else {
         const terms = Object.keys(props.terms);
-        return (<div>
+        return (<div id="term-selector">
             {terms.map((term) =>
-                <div>
-                <input type='checkbox' name={term} onChange={props.handleChange}
-                    checked={props.terms[term]} />
+                <div name={term} onClick={props.handleChange}
+                className={props.terms[term] ? 'term mark-selected' : 'term mark-deselected'}>
+                {/* <input type='checkbox' name={term} onChange={props.handleChange}
+                    checked={props.terms[term]} /> */}
                 <p>{term}</p>
                 </div>
             )}

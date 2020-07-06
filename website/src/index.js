@@ -99,7 +99,7 @@ class Home extends React.Component {
         const name = target.name;
         const val = target.value;
         const terms = Object.keys(this.state.terms);
-        console.log(name);
+        const innerText = target.innerText;
 
         // If this is a selection box for a day you want
         if (DAYS.includes(name)) {
@@ -112,10 +112,10 @@ class Home extends React.Component {
             }, this.handleUpdate);
         // If this a selection box for the term you want
         // TODO: can probably optimize this
-        } else if (terms.includes(name)) {
+        } else if (terms.includes(innerText)) {
             let termsSelected = {};
             for (let term of terms) {
-                if (term == name) {
+                if (term == innerText) {
                     // Allows toggling selection between no term and a term
                     termsSelected[term] = !this.state.termsSelected[term];
                 } else {

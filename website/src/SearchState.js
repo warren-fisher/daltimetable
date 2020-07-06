@@ -52,14 +52,13 @@ export function SearchState(props) {
                 width={props.size.width}
                 height={props.size.height} />
 
+            <TermSelector handleChange={props.handleChange} terms={props.terms} />
             <div className="classes">
                 {data.map((cls) => {
                     return <ClassInfo data={cls} handleChange={props.handleChange}
                         checked={props.classesSelected[cls.crn]} />
                 })}
             </div>
-
-            <TermSelector handleChange={props.handleChange} terms={props.terms}/>
         </div>
     )
 }
