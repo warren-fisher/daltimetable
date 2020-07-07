@@ -55,7 +55,8 @@ export class DisplayState extends React.Component {
 
         // Rectangular outline
         ctx.lineWidth = 6;
-        ctx.strokeStyle = 'green';
+        // Light blue-purple ish
+        ctx.strokeStyle = '#82A5FF';
         // Green line is 6px wide, so we must add +- 3px or +- 6px sometimes to align correctly
         ctx.strokeRect(xOffset, yOffset, width - 3, height - 3);
 

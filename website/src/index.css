@@ -77,14 +77,18 @@ header a {
 }
 
 .term {
-    padding: 20px;
+    border-radius: 10px;
+    padding: 10px;
     margin: 10px;
+    background-color: rgb(180, 180, 180);
 }
 
 .mark-selected {
-    background-color: green;
+    /* background-color: green; */
+    border: 5px solid green;
 }
 
 .mark-deselected {
-    background-color: red;
+    /* background-color: red; */
+    border: 5px solid red;
 }
