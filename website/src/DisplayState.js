@@ -12,8 +12,8 @@ export class DisplayState extends React.Component {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
-        this.widthFactor = 0.75;
-        this.heightFactor = 0.5;
+        this.widthFactor = 0.9;
+        this.heightFactor = 0.8;
         // Pixel offsets for time / date text
         this.xOffset = 50;
         this.yOffset = 50;
@@ -40,7 +40,9 @@ export class DisplayState extends React.Component {
     drawAll() {
         let ctx = this.canvas.current.getContext('2d');
         // How much to offset the table for times/days
-        const xOffset = 50;
+        const xOffset = 53;
+        // This much of the xOffset is to the right of the table
+        const xOffsetRight = 3;
         const yOffset = 50;
         // Width and Height of the entire table (does not include offset)
         const tWidth = this.props.width * this.widthFactor;
@@ -57,8 +59,8 @@ export class DisplayState extends React.Component {
         ctx.lineWidth = 6;
         // Light blue-purple ish
         ctx.strokeStyle = '#82A5FF';
-        // Green line is 6px wide, so we must add +- 3px or +- 6px sometimes to align correctly
-        ctx.strokeRect(xOffset, yOffset, width - 3, height - 3);
+        // Outer line is 6px wide, so we must add +- 3px or +- 6px sometimes to align correctly
+        ctx.strokeRect(xOffset, yOffset, width - xOffsetRight, height - 3);
 
         // Vertical lines
         ctx.lineWidth = 1;
@@ -66,14 +68,16 @@ export class DisplayState extends React.Component {
         ctx.strokeStyle = '#b7b7b7';
         ctx.beginPath();
 
-        // What to label each day
         const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        // Causes the text to center on the x,y coordinates provided to fillText
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
         // There are five horizontal spaces (so 4 lines)
-        // We label every day, but skip the first line
+        // We label every day, but skip the first line since is actually the outer line
         for (let i = 0; i < 5; i++) {
             let x = width * i / 5;
-            let x_right = width * (i + 1) / 5;
-            let x_center = ((x + xOffset) + (width * (i + 1) / 5)) / 2
+            let x_right = width * (i + 1) / 5 + xOffset;
+            let x_center = ((x + xOffset) + x_right) / 2
 
             // The i = 0 line is the left hand side of table, already coloured in by outline
             if (i != 0) {
@@ -83,9 +87,8 @@ export class DisplayState extends React.Component {
             }
 
             ctx.fillStyle = 'black';
-            ctx.font = '2vw georgia';
-            // For some reason x position of avg of LHS and center works well
-            ctx.fillText(days[i], (x + x_center) / 2, yOffset / 2, x_right - x);
+            ctx.font = '20px georgia';
+            ctx.fillText(days[i], x_center, yOffset / 2);
         }
 
         // Horizontal lines
@@ -99,10 +102,10 @@ export class DisplayState extends React.Component {
 
             const time = index => `${Math.floor((index + 1) / 2) + 8}:${((index + 1) % 2) * 30}`
             ctx.fillStyle = 'black';
-            ctx.font = '1vw georgia';
-            // Append a zero to the string if neccesary since the calculation returns 9:0 not 9:00
+            ctx.font = '16px georgia';
+            // Append a zero to the string if neccesary since the time calculation returns 9:0 not 9:00
             let str = (i % 2) == 0 ? time(i) : time(i) + '0';
-            ctx.fillText(str, 10, y + yOffset, xOffset - 10);
+            ctx.fillText(str, 25, y + yOffset, xOffset - 10);
         }
 
         let keys = Object.keys(this.props.classes);
@@ -183,6 +186,9 @@ export class DisplayState extends React.Component {
         const start = cls.start_time;
         const end = cls.end_time;
 
+        // Reset text aligning
+        ctx.textAlign = 'start';
+        ctx.textBaseline = 'alphabetic';
 
         // Each class has a single time irrespective of day
         // so the y position is the same for all days
