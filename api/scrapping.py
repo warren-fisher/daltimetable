@@ -51,7 +51,7 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-<td CLASS="dett."NOWRAP>((.*?(\d*)-(\d*))|(C/D))</td>)""", re.MULTILINE)
+<td CLASS="dett."NOWRAP>(.*?(\d*)-(\d*)|(C/D))</td>)""", re.MULTILINE)
 
 #TODO: better matcher
 # matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
@@ -111,46 +111,16 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 21 = number registered
 # 22 = spaces left
 
-def time_setup(match, code, class_name, department, term_code):
-    """
-    Clean the regex up
-
-    match = regex matching
-    class_name is the name of the class, or the name of the class the lab belongs to
-    """
-    cached = {'name':class_name, 'department':department, 'code':code, 'term_code':term_code}
-    cached['type_'] = decode_type(match.group(5))
-    cached['crn'] = match.group(7)
-    cached['identifier'] = match.group(8)
-    cached['credit_hours'] = match.group(10)
-
-    # Groups 12-16 are for the days
-    days = ''
-    for i in range(12, 17):
-        day = clean(match.group(i))
-        if day.lower() not in ['m', 't', 'w', 'r', 'f']:
-            continue
-        days += day 
-    cached['days'] =  days
-
-    if match.group(18):
-        cached['start_time'] = match.group(18)
-        cached['end_time'] = match.group(19)
-    else:
-        print('hi')
-        cached['start_time'] = '0001'
-        cached['end_time'] = '2359'
-    return cached
-
 class ClassInfo():
     """
     Object to store all the lectures and tutorials/labs that a class has.
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
 
-    def __init__(self, name, code, lectures, department, term_code, labs=None, tutorials=None):
+    def __init__(self, name, code, lectures, department, term_code, dis_code, labs=None, tutorials=None):
         self.name = name
         self.code = code
+        self.district_code = dis_code
         self.lectures = lectures
         self.department = department
         self.year = year
@@ -185,9 +155,11 @@ class ClassInfo():
                 self._store_lab_lec_relation(lecture.crn, tut_or_lab.crn)
 
     def _store_lab_lec_relation(self, lec_crn, lab_crn):
-        sql = f"""INSERT INTO classLabs (T_CODE, C_CRN, L_CRN) VALUES
-        ({self.term_code}, {lec_crn}, {lab_crn});\n
         """
+        Write the lecture-lab pair to sql. Tutorials are treated equivalenty to labs.
+        """
+        sql = f"""INSERT INTO classLabs (T_CODE, C_CRN, L_CRN) VALUES
+        ({self.term_code}, {lec_crn}, {lab_crn});\n"""
 
         with open('database.sql', 'a') as f:
             f.write(sql)
@@ -212,7 +184,7 @@ class Timeslot():
 
     def __str__(self):
         return f"{self.department=} {self.code=} {self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
-    
+
     @staticmethod
     def time_convert(time):
         return f"TIME(STR_TO_DATE('{time}', '%k%i'))"
@@ -254,13 +226,14 @@ class LectureInfo(Timeslot):
     Class to represent a lecture timeslot. Contains information about its labs/tutorials (if it has any)
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, dis_code, **kwargs):
+        self.district_code = dis_code
         super().__init__(**kwargs)
 
     def _sql(self):
         sql = f"""\nINSERT INTO classInfo (C_CRN, T_CODE, C_CODE, C_NAME, D_CODE, C_DAYS, C_TIMESTART,
-        C_TIMEEND, C_CREDIT_HRS) VALUES ({self.crn}, {self.term_code}, '{self.code}', '{self.name}', '{self.department}', '{self.days}',
-        {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours});\n"""
+        C_TIMEEND, C_CREDIT_HRS, DIS_CODE) VALUES ({self.crn}, {self.term_code}, '{self.code}', '{self.name}', '{self.department}', '{self.days}',
+        {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours}, {self.district_code});\n"""
 
         return sql
 
@@ -268,22 +241,43 @@ class LectureInfo(Timeslot):
         with open('database.sql', 'a') as f:
             f.write(self._sql())
 
-def get_term_code(yr, term):
-    term_ids = {'Winter':0, 'Summer': 1, 'Fall':2}
+def time_setup(match, code, class_name, department, term_code):
+    """
+    Clean the regex up
 
-    # Can store up to 32 years past 2019 in the future in 2 digits, (2051 - 2019) * 3 = 96 + 2
-    term_code = (int(yr) - 2019) * 3 + term_ids[term]
-    return term_code
+    match = regex matching
+    class_name is the name of the class, or the name of the class the lab belongs to
+    """
+    cached = {'name':class_name, 'department':department, 'code':code, 'term_code':term_code}
+    cached['type_'] = decode_type(match.group(5))
+    cached['crn'] = match.group(7)
+    cached['identifier'] = match.group(8)
+    credits_hours = match.group(10)
+    # Sometimes a random character (-) shows up on the academic timetable. Probably a typo but we'll put it at 0
+    try:
+        int(credits_hours)
+        cached['credit_hours'] = credits_hours
+    except ValueError:
+        cached['credit_hours'] = 0
 
-def store_term(yr, term):
-    term_code = get_term_code(yr, term)
+    # Groups 12-16 are for the days
+    days = ''
+    for i in range(12, 17):
+        day = clean(match.group(i))
+        if day.lower() not in ['m', 't', 'w', 'r', 'f']:
+            continue
+        days += day
+    cached['days'] =  days
 
-    sql = f"""\nINSERT INTO terms (T_CODE, YR, TERM) VALUES ({term_code}, {yr}, '{term}');\n"""
+    if match.group(18):
+        cached['start_time'] = match.group(18)
+        cached['end_time'] = match.group(19)
+    else:
+        cached['start_time'] = '0001'
+        cached['end_time'] = '2359'
+    return cached
 
-    with open('database.sql', 'a') as f:
-        f.write(sql)
-
-def classes_on_pg(link, term_code):
+def classes_on_pg(link, term_code, dis_code):
     """
     Get all the classes within a page (not including work/study terms)
     """
@@ -312,24 +306,25 @@ def classes_on_pg(link, term_code):
             cached['tutorials'] = []
             cached['lectures'] = []
             cached['term_code'] = term_code
+            cached['dis_code'] = dis_code
 
         # Match lecture/tutorial/lab info
         elif match.group(4):
             if (type_ := decode_type(match.group(5))) != 'lecture':
 
-                # These type of classes dont matter to us
+                # These types of classes dont matter to us
                 if type_ in ['workterm', 'study', None]:
                     continue
                 if type_ == 'tutorial':
-                    lab = LabInfo(True, **time_setup(match, cached['code'], cached['name'],
-                                                     cached['department'], cached['term_code']))
+                    lab = LabInfo(True, **time_setup(match, cached['code'], cached['name'], cached['department'],
+                                                     cached['term_code']))
                 else:
                     lab = LabInfo(**time_setup(match, cached['code'], cached['name'], cached['department'],
                                                cached['term_code']))
                 cached[type_ + 's'].append(lab)
             else:
-                lecture = LectureInfo(**time_setup(match, cached['code'], cached['name'], cached['department'],
-                                                   cached['term_code']))
+                lecture = LectureInfo(cached['dis_code'], **time_setup(match, cached['code'], cached['name'],
+                                                cached['department'], cached['term_code']))
                 cached['lectures'].append(lecture)
     return classes
 
@@ -337,19 +332,22 @@ def get_classes_by_dept(department, link, year, term):
     """
     Get all the classes (that are not work/study terms) from a specific department
     """
+    original_link = link
     classes = []
     i = 0
-    while True:
-        pg_num = 20*i + 1
-        link = link + f"{department}" + r"&s_numb=&n=" + f"{pg_num}" + r"&s_district=100"
-        print(link)
-        term_code = get_term_code(year, term)
-        results = classes_on_pg(link, term_code)
-        if len(results) == 0:
-            break
-        for c in results:
-            classes.append(c)
-        i += 1
+    for district, dis_code in districts.items():
+        while True:
+            pg_num = 20*i + 1
+            link = original_link + f"{department}" + r"&s_numb=&n=" + f"{pg_num}" + r"&s_district=" + f"{dis_code}"
+            print(link)
+            term_code = get_term_code(year, term)
+
+            results = classes_on_pg(link, term_code, dis_code)
+            if len(results) == 0:
+                break
+            for c in results:
+                classes.append(c)
+            i += 1
     return classes
 
 def get_all_dept():
@@ -378,13 +376,53 @@ def dept_sql(dept, name):
     sql += f"INSERT INTO department VALUES ('{escape_sql(dept)}','{escape_sql(name)}');\n"
     return sql
 
+def get_term_code(yr, term):
+    """
+    Calculate the term code of a specific year and term pair. Works until 2051.
+    """
+    term_ids = {'Winter':0, 'Summer': 1, 'Fall':2}
+
+    # Can store up to 32 years past 2019 in the future in 2 digits, (2051 - 2019) * 3 = 96 + 2
+    term_code = (int(yr) - 2019) * 3 + term_ids[term]
+    return term_code
+
+def store_term(yr, term):
+    """
+    Store the term code into the database SQL file.
+    """
+    term_code = get_term_code(yr, term)
+
+    sql = f"""\nINSERT INTO terms (T_CODE, YR, TERM) VALUES ({term_code}, {yr}, '{term}');\n"""
+
+    with open('database.sql', 'a') as f:
+        f.write(sql)
+
+def store_district(name, code):
+    """
+    Store the term code into the database SQL file.
+    """
+    sql = f"""\nINSERT INTO districts (DIS_CODE, DIS_NAME) VALUES ({code}, '{name}');\n"""
+
+    with open('database.sql', 'a') as f:
+        f.write(sql)
+
 terms = {"2020 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202030&s_crn=&s_subj=",
         "2020 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202110&s_subj=",
         "2021 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202120&s_subj="}
 
+districts = {
+    "Halifax": 100,
+    "Truro": 200,
+    "Online": 300,
+    "Other": 400,
+}
+
 for key in terms:
     year, term = key.split()
     store_term(year, term)
+
+for name, code in districts.items():
+    store_district(name, code)
 
 for dept, name in get_all_dept().items():
     with open('database.sql', 'a') as f:
