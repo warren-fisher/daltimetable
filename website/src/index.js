@@ -118,6 +118,7 @@ class Home extends React.Component {
                 if (term == innerText) {
                     // Allows toggling selection between no term and a term
                     termsSelected[term] = !this.state.termsSelected[term];
+                    // TODO: determine what happens if no term is selected
                 } else {
                     // Only one term should be selected at a time
                     termsSelected[term] = false;
@@ -129,7 +130,9 @@ class Home extends React.Component {
         // the search parameters.
         } else if (!isNaN(name)) {
             if (!this.state.classesSelected[name]) {
-                let resp = Home.getCRN(name);
+                // TODO: fix for if no term is selected
+                const term = this.getTermState();
+                let resp = Home.getCRN(name, term);
                 resp.then(result => {
                     this.setState({
                         classesSelected: {
@@ -283,9 +286,10 @@ class Home extends React.Component {
      * Query the database based on the Course Registration Number.
      *
      * @param {number} crn
+     * @param {number} term_code
      */
-    static async getCRN(crn) {
-        const response = await fetch(`http://localhost:5000/api/crn/${crn}`, {
+    static async getCRN(crn, term_code) {
+        const response = await fetch(`http://localhost:5000/api/crn/${crn}/${term_code}`, {
             method: 'GET',
         });
         return await response.json();
@@ -361,7 +365,9 @@ function RenderTable(props) {
             console.log(all_crns);
             let all_class_info = [];
             for (let crn of all_crns) {
-                const cls_ = await Home.getCRN(crn);
+                // TODO: fix for if no term is selected
+                const term = this.getTermState();
+                const cls_ = await Home.getCRN(crn, term);
                 all_class_info.push(cls_);
             }
 

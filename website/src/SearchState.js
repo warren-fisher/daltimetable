@@ -55,7 +55,7 @@ export function SearchState(props) {
             <TermSelector handleChange={props.handleChange} terms={props.terms} />
             <div className="classes">
                 {data.map((cls) => {
-                    return <ClassInfo data={cls} handleChange={props.handleChange}
+                    return <ClassInfo name={cls.crn} data={cls} handleChange={props.handleChange}
                         checked={props.classesSelected[cls.crn]} />
                 })}
             </div>

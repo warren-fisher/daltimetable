@@ -11,9 +11,9 @@ cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 def index():
     return "hello"
 
-@app.route('/api/crn/<int:crn>', methods=["GET"])
-def get_crn(crn):
-    result = sql.crn_query(crn)
+@app.route('/api/crn/<int:crn>/<int:term>', methods=["GET"])
+def get_crn(crn, term):
+    result = sql.crn_query(crn, term)
     return jsonify(result)
 
 @app.route('/api/search/<string:search>', methods=["GET"])

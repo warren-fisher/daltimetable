@@ -21,19 +21,17 @@ def class_helper(res):
             'end_time': res[8].strftime('%H%M')
         }
 
-#TODO: should be able to specify term
-def crn_query(crn):
+def crn_query(crn, term):
     s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
-            JOIN terms USING(T_CODE) WHERE C_CRN LIKE :x""")
+            JOIN terms USING(T_CODE) WHERE C_CRN LIKE :x AND T_CODE LIKE :z""")
 
-    result = engine.connect().execute(s, x=crn)
-
-    # TODO: should be no duplicates, except for SOMETIMES there is identical CRNs over diff term
-    for res in result:
-        d = format_class(res)
-
-    return d
+    # Not possible to get a duplicate since the (CRN, term) pair is unique
+    result = engine.connect().execute(s, x=crn, z=term).first()
+    if result is None:
+        return {}
+    else:
+        return format_class(result)
 
 def timedelta_helper(t):
     hours = t.seconds//3600
