@@ -11,20 +11,38 @@ import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
  * @param {arr} props.classes all classes to display due to the users search
  * @param {obj} props.classesSelected all classes the user has selected
  * @param {func} props.handleChange onChange function to update state
- * @param {obj} props.terms all terms to select from and their truthy/falsy state
+ * @param {obj} props.termsSelected all terms to select from and their truthy/falsy state
  * @param {obj} props.checkboxes state of each checkbox in the form (so that it can be a 'controlled' form)
  * @param {obj} props.size of the users screen
+ * @param {obj} props.terms the term codes to use in ClassInfo name scheme
+ * @param {func} props.getTermState to get the currently selected term
  */
 export function SearchState(props) {
     const data = props.classes;
 
-    let selectedCRNs = [];
-    for (let cls_ in props.classesSelected) {
-        if (props.classesSelected[cls_] !== false) {
-            selectedCRNs.push(cls_);
+    let selectedClasses = {};
+    for (let term in props.classesSelected) {
+        let selectedCRNs = [];
+        for (let cls_ in props.classesSelected) {
+            if (props.classesSelected[cls_] !== false) {
+                selectedCRNs.push(cls_);
+            }
         }
+        selectedClasses = {...selectedClasses,
+                        [term]: selectedCRNs};
     }
-    const hexCode = storeClassesAsId(selectedCRNs);
+
+    // TODO pay attention to array vs obj
+    let classesToDisplay = {};
+    let term_selected = props.getTermState();
+    if (term_selected === null) {
+        classesToDisplay = {};
+    } else {
+        classesToDisplay = props.classesSelected[term_selected];
+    }
+
+    // TODO: fixme
+    // const hexCode = storeClassesAsId(selectedCRNs);
 
     return (
         <div id='main'>
@@ -46,16 +64,26 @@ export function SearchState(props) {
                     )}
                 </div>
             </form>
-            <strong>{hexCode}</strong>
+            {/* <strong>{hexCode}</strong> */}
             <DisplayState
-                classes={props.classesSelected}
+                classes={classesToDisplay}
                 width={props.size.width}
                 height={props.size.height} />
 
-            <TermSelector handleChange={props.handleChange} terms={props.terms} />
+            <TermSelector handleChange={props.handleChange} terms={props.termsSelected} />
             <div className="classes">
                 {data.map((cls) => {
-                    return <ClassInfo name={cls.crn} data={cls} handleChange={props.handleChange}
+                    let term_str = `${cls.term} ${cls.year}`;
+                    let term_code = props.terms[term_str];
+
+                    if (String(term_code).length == 1) {
+                        term_code = "0" + String(term_code);
+                    }
+
+                    {/* String concactonation */}
+                    let name = term_code + cls.crn;
+
+                    return <ClassInfo name={name} data={cls} handleChange={props.handleChange}
                         checked={props.classesSelected[cls.crn]} />
                 })}
             </div>

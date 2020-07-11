@@ -21,6 +21,7 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
+        this.getTermState = this.getTermState.bind(this);
         this.state = {
             classes: [],
             checkboxes: DAYS.reduce((options, option) => ({
@@ -52,14 +53,28 @@ class Home extends React.Component {
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions.bind(this));
 
+        // Setting up some initial state based on the terms received from the API
         let resp = this.getTerms();
         resp.then(result => {
             let terms = {};
             let termsSelected = {};
+            let first = true;
             for (let term_code in result) {
                 let name = result[term_code];
+
+                this.setState({classesSelected: {
+                    ...this.state.classesSelected,
+                    [term_code]: {}
+                }})
+
                 terms[name] = term_code;
-                termsSelected[name] = false;
+                // TODO: clean up this mess. done because we always want a term selected
+                if (first == true) {
+                    termsSelected[name] = true;
+                    first = false;
+                } else {
+                    termsSelected[name] = false;
+                }
             }
             this.setState({terms: terms, termsSelected: termsSelected});
         }).catch(() => { console.log('fail') })
@@ -90,6 +105,7 @@ class Home extends React.Component {
     }
 
     /**
+     * TODO fix for when changing terms the classes selected are broken
      * Master event listener for all changes to the form.
      *
      * @param {event} e
@@ -125,31 +141,40 @@ class Home extends React.Component {
                 }
             }
             this.setState({ termsSelected: termsSelected }, this.handleUpdate);
-        // If this is a selection box for a class, because classes have their name as their CRN
+        // If this is a selection box for a class, because classes have their name as their
+        // term code added as two digits in front of their CRN, thus the name is a number
         // The setState calls here do not need a handleUpdate callback because they did not change
         // the search parameters.
         } else if (!isNaN(name)) {
+            const term_code = Number(name.slice(0, 2));
+            // const term_name = this.getTermNameFromCode(term_code);
+            const crn = name.slice(2,);
             if (!this.state.classesSelected[name]) {
-                // TODO: fix for if no term is selected
-                const term = this.getTermState();
-                let resp = Home.getCRN(name, term);
+                let resp = Home.getCRN(crn, term_code);
                 resp.then(result => {
                     this.setState({
                         classesSelected: {
                             ...this.state.classesSelected,
-                            [name]: result
+                            [term_code]: {
+                                ...this.state.classesSelected[term_code],
+                                [crn]: result
+                            }
                         }
                     })
                 }).catch(() => { console.log('fail') })
             } else {
+                // TODO: unselecting classes is now broken
                 this.setState({
                     classesSelected: {
                         ...this.state.classesSelected,
-                        [name]: !this.state.classesSelected[name]
+                        [term_code]: {
+                            ...this.state.classesSelected[term_code],
+                            [crn]: !this.state.classesSelected[term_code][crn]
+                        }
                     }
                 })
             }
-        // Catches all other generic query updates
+        // Catches all other generic query updates (like text in the search box)
         } else {
             this.setState({ [name]: val }, this.handleUpdate);
         }
@@ -165,6 +190,19 @@ class Home extends React.Component {
         resp.then(result => {
             this.apiResponseState(result);
         }).catch(() => { console.log('fail') })
+    }
+
+    /**
+     * Get the name of a term that has this term_code.
+     *
+     * @param {int} term_code used as unique identifier for that term
+     */
+    getTermNameFromCode(term_code) {
+        for (let term_name in this.state.terms) {
+            if (this.state.terms[term_name] === term_code) {
+                return term_name;
+            }
+        }
     }
 
     /**
@@ -192,6 +230,7 @@ class Home extends React.Component {
         let crn = this.isNull(this.state.crn);
         let dept = this.isNull(this.state.dept);
         let term_code = this.isNull(this.getTermState());
+        console.log('term', this.getTermState());
         return [search, start, end, days, crn, dept, term_code];
     }
 
@@ -199,6 +238,12 @@ class Home extends React.Component {
      * Return the term code of the term selected, or null if no term is selected.
      */
     getTermState() {
+        console.log(this.state);
+        console.log(this.state.termsSelected, 'yes you');
+        // Happens at the start when the API response to the getting terms has not been received
+        if (this.state.termsSelected === undefined) {
+            return null;
+        }
         for (let term of Object.keys(this.state.termsSelected)) {
             if (this.state.termsSelected[term] == true) {
                 return this.state.terms[term];
@@ -323,7 +368,9 @@ class Home extends React.Component {
                                 classesSelected={this.state.classesSelected}
                                 checkboxes={this.state.checkboxes}
                                 size={this.state.size}
-                                terms={this.state.termsSelected}
+                                termsSelected={this.state.termsSelected}
+                                terms={this.state.terms}
+                                getTermState={this.getTermState}
                                 />)}/>
 
                         <Route exact path="/FAQ">
@@ -350,6 +397,7 @@ class Home extends React.Component {
 
 /**
  * Intermediary function used by react-router to render DisplayState without setting the state of the form.
+ * TODO: probably dont even need this function, also it doesnt work right now due to changes (multiple terms)
  *
  * @param {num} props.width Horizontal width of the users screen
  * @param {num} props.height Vertical height of the users screen

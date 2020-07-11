@@ -20,6 +20,7 @@ export function CheckboxDay(props) {
  * Functional component representing each class to select for query purposes.
  *
  * @param {obj} props.data data about the class
+ * @param {str} props.name what to name the class
  * @param {bool} props.checked whether or not this day is selected
  * @param {func} props.handleChange onChange function to update state
  */
@@ -27,7 +28,7 @@ export function ClassInfo(props) {
     const d = props.data;
     return (
         <div className="class_" id={d.crn}>
-            <input type='checkbox' name={d.crn} onChange={props.handleChange} checked={props.checked} />
+            <input type='checkbox' name={props.name} onChange={props.handleChange} checked={props.checked} />
         CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}
         </div>
     );
@@ -49,8 +50,6 @@ export function TermSelector(props) {
             {terms.map((term) =>
                 <div name={term} onClick={props.handleChange}
                 className={props.terms[term] ? 'term mark-selected' : 'term mark-deselected'}>
-                {/* <input type='checkbox' name={term} onChange={props.handleChange}
-                    checked={props.terms[term]} /> */}
                 <p>{term}</p>
                 </div>
             )}
