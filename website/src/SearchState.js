@@ -80,11 +80,11 @@ export function SearchState(props) {
                         term_code = "0" + String(term_code);
                     }
 
-                    {/* String concactonation */}
+                    {/* String concatonation */}
                     let name = term_code + cls.crn;
 
                     return <ClassInfo name={name} data={cls} handleChange={props.handleChange}
-                        checked={props.classesSelected[cls.crn]} />
+                        checked={classesToDisplay[cls.crn]} />
                 })}
             </div>
         </div>

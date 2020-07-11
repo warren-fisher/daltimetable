@@ -230,7 +230,6 @@ class Home extends React.Component {
         let crn = this.isNull(this.state.crn);
         let dept = this.isNull(this.state.dept);
         let term_code = this.isNull(this.getTermState());
-        console.log('term', this.getTermState());
         return [search, start, end, days, crn, dept, term_code];
     }
 
@@ -238,8 +237,6 @@ class Home extends React.Component {
      * Return the term code of the term selected, or null if no term is selected.
      */
     getTermState() {
-        console.log(this.state);
-        console.log(this.state.termsSelected, 'yes you');
         // Happens at the start when the API response to the getting terms has not been received
         if (this.state.termsSelected === undefined) {
             return null;

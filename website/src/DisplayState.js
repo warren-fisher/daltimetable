@@ -195,8 +195,6 @@ export class DisplayState extends React.Component {
         let yStart = this.timeY(start);
         let yEnd = this.timeY(end);
 
-        console.log(yStart, yEnd);
-
         ctx.lineWidth = 5;
         // Dark blue
         ctx.strokeStyle = '#0d5af9';
@@ -223,7 +221,6 @@ export class DisplayState extends React.Component {
 
     render() {
         const classes = [];
-        console.log(this.props.classes)
         for (let crn in this.props.classes) {
             // Sometimes props.classes[crn] may be undefined, !!undefined === false
             if (!!this.props.classes[crn]) {
