@@ -41,7 +41,6 @@ export function ClassInfo(props) {
  * @param {func} props.handleChange onChange function to update state
  */
 export function TermSelector(props) {
-    console.log(props.terms, 'hi');
     if (props.terms === undefined) {
         return null;
     } else {
