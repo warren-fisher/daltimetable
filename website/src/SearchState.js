@@ -20,11 +20,12 @@ import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 export function SearchState(props) {
     const data = props.classes;
 
+    // This was used for hex data
     let selectedClasses = {};
     for (let term in props.classesSelected) {
         let selectedCRNs = [];
-        for (let cls_ in props.classesSelected) {
-            if (props.classesSelected[cls_] !== false) {
+        for (let cls_ in props.classesSelected[term]) {
+            if (props.classesSelected[term][cls_] !== false) {
                 selectedCRNs.push(cls_);
             }
         }
@@ -42,7 +43,8 @@ export function SearchState(props) {
     }
 
     // TODO: fixme
-    // const hexCode = storeClassesAsId(selectedCRNs);
+    const base36_code = storeClassesAsId(selectedClasses);
+    console.log('base36', base36_code);
 
     return (
         <div id='main'>
@@ -64,7 +66,7 @@ export function SearchState(props) {
                     )}
                 </div>
             </form>
-            {/* <strong>{hexCode}</strong> */}
+            <strong>{base36_code}</strong>
             <DisplayState
                 classes={classesToDisplay}
                 width={props.size.width}

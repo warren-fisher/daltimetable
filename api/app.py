@@ -41,5 +41,10 @@ def get_terms():
     result = sql.get_terms()
     return jsonify(result)
 
+@app.route('/api/get/crns/<int:term>/<string:crns>', methods=["GET"])
+def get_multiple_crns(term, crns):
+    result = sql.multiple_crn_query(crns, term)
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)
