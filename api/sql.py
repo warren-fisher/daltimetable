@@ -8,6 +8,7 @@ engine = create_engine(
     f"mysql+pymysql://{credentials['username']}:{credentials['password']}@localhost/daltimetable",
      echo=True)
 
+# TODO: not used?
 def class_helper(res):
     return {
             'crn': res[0],
@@ -32,6 +33,27 @@ def crn_query(crn, term):
         return {}
     else:
         return format_class(result)
+
+def multiple_crn_query(crns, term):
+    # CRNS is a long string (containing only digits), where every group of 5 is a crn to return
+
+    length = len(crns)
+    result = {}
+
+    if length % 5 != 0:
+        return result
+    for i in range(length//5):
+        crn = crns[5*i:5*(i+1)]
+        # Make sure it is a valid integer
+        # Is it neccesary, wont the CRN query just return nothing if it is a string?
+        try:
+            int(crn)
+        except ValueError:
+            pass
+        data = crn_query(crn, term)
+        result[crn] = data
+
+    return result
 
 def timedelta_helper(t):
     hours = t.seconds//3600

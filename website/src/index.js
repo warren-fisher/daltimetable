@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { DisplayState } from './DisplayState.js';
 import { SearchState } from './SearchState.js';
-import { DAYS, storeClassesAsId, getClassesFromId} from './helpers.js'
+import { DAYS, storeClassesAsId, getClassesFromId} from './helpers.js';
+import { TermSelector } from './other_components.js';
 
 import {
     BrowserRouter as Router,
@@ -149,7 +150,7 @@ class Home extends React.Component {
             const term_code = Number(name.slice(0, 2));
             // const term_name = this.getTermNameFromCode(term_code);
             const crn = name.slice(2,);
-            if (!this.state.classesSelected[name]) {
+            if (!this.state.classesSelected[term_code][crn]) {
                 let resp = Home.getCRN(crn, term_code);
                 resp.then(result => {
                     this.setState({
@@ -163,7 +164,6 @@ class Home extends React.Component {
                     })
                 }).catch(() => { console.log('fail') })
             } else {
-                // TODO: unselecting classes is now broken
                 this.setState({
                     classesSelected: {
                         ...this.state.classesSelected,
@@ -382,7 +382,10 @@ class Home extends React.Component {
                         <Route path="/share/:id" children={
                             <RenderTable
                                 width={this.state.size.width}
-                                height={this.state.size.height} />
+                                height={this.state.size.height}
+                                getTermState={this.getTermState}
+                                handleChange={this.handleChange}
+                                terms={this.state.termsSelected} />
                         } />
 
                     </Switch>
@@ -406,20 +409,23 @@ function RenderTable(props) {
 
     useEffect(() => {
         async function getClass() {
-            let all_crns = getClassesFromId(id);
-            console.log(all_crns);
-            let all_class_info = [];
-            for (let crn of all_crns) {
-                // TODO: fix for if no term is selected
-                const term = this.getTermState();
-                const cls_ = await Home.getCRN(crn, term);
-                all_class_info.push(cls_);
+
+            // This logic is similar to that in SearchState, probably can push it into the DisplayState component?
+            // by putting the term selector in there
+            let all_classes = await getClassesFromId(id);
+            console.log('hello', all_classes);
+
+            let classesToDisplay = {};
+            let term_selected = props.getTermState();
+            console.log(term_selected);
+            if (term_selected === null) {
+                classesToDisplay = {};
+            } else {
+                classesToDisplay = all_classes[term_selected];
             }
 
-            let classesSelected = { ...classes };
-            for (let class_info of all_class_info) {
-                classesSelected = { ...classesSelected, [class_info['crn']]: class_info }
-            }
+            console.log('selected', classesToDisplay);
+            let classesSelected = { ...classesToDisplay };
             setClasses(classesSelected);
         }
         getClass();
@@ -433,6 +439,8 @@ function RenderTable(props) {
                 classes={classes}
                 width={props.width}
                 height={props.height} />
+                {/* TODO: term selector does not appear? */}
+            <TermSelector handleChange={props.handleChange} terms={props.termsSelected} />
 
         </div>
     );

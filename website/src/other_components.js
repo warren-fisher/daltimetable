@@ -21,7 +21,7 @@ export function CheckboxDay(props) {
  *
  * @param {obj} props.data data about the class
  * @param {str} props.name what to name the class
- * @param {bool} props.checked whether or not this day is selected
+ * @param {bool} props.checked whether or not this class is selected
  * @param {func} props.handleChange onChange function to update state
  */
 export function ClassInfo(props) {
