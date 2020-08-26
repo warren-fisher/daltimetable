@@ -134,7 +134,7 @@ class Home extends React.Component {
             for (let term of terms) {
                 if (term == innerText) {
                     // Allows toggling selection between no term and a term
-                    termsSelected[term] = !this.state.termsSelected[term];
+                    termsSelected[term] = true;
                     // TODO: determine what happens if no term is selected
                 } else {
                     // Only one term should be selected at a time
@@ -441,7 +441,6 @@ function RenderTable(props) {
                 height={props.height} />
                 {/* TODO: term selector does not appear? */}
             <TermSelector handleChange={props.handleChange} terms={props.termsSelected} />
-
         </div>
     );
 }
