@@ -126,16 +126,15 @@ export class DisplayState extends React.Component {
      */
     timeY(time) {
         // How much to offset the table for times/days
-        const yOffset = this.xOffset;
+        const yOffset = this.yOffset;
         // Width and Height of the entire table (does not include offset)
         const tHeight = this.props.height * this.heightFactor;
         // Width and height of the table (not including offset)
         const height = tHeight - yOffset;
 
         const blockSize = height / 24;
-        // Time in HH:MM format, so we dont care about the :
-        const hr = time.slice(0, 2);
-        const min = time.slice(3, 5);
+        // Time in H:MM format, so the colon splits hours and minutes
+        const [hr, min] = time.split(":");
 
         // Calculate what block the class is in
         // Subtract one because that is equivalent to 30 minutes, and the table

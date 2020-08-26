@@ -1,2 +1,3 @@
 cred_*
 __pycache__
+.nosync

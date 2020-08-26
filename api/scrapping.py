@@ -34,10 +34,17 @@ def decode_type(t):
         return 'workterm'
     if t == 's':
         return 'study'
-    
-def escape_sql(s):
-    return s.replace("'", "\\'")            
 
+"""
+Its fine to custom bake a solution here because this is not user facing,
+meaning it is not vulnerable to SQL injection
+"""
+def escape_sql(s):
+    try:
+        s = str(s)
+        return s.replace("'", "\\'")
+    except ValueError:
+        return ''
 
 matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett(.)">(.*)</td>
@@ -352,14 +359,18 @@ def get_classes_by_dept(department, link, year, term):
 
 def get_all_dept():
     """
-    Get all the names and acronyms of the Dalhousie departments (Halifax campus only)
+    Get all the names and acronyms of the Dalhousie departments (all campus)
+    TODO: the regex can be cleaner
+    TODO: only gets classes that the department has active courses in fall/winter
+        because of matching based off of downloaded html
     """
     text = open("dalonline_display_schedule.html", 'r').read()
-    dept_matcher = re.compile("""<a href="fysktime\.P_DisplaySchedule\?s_term=202020&s_subj=([A-Za-z]{4})&s_district=100">(.*)</a>""")
+    dept_matcher = re.compile("""<a href="fysktime\.P_DisplaySchedule\?s_term=(.*)&s_subj=([A-Za-z]{4})&s_district=All">(.*)</a>""")
     depts = {}
     for match in dept_matcher.finditer(text):
-        depts[match.group(1)]=match.group(2)
+        depts[match.group(2)]=match.group(3)
 
+    print(depts)
     return depts
 
 def dept_sql(dept, name):
@@ -417,6 +428,14 @@ districts = {
     "Other": 400,
 }
 
+# Get the DDL SQL from the template file
+database_sql = ""
+with open('template.sql', 'r') as f:
+    database_sql = f.read()
+
+with open('database.sql', 'a') as f:
+    f.write(database_sql)
+
 for key in terms:
     year, term = key.split()
     store_term(year, term)
@@ -425,6 +444,7 @@ for name, code in districts.items():
     store_district(name, code)
 
 for dept, name in get_all_dept().items():
+    print(dept)
     with open('database.sql', 'a') as f:
         f.write(dept_sql(dept, name))
     for key in terms:
