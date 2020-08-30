@@ -201,19 +201,25 @@ export class DisplayState extends React.Component {
         // Each day has its own x position
         for (let day of cls.dates.split('')) {
             const [xStart, xEnd] = this.dayX(day);
-            ctx.strokeRect(xStart + 3, yStart, xEnd - xStart - 6,
-                yEnd - yStart);
+            let yMid = (yStart + yEnd) / 2;
+            let boxHeight = yEnd - yStart;
 
-            // Fill in middle
-            // TODO: Fix cutting off weird spots
+            // TODO: rectable is not quite perfectly centered horizontally for some days
+            // Outside blue rectangle
+            ctx.strokeRect(xStart + 3, yStart, xEnd - xStart - 6,
+                boxHeight);
+
+            // Fill in middle with white
             ctx.fillStyle = 'white';
             ctx.fillRect(xStart + 3, yStart, xEnd - xStart - 6,
-                yEnd - yStart)
+                boxHeight)
 
             // Text
-            // !TODO: allow for multiline text
+            // !TODO: perhaps the class name could be responsive to multiple lines for small screens
             ctx.fillStyle = 'black';
             ctx.font = '1vw georgia';
+
+            ctx.fillText(`${cls.department} ${cls.crn}`, xStart + 6, yMid - boxHeight / 4);
             ctx.fillText(cls.name, xStart + 6, (yStart + yEnd) / 2);
         }
     }

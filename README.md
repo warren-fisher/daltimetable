@@ -8,7 +8,7 @@ It supports searching / filtering classes (which the academic timetable does not
 - Sharing a selection of class(es) with friends via a link
 
 ## Planned features
-- Ability to remove class from selection (without searching for it again)
+- Ability to remove class from selection (perhaps a list of selected classes)
 - Make it look much better
 - Improve responsiveness so that it is usable on a wider range of devices
 - Search by location / professor
