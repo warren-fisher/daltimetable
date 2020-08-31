@@ -66,7 +66,13 @@ export function SearchState(props) {
                     )}
                 </div>
             </form>
-            <strong>{base36_code}</strong>
+            <div>
+                Unique ID :
+                <strong> {base36_code} </strong>
+                <button onClick={() => { navigator.clipboard.writeText(`${document.URL}share/${base36_code}`) }}>Copy link to share with your friends</button>
+            </div>
+
+
             <DisplayState
                 classes={classesToDisplay}
                 width={props.size.width}

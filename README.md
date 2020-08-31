@@ -18,7 +18,7 @@ It supports searching / filtering classes (which the academic timetable does not
 - Class names not fitting properly within class 'box'
 - Responsiveness
 - Accessibility of the time display table (perhaps not possible)
-- When viewing a share link classes are not drawn immediately (sometimes, cant reproduce)
+- When viewing a share link classes are not drawn immediately (must refresh page once first)
 
 ## Dependancies
 Dependancies are incomplete. Planning to fix later
