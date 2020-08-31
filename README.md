@@ -8,6 +8,7 @@ It supports searching / filtering classes (which the academic timetable does not
 - Sharing a selection of class(es) with friends via a link
 
 ## Planned features
+- In share link remove any terms from the term selector if there are no classes in that term
 - Ability to remove class from selection (perhaps a list of selected classes)
 - Make it look much better
 - Improve responsiveness so that it is usable on a wider range of devices
@@ -18,7 +19,6 @@ It supports searching / filtering classes (which the academic timetable does not
 - Class names not fitting properly within class 'box'
 - Responsiveness
 - Accessibility of the time display table (perhaps not possible)
-- When viewing a share link classes are not drawn immediately (must refresh page once first)
 
 ## Dependancies
 Dependancies are incomplete. Planning to fix later

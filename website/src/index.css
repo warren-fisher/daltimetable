@@ -3,7 +3,7 @@ body {
     margin: 20px;
 }
 
-#main {
+#main, #share-link-main {
     display: flex;
     flex-direction: column;
     align-items: center;

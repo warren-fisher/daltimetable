@@ -401,6 +401,9 @@ class Home extends React.Component {
  *
  * @param {num} props.width Horizontal width of the users screen
  * @param {num} props.height Vertical height of the users screen
+ * @param {func} props.handleChange onChange function to update state
+ * @param {obj} props.terms all terms to select from and their truthy/falsy state
+ * @param {func} props.getTermState to get the currently selected term
  */
 function RenderTable(props) {
     // Get the dynamic portion of the URL
@@ -429,18 +432,17 @@ function RenderTable(props) {
             setClasses(classesSelected);
         }
         getClass();
-    },
-        [])
+    })
 
     return (
-        <div>
+        <div id='share-link-main'>
             <h3>ID: {id}</h3>
             <DisplayState
                 classes={classes}
                 width={props.width}
                 height={props.height} />
                 {/* TODO: term selector does not appear? */}
-            <TermSelector handleChange={props.handleChange} terms={props.termsSelected} />
+            <TermSelector handleChange={props.handleChange} terms={props.terms} />
         </div>
     );
 }
