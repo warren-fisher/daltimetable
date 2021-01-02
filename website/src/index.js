@@ -283,14 +283,14 @@ class Home extends React.Component {
      * @param {string} end
      */
     async masterQuery(search, crn, dept, days, start, end, term_code) {
-        const response = await fetch(`http://localhost:5000/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
+        const response = await fetch(`https://api.warrenfisher.net/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
             method: 'GET',
         });
         return await response.json();
     }
 
     async getTerms() {
-        const response = await fetch('http://localhost:5000/api/get/terms', {
+        const response = await fetch('https://api.warrenfisher.net/api/get/terms', {
             method: 'GET',
         });
         return await response.json();
@@ -305,7 +305,7 @@ class Home extends React.Component {
      * @param {string} end
      */
     async getTime(start, end) {
-        const response = await fetch(`http://localhost:5000/api/time/${start}/${end}`, {
+        const response = await fetch(`https://api.warrenfisher.net/api/time/${start}/${end}`, {
             method: 'GET',
         });
         return await response.json();
@@ -318,7 +318,7 @@ class Home extends React.Component {
      * @param {string} search
      */
     async getSearch(search) {
-        const response = await fetch(`http://localhost:5000/api/search/${search}`, {
+        const response = await fetch(`https://api.warrenfisher.net/api/search/${search}`, {
             method: 'GET',
         });
         return await response.json();
@@ -331,7 +331,7 @@ class Home extends React.Component {
      * @param {number} term_code
      */
     static async getCRN(crn, term_code) {
-        const response = await fetch(`http://localhost:5000/api/crn/${crn}/${term_code}`, {
+        const response = await fetch(`https://api.warrenfisher.net/api/crn/${crn}/${term_code}`, {
             method: 'GET',
         });
         return await response.json();
@@ -346,10 +346,6 @@ class Home extends React.Component {
                     <h2><Link to={{
                         pathname: "/",
                     }}>Pick your classes</Link></h2>
-
-                    <h2><Link to={{
-                        pathname: "/faq",
-                    }}>FAQ</Link></h2>
 
                     <h2><Link to={{
                         pathname: "/contribute",
@@ -370,13 +366,11 @@ class Home extends React.Component {
                                 getTermState={this.getTermState}
                                 />)}/>
 
-                        <Route exact path="/FAQ">
-
-                            <p>Hello</p>
-                        </Route>
-
                         <Route exact path="/Contribute">
-                            <p>Any help is appreciated</p>
+                            <div id="contribute">
+                            This is an open source application available at <a href='https://github.com/warren-fisher/daltimetable'>github</a> created in React by Warren Fisher.
+                            Please feel free to explore the code and suggest any changes, or even submit your own pull request.
+                            </div>
                         </Route>
 
                         <Route path="/share/:id" children={

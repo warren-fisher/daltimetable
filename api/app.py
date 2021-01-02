@@ -5,7 +5,7 @@ import sql
 
 #TODO: standardize API, simplify and slim down to base neccesary endpoints
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+cors = CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "https://test.warrenfisher.net"]}})
 
 @app.route('/')
 def index():

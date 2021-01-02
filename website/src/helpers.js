@@ -78,7 +78,7 @@ export async function getClassesFromId(link_id) {
  * @param {number} term_code of the term selected
  */
 async function getMultipleCRN(crns, term_code) {
-    const response = await fetch(`http://localhost:5000/api/get/crns/${term_code}/${crns}`, {
+    const response = await fetch(`https://api.warrenfisher.net/api/get/crns/${term_code}/${crns}`, {
         method: 'GET',
     });
     return await response.json();

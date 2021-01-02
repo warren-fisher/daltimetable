@@ -96,7 +96,6 @@ def time_and_search_query(search, start_time, end_time):
     search = '%' + search + '%'
     start_time = time_helper(start_time)
     end_time = time_helper(end_time)
-    print(f"{start_time=} {end_time=}")
 
     s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
