@@ -21,12 +21,7 @@ It supports searching / filtering classes. Dalhousie's academic timetable (class
 - Responsiveness
 - Accessibility of the time display table (perhaps not possible)
 
-<<<<<<< HEAD
 ## Dependencies
-=======
-## Dependancies
-
->>>>>>> fa75b64421a6d94e1ea0501e78cbdc4927c405c2
 ### API
 - Python 3
 - SQL Alchemy, PyMYSQL

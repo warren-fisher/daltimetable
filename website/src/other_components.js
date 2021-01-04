@@ -34,24 +34,39 @@ export function ClassInfo(props) {
     );
 }
 
+
 /**
- * Functional component representing a toggle switch with three options
+ * Class component representing a toggle switch with many options to select what term to choose.
  *
  * @param {obj} props.terms all terms to select from and their truthy/falsy state
  * @param {func} props.handleChange onChange function to update state
  */
-export function TermSelector(props) {
-    if (props.terms === undefined) {
-        return null;
-    } else {
-        const terms = Object.keys(props.terms);
-        return (<div id="term-selector">
-            {terms.map((term) =>
-                <div name={term} onClick={props.handleChange}
-                className={props.terms[term] ? 'term mark-selected' : 'term mark-deselected'}>
-                <p>{term}</p>
-                </div>
-            )}
-        </div>);
+export class TermSelect extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidUpdate(prevProps) {
+        // Do this so that component re-renders on update
+        if (this.props.terms !== prevProps.terms) {
+            this.setState({change: true});
+        }
+    }
+
+    render() {
+        if (this.props.terms === undefined) {
+            return null;
+        } else {
+            const terms = Object.keys(this.props.terms);
+            return (<div id="term-selector">
+                {terms.map((term) =>
+                    <div name={term} onClick={this.props.handleChange}
+                        className={this.props.terms[term] ? 'term mark-selected' : 'term mark-deselected'}>
+                        <p>{term}</p>
+                    </div>
+                )}
+            </div>);
+        }
     }
 }

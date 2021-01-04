@@ -5,7 +5,7 @@ import './index.css';
 import { DisplayState } from './DisplayState.js';
 import { SearchState } from './SearchState.js';
 import { DAYS, storeClassesAsId, getClassesFromId} from './helpers.js';
-import { TermSelector } from './other_components.js';
+import { TermSelect } from './other_components';
 
 import {
     BrowserRouter as Router,
@@ -436,7 +436,7 @@ function RenderTable(props) {
                 width={props.width}
                 height={props.height} />
                 {/* TODO: term selector does not appear? */}
-            <TermSelector handleChange={props.handleChange} terms={props.terms} />
+            <TermSelect handleChange={props.handleChange} terms={props.terms} />
         </div>
     );
 }

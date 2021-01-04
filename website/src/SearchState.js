@@ -1,9 +1,8 @@
 import React from 'react';
 import './index.css';
-import { CheckboxDay, ClassInfo, TermSelector } from './other_components.js';
+import { CheckboxDay, ClassInfo, TermSelect } from './other_components.js';
 import { DisplayState } from './DisplayState.js'
 import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
-
 
 /**
  * Function component to represent the form. State is governed by the higher order component 'Home'.
@@ -78,7 +77,7 @@ export function SearchState(props) {
                 width={props.size.width}
                 height={props.size.height} />
 
-            <TermSelector handleChange={props.handleChange} terms={props.termsSelected} />
+            <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
             <div className="classes">
                 {data.map((cls) => {
                     let term_str = `${cls.term} ${cls.year}`;
