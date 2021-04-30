@@ -1,5 +1,4 @@
 import React from 'react';
-import './index.css';
 
 /**
  * Class component to draw the entire table of classes. Receives props from SearchState or RenderTable.

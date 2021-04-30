@@ -1,5 +1,4 @@
 import React from 'react';
-import './index.css';
 
 /**
  * Functional component representing each day to select for query purposes.
