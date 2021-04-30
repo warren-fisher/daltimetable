@@ -47,6 +47,19 @@ export function SearchState(props) {
 
     return (
         <div id='main'>
+            <div>
+            <h2>How to use this app</h2>
+            <p>0. Select the term you want to create a schedule for. This button is below the form and above the schedule image.</p>
+            <p>1. Enter your search parameters in this form</p>
+            <p>2. The search will automatically happen once parameters are entered. If you scroll below the empty schedule there will be a long list of classes</p>
+            <p>3. The more specific your search is the better, since less classes will appear! Only classes which meet all search parameters are shown.</p>
+            <p>4. Click on the checkbox to the left of a class to add it to your schedule</p>
+            <p>5. The schedule image will change and display your newly chosen class in the appropriate spot</p>
+            <p>6. Once you have selected all the classes you can click the "copy link to share with your friends button"</p>
+            <p>7. This link will store your schedule in the URL (no account neccesary). Save the link and visit it when needed.</p>
+
+            </div>
+
             <form>
                 <label htmlFor="string-search">Search by class for name</label>
                 <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
@@ -71,13 +84,13 @@ export function SearchState(props) {
                 <button onClick={() => { navigator.clipboard.writeText(`${document.URL}share/${base36_code}`) }}>Copy link to share with your friends</button>
             </div>
 
+            <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
 
             <DisplayState
                 classes={classesToDisplay}
                 width={props.size.width}
                 height={props.size.height} />
 
-            <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
             <div className="classes">
                 {data.map((cls) => {
                     let term_str = `${cls.term} ${cls.year}`;

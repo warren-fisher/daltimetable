@@ -48,6 +48,8 @@ export class TermSelect extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+
+        console.log("update succesful");
         // Do this so that component re-renders on update
         if (this.props.terms !== prevProps.terms) {
             this.setState({change: true});
