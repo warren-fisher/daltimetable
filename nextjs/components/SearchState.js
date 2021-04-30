@@ -1,5 +1,4 @@
 import React from 'react';
-import './index.css';
 import { CheckboxDay, ClassInfo, TermSelect } from './other_components.js';
 import { DisplayState } from './DisplayState.js'
 import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
