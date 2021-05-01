@@ -61,12 +61,12 @@ export function SearchState(props) {
 
             <form>
                 <label htmlFor="string-search">Search by class for name</label>
-                <input type='text' id="string-search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
+                <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
 
                 <label htmlFor="time">Search by class within time slot</label>
                 <div id="time">
-                    <input type='text' id='time-start' name='time_start' placeholder='start time' onChange={props.handleChange} value={props.value} />
-                    <input type='text' id='time-end' name='time_end' placeholder='end time' onChange={props.handleChange} value={props.value} />
+                    <input type='text' id='time-start' name='time-start' placeholder='start time' onChange={props.handleChange} value={props.value} />
+                    <input type='text' id='time-end' name='time-end' placeholder='end time' onChange={props.handleChange} value={props.value} />
                 </div>
 
                 <div id="days">
