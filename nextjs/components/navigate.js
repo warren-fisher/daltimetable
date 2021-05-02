@@ -15,6 +15,14 @@ function Navigate({children}) {
             </Link></h2>
         </header>
         {children}
+        <footer>
+            <p>
+
+            Tool created by Warren Fisher
+
+            </p>
+
+        </footer>
         </>
     );
 }

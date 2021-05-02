@@ -49,14 +49,15 @@ body {
     margin: 0;
 }
 
-/* Header */
+/* Header & footer */
 
 :root {
     --header-color: #1F2016;
     --header-text: #E2E3C5;
 }
 
-header {
+header,
+footer {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -69,6 +70,11 @@ header {
 header a {
     text-decoration: none;
     color: var(--header-text);
+}
+
+footer {
+    margin-top: 2vh;
+    margin-bottom: 0;
 }
 
 /* Term tri-select feature css */
@@ -120,4 +126,3 @@ header a {
     text-decoration:underline;
     text-decoration-color: red;
 }
-
