@@ -83,6 +83,8 @@ export function SearchState(props) {
                 <button onClick={() => { navigator.clipboard.writeText(`${document.URL}share/${base36_code}`) }}>Copy link to share with your friends</button>
             </div>
 
+
+
             <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
 
             <DisplayState

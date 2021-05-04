@@ -6,6 +6,8 @@ import {TermSelect} from '../../components/other_components.js';
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/router';
 
+import {TermAndClasses} from '../../components/CanvasAndSelector.js';
+
 {/* <Route path="/share/:id" children={
     <RenderTable
         width={this.state.size.width}
@@ -36,11 +38,22 @@ function RenderTable(props) {
         return <div>Loading...</div>
     }
 
-    const { id } = router.query;
-
     console.log("props=", props)
 
+    const { id } = router.query;
+
     const [classes, setClasses] = useState({});
+
+    const [term, setTerm] = useState({'Summer': true, 'Fall': false});
+
+    const changeTerm = (x) => {
+        let newState;
+        if (x == 0) {
+            let newState = { 'Summer': true, 'Fall': false }
+        } else if (x == 1) {
+            let newState = { 'Summer': false, 'Fall': true }
+        }
+    }
 
     useEffect(() => {
         async function getClass() {
@@ -66,6 +79,7 @@ function RenderTable(props) {
             // console.log('selected', classesToDisplay);
             // let classesSelected = { ...classesToDisplay };
 
+            // TODO: proper class code
             let classesSelected = all_classes[4];
             setClasses(classesSelected);
         }
@@ -76,12 +90,20 @@ function RenderTable(props) {
         // TODO: proper height, width
         <div id='share-link-main'>
             <h3>ID: {id}</h3>
-            <DisplayState
+            <TermAndClasses
+                width={1000}
+                height={1000}
+                classesToDisplay={classes}
+                terms={term}
+                handleChange={() => {}}
+            />
+
+            {/* <DisplayState
                 classes={classes}
                 width={1000}
                 height={1000} />
-            {/* TODO: term selector does not appear? */}
-            <TermSelect handleChange={props.handleChange} terms={props.terms} />
+            { TODO: term selector does not appear? }
+            <TermSelect handleChange={props.handleChange} terms={props.terms} /> */}
         </div>
     );
 }
@@ -91,10 +113,10 @@ export async function getStaticProps({params}) {
 
     let id = params.id;
 
-    // const all_classes = await getClassesFromId(params.id);
+    const all_classes = await getClassesFromId(params.id);
 
     return {
-        props: {id}
+        props: {id, all_classes}
     }
 }
 
