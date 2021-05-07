@@ -7,6 +7,9 @@ import { TermSelect } from '../components/other_components';
 
 import {Link} from 'next/link';
 
+import {masterQuery, getTerms, getSearch,
+        getCRN, getMultipleCRN} from '../components/api/api.js';
+
 /**
  * Main react component that governs state of the form, as well as navigation of the app.
  */
@@ -47,7 +50,7 @@ class Home extends React.Component {
         window.addEventListener("resize", this.updateDimensions.bind(this));
 
         // Setting up some initial state based on the terms received from the API
-        let resp = this.getTerms();
+        let resp = getTerms();
         resp.then(result => {
             let terms = {};
             let termsSelected = {};
@@ -145,7 +148,7 @@ class Home extends React.Component {
             // const term_name = this.getTermNameFromCode(term_code);
             const crn = name.slice(2,);
             if (!this.state.classesSelected[term_code][crn]) {
-                let resp = Home.getCRN(crn, term_code);
+                let resp = getCRN(crn, term_code);
                 resp.then(result => {
                     this.setState({
                         classesSelected: {
@@ -180,7 +183,7 @@ class Home extends React.Component {
      */
     handleUpdate() {
         let [search, start, end, days, crn, dept, term_code] = this.getApiState();
-        let resp = this.masterQuery(search, crn, dept, days, start, end, term_code);
+        let resp = masterQuery(search, crn, dept, days, start, end, term_code);
         resp.then(result => {
             this.apiResponseState(result);
         }).catch(() => { console.log('fail') })
@@ -263,72 +266,6 @@ class Home extends React.Component {
             }
         }
         return s;
-    }
-
-    /**
-     * A master query that can query the database based on many different inputs.
-     * If a input is an exclamation point it is ignored in the query based on the API.
-     *
-     * @param {string} search
-     * @param {number} crn
-     * @param {string} dept
-     * @param {string} days
-     * @param {string} start
-     * @param {string} end
-     */
-    async masterQuery(search, crn, dept, days, start, end, term_code) {
-        const response = await fetch(`https://api.warrenfisher.net/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
-            method: 'GET',
-        });
-        return await response.json();
-    }
-
-    async getTerms() {
-        const response = await fetch('https://api.warrenfisher.net/api/get/terms', {
-            method: 'GET',
-        });
-        return await response.json();
-    }
-
-    /**
-     * Query the database based on a start and end time.
-     * Refer to api/sql.py for acceptable string formats.
-     * !not used
-     *
-     * @param {string} start
-     * @param {string} end
-     */
-    async getTime(start, end) {
-        const response = await fetch(`https://api.warrenfisher.net/api/time/${start}/${end}`, {
-            method: 'GET',
-        });
-        return await response.json();
-    }
-
-    /**
-     * Query the database based on a string query.
-     * !not used
-     *
-     * @param {string} search
-     */
-    async getSearch(search) {
-        const response = await fetch(`https://api.warrenfisher.net/api/search/${search}`, {
-            method: 'GET',
-        });
-        return await response.json();
-    }
-
-    /**
-     * Query the database based on the Course Registration Number.
-     *
-     * @param {number} crn
-     * @param {number} term_code
-     */
-    static async getCRN(crn, term_code) {
-        const response = await fetch(`https://api.warrenfisher.net/api/crn/${crn}/${term_code}`, {
-            method: 'GET',
-        });
-        return await response.json();
     }
 
     render() {
