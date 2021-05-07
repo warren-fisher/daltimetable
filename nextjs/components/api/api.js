@@ -12,14 +12,14 @@ const apiURL = "http://localhost:5000";
      * @param {string} start
      * @param {string} end
      */
-async function masterQuery(search, crn, dept, days, start, end, term_code) {
+export async function masterQuery(search, crn, dept, days, start, end, term_code) {
     const response = await fetch(`${apiURL}/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
         method: 'GET',
     });
     return await response.json();
 }
 
-async function getTerms() {
+export async function getTerms() {
     const response = await fetch(`${apiURL}/api/get/terms`, {
         method: 'GET',
     });
@@ -34,7 +34,7 @@ async function getTerms() {
  * @param {string} start
  * @param {string} end
  */
-async function getTime(start, end) {
+export async function getTime(start, end) {
     const response = await fetch(`${apiURL}/api/time/${start}/${end}`, {
         method: 'GET',
     });
@@ -47,7 +47,7 @@ async function getTime(start, end) {
  *
  * @param {string} search
  */
-async function getSearch(search) {
+export async function getSearch(search) {
     const response = await fetch(`${apiURL}/api/search/${search}`, {
         method: 'GET',
     });
@@ -60,7 +60,7 @@ async function getSearch(search) {
  * @param {number} crn
  * @param {number} term_code
  */
-async function getCRN(crn, term_code) {
+export async function getCRN(crn, term_code) {
     const response = await fetch(`${apiURL}/api/crn/${crn}/${term_code}`, {
         method: 'GET',
     });
@@ -77,5 +77,15 @@ export async function getMultipleCRN(crns, term_code) {
     const response = await fetch(`${apiURL}/api/get/crns/${term_code}/${crns}`, {
         method: 'GET',
     });
+    return await response.json();
+}
+
+/**
+ * Query the database for all classes over all terms
+ *
+ * @returns
+ */
+export async function getAllClasses() {
+    const response = await fetch(`${apiURL}/api/get/allclasses`, {method:'GET'});
     return await response.json();
 }

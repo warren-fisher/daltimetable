@@ -233,6 +233,22 @@ def raw_query_helper(results):
         data[d['name']] = d
     return data
 
+def get_all_crn():
+    s = text("""SELECT C_CRN, T_CODE FROM classInfo""")
+
+    result = engine.connect().execute(s)
+    if result is None:
+        return {}
+    else:
+
+        data = {}
+        for res in result:
+            d = {'crn': res[0], 't_code': res[1]}
+            # Each name unique since term-crn pair is unique
+            name = f"{d['t_code']}-{d['crn']}"
+            data[name] = d
+        return data
+
 if __name__ == "__main__":
     s = get_terms()
     print(s)

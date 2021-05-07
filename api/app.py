@@ -46,5 +46,10 @@ def get_multiple_crns(term, crns):
     result = sql.multiple_crn_query(crns, term)
     return jsonify(result)
 
+@app.route('/api/get/allclasses', methods=["GET"])
+def get_all_classes():
+    result = sql.get_all_crn()
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)
