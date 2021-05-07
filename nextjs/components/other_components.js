@@ -38,6 +38,8 @@ export function ClassInfo(props) {
 /**
  * Class component representing a toggle switch with many options to select what term to choose.
  *
+ *TODO: move / remove
+ *
  * @param {obj} props.terms all terms to select from and their truthy/falsy state
  * @param {func} props.handleChange onChange function to update state
  */

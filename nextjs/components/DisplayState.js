@@ -1,5 +1,7 @@
 import React from 'react';
 
+// TODO: classes can start at 8:05 (or earlier?)
+
 /**
  * Class component to draw the entire table of classes. Receives props from SearchState or RenderTable.
  *
