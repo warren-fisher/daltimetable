@@ -85,10 +85,10 @@ footer {
     --button-border: rgb(214, 214, 214);
 }
 
-#term-selector {
+/* #term-selector {
     display: flex;
     flex-direction: row;
-}
+} */
 
 .term {
     border-radius: 10px;

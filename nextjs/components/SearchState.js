@@ -3,6 +3,8 @@ import { CheckboxDay, ClassInfo, TermSelect } from './other_components.js';
 import { DisplayState } from './DisplayState.js'
 import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 
+import { TermAndClasses } from './CanvasAndSelector.js';
+
 /**
  * Function component to represent the form. State is governed by the higher order component 'Home'.
  *
@@ -83,14 +85,18 @@ export function SearchState(props) {
                 <button onClick={() => { navigator.clipboard.writeText(`${document.URL}share/${base36_code}`) }}>Copy link to share with your friends</button>
             </div>
 
+            <TermAndClasses
+                width={props.size.width}
+                height={props.size.height}
+                classesToDisplay={props.classesSelected}
+                />
 
-
-            <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
+            {/* <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
 
             <DisplayState
                 classes={classesToDisplay}
                 width={props.size.width}
-                height={props.size.height} />
+                height={props.size.height} /> */}
 
             <div className="classes">
                 {data.map((cls) => {
