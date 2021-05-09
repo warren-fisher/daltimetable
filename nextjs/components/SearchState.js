@@ -79,7 +79,7 @@ export function SearchState(props) {
                 <div id="days">
                     {DAYS.map((day) => {
                         let checked = props.checkboxes[day];
-                        return <CheckboxDay day={day} checked={checked} handleChange={props.handleChange} />
+                        return <CheckboxDay key={day} day={day} checked={checked} handleChange={props.handleChange} />
                     }
                     )}
                 </div>

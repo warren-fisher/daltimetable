@@ -2,16 +2,16 @@ import '../styles/globals.css'
 import '../styles/index.css'
 import Navigate from '../components/navigate.js';
 
-import {ContextWrapper} from '../components/userContext.js';
+import {UserWrapper, useUser} from '../components/contexts/user.js';
 
 
 function MyApp({ Component, pageProps }) {
     return (
-        <ContextWrapper>
+        <UserWrapper>
             <Navigate>
                 <Component {...pageProps} />
             </Navigate>
-        </ContextWrapper>
+        </UserWrapper>
     );
 };
 
