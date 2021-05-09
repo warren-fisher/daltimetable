@@ -5,6 +5,8 @@ import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 
 import { TermAndClasses } from './CanvasAndSelector.js';
 
+import { useTerm } from './contexts/terms.js';
+
 /**
  * Function component to represent the form. State is governed by the higher order component 'Home'.
  *
@@ -18,6 +20,9 @@ import { TermAndClasses } from './CanvasAndSelector.js';
  * @param {func} props.getTermState to get the currently selected term
  */
 export function SearchState(props) {
+
+    const { term, setTerm, allTerms, setAllTerms } = useTerm();
+
     const data = props.classes;
 
     // This was used for hex data

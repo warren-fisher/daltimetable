@@ -7,6 +7,7 @@ import {useState, useEffect} from 'react';
 import {useRouter} from 'next/router';
 
 import {TermAndClasses} from '../../components/CanvasAndSelector.js';
+import { TermWrapper } from '../../components/contexts/terms.js';
 
 /**
  * Intermediary function used by react-router to render DisplayState without setting the state of the form.
@@ -64,11 +65,13 @@ function RenderTable(props) {
         // TODO: proper height, width
         <div id='share-link-main'>
             <h3>ID: {id}</h3>
-            <TermAndClasses
-                width={1000}
-                height={1000}
-                classesToDisplay={classes}
-            />
+            <TermWrapper>
+                <TermAndClasses
+                    width={1000}
+                    height={1000}
+                    classesToDisplay={classes}
+                />
+            </TermWrapper>
 
         </div>
     );

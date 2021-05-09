@@ -6,6 +6,8 @@ import {DisplayState} from '../components/DisplayState.js';
 
 import {useState, useEffect} from 'react';
 
+import {useTerm} from '../components/contexts/terms.js';
+
 /**
  * Intermediary function used by react-router to render DisplayState without setting the state of the form.
  * TODO: probably dont even need this function, also it doesnt work right now due to changes (multiple terms)
@@ -18,8 +20,10 @@ import {useState, useEffect} from 'react';
  */
 export function TermAndClasses(props) {
 
-    const [term, setTerm] = useState('');
-    const [allTerms, setAllTerms] = useState({});
+    const {term, setTerm, allTerms, setAllTerms} = useTerm();
+
+    // const [term, setTerm] = useState('');
+    // const [allTerms, setAllTerms] = useState({});
 
     const handleChange = (e) => {
         const target = e.target;

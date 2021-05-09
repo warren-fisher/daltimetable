@@ -9,6 +9,7 @@ import {Link} from 'next/link';
 
 import {masterQuery, getTerms, getSearch,
         getCRN, getMultipleCRN} from '../components/api/api.js';
+import { TermWrapper } from '../components/contexts/terms.js';
 
 /**
  * Main react component that governs state of the form, as well as navigation of the app.
@@ -272,6 +273,7 @@ class Home extends React.Component {
         return (
             <>
                 <div id='main'>
+                    <TermWrapper>
                             <SearchState
                                 handleChange={this.handleChange}
                                 classes={this.state.classes}
@@ -282,6 +284,7 @@ class Home extends React.Component {
                                 terms={this.state.terms}
                                 getTermState={this.getTermState}
                             />
+                    </TermWrapper>
                 </div>
             </>
         )
