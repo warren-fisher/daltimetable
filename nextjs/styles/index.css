@@ -85,17 +85,25 @@ footer {
     --button-border: rgb(214, 214, 214);
 }
 
-/* #term-selector {
+#term-selector {
     display: flex;
+    flex-flow: wrap;
     flex-direction: row;
+}
+/* .term-div {
+    width: 33vw;
 } */
 
-.term {
+/* .term {
+    display: none;
+} */
+
+/* .term {
     border-radius: 10px;
     padding: 10px;
     margin: 10px 10px 10px 10px;
     background-color: var(--button);
-}
+} */
 
 .term:active {
     background-color: var(--button-down);

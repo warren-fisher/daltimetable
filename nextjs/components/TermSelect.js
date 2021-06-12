@@ -19,7 +19,7 @@ export function TermSelect(props) {
 
         <div id="term-selector">
             {Object.keys(terms).map((term) =>
-                <div key={index++}>
+                <div key={index++} className="term-div">
                 <input type="radio" className="term" checked={term == props.term} value={term} id={term} onChange={props.handleChange}/>
                 <label htmlFor={term}>{term}</label>
                 </div>
