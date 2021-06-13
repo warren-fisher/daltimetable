@@ -25,6 +25,8 @@ export function CheckboxDay(props) {
  */
 export function ClassInfo(props) {
     const d = props.data;
+    //TODO: fix
+    //TODO: crn not unique id for div
     return (
         <div className="class_" id={d.crn}>
             <label htmlFor={props.name}></label>

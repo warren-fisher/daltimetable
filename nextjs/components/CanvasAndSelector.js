@@ -22,9 +22,6 @@ export function TermAndClasses(props) {
 
     const {term, setTerm, allTerms, setAllTerms} = useTerm();
 
-    // const [term, setTerm] = useState('');
-    // const [allTerms, setAllTerms] = useState({});
-
     const handleChange = (e) => {
         const target = e.target;
         if (target.checked) {
@@ -32,30 +29,10 @@ export function TermAndClasses(props) {
         }
     }
 
-    useEffect(() => {
-        async function getData() {
-            let res = await getTerms();
-            let tempAllTerms = {}
-            let first = true;
-
-            for (let term_code in res) {
-                let name = res[term_code];
-                tempAllTerms[name] = term_code;
-
-                setAllTerms(tempAllTerms);
-
-                if (first) {
-                    setTerm(name);
-                    console.log(name);
-                    first = false;
-                }
-            }
-        }
-        getData();
-    }, []);
-
     let classesThisTerm = {};
 
+    //TODO: whats this do
+    //TODO: make better?
     if (term != '' && props.classesToDisplay != {}) {
         const term_code = allTerms[term]
         classesThisTerm = props.classesToDisplay[term_code];

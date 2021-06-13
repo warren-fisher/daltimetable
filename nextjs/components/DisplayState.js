@@ -183,6 +183,12 @@ export class DisplayState extends React.Component {
      * @param {object} cls
      */
     drawClass(ctx, cls) {
+        if (cls == undefined) {
+            console.error("err drawing");
+            return;
+        }
+        console.log("drawing", cls);
+
         const start = cls.start_time;
         const end = cls.end_time;
 

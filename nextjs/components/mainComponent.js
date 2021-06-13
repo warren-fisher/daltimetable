@@ -14,7 +14,7 @@ import { TermWrapper } from '../components/contexts/terms.js';
 /**
  * Main react component that governs state of the form, as well as navigation of the app.
  */
-export class Home extends React.Component {
+class Home extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -30,6 +30,18 @@ export class Home extends React.Component {
             size: { width: 1, height: 1 },
             terms: {}
         }
+
+        // // TODO: will this reset stuff
+        // for (let name in this.props.termCtx.allTerms) {
+        //     let term_code = termData[name];
+        //     console.log("for = ", term_code);
+        //     this.setState({
+        //         classesSelected: {
+        //             ...this.state.classesSelected,
+        //             [term_code]: {}
+        //         }
+        //     });
+        // }
     }
 
     /**
@@ -51,32 +63,41 @@ export class Home extends React.Component {
         window.addEventListener("resize", this.updateDimensions.bind(this));
 
         // Setting up some initial state based on the terms received from the API
-        let resp = getTerms();
-        resp.then(result => {
-            let terms = {};
-            let termsSelected = {};
-            let first = true;
-            for (let term_code in result) {
-                let name = result[term_code];
 
-                this.setState({
-                    classesSelected: {
-                        ...this.state.classesSelected,
-                        [term_code]: {}
-                    }
-                })
+        const termCtx = this.props.termCtx;
+
+        //TODO: mega OPTIMIZE
+
+        let terms = {};
+        let resp = getTerms();
+        resp.then(res => {
+            console.log("result", res);
+
+            let tempAllTerms = {}
+            let first = true;
+
+            for (let term_code in res) {
+                let name = res[term_code];
+                tempAllTerms[name] = term_code;
+
+                //TODO: set outside loop
+                termCtx.setAllTerms(tempAllTerms);
+
+                this.setState({classesSelected: {
+                    ...this.state.classesSelected,
+                    [term_code]: {}
+                }})
+
+                if (first) {
+                    termCtx.setTerm(name);
+                    console.log(name);
+                    first = false;
+                }
 
                 terms[name] = term_code;
-                // TODO: clean up this mess. done because we always want a term selected
-                if (first == true) {
-                    termsSelected[name] = true;
-                    first = false;
-                } else {
-                    termsSelected[name] = false;
-                }
             }
-            this.setState({ terms: terms, termsSelected: termsSelected });
-        }).catch(() => { console.log('fail') })
+            this.setState({terms: terms});
+        }).catch(() => (console.log("fail")));
     }
 
     /**
@@ -113,7 +134,7 @@ export class Home extends React.Component {
         const target = e.target;
         const name = target.name;
         const val = target.value;
-        const terms = Object.keys(this.state.terms);
+        const terms = this.props.termCtx.allTerms;
         const innerText = target.innerText;
 
         // If this is a selection box for a day you want
@@ -127,28 +148,23 @@ export class Home extends React.Component {
             }, this.handleUpdate);
             // If this a selection box for the term you want
             // TODO: can probably optimize this
-        } else if (terms.includes(innerText)) {
-            let termsSelected = {};
-            for (let term of terms) {
-                if (term == innerText) {
-                    // Allows toggling selection between no term and a term
-                    termsSelected[term] = true;
-                    // TODO: determine what happens if no term is selected
-                } else {
-                    // Only one term should be selected at a time
-                    termsSelected[term] = false;
-                }
-            }
-            this.setState({ termsSelected: termsSelected }, this.handleUpdate);
-            // If this is a selection box for a class, because classes have their name as their
-            // term code added as two digits in front of their CRN, thus the name is a number
-            // The setState calls here do not need a handleUpdate callback because they did not change
-            // the search parameters.
-        } else if (!isNaN(name)) {
+        }
+        // If this is a selection box for a class, because classes have their name as their
+        // term code added as two digits in front of their CRN, thus the name is a number
+        // The setState calls here do not need a handleUpdate callback because they did not change
+        // the search parameters.
+
+        //TODO: classes selected broken
+        //TODO: name not working
+        else if (!isNaN(name)) {
             const term_code = Number(name.slice(0, 2));
             // const term_name = this.getTermNameFromCode(term_code);
             const crn = name.slice(2,);
-            if (!this.state.classesSelected[term_code][crn]) {
+
+            console.log("log checkbox action", target, name, crn, term_code);
+            // return;
+            if (this.state.classesSelected[term_code] != undefined &&
+                !this.state.classesSelected[term_code][crn]) {
                 let resp = getCRN(crn, term_code);
                 resp.then(result => {
                     this.setState({
@@ -190,6 +206,7 @@ export class Home extends React.Component {
         }).catch(() => { console.log('fail') })
     }
 
+    //TODO: fix
     /**
      * Get the name of a term that has this term_code.
      *
@@ -235,16 +252,19 @@ export class Home extends React.Component {
      * Return the term code of the term selected, or null if no term is selected.
      */
     getTermState() {
-        // Happens at the start when the API response to the getting terms has not been received
-        if (this.state.termsSelected === undefined) {
+
+        console.log("hefdasldfdasf", this.props.termCtx);
+        let termCtx = this.props.termCtx;
+
+        if (termCtx === undefined) {
             return null;
         }
-        for (let term of Object.keys(this.state.termsSelected)) {
-            if (this.state.termsSelected[term] == true) {
-                return this.state.terms[term];
-            }
+
+        // Happens at the start when the API response to the getting terms has not been received
+        if (termCtx.term === undefined) {
+            return null;
         }
-        return null;
+        return termCtx.allTerms[termCtx.term];
     }
 
     /**
@@ -279,7 +299,6 @@ export class Home extends React.Component {
                         classesSelected={this.state.classesSelected}
                         checkboxes={this.state.checkboxes}
                         size={this.state.size}
-                        termsSelected={this.state.termsSelected}
                         terms={this.state.terms}
                         getTermState={this.getTermState}
                     />
@@ -289,4 +308,4 @@ export class Home extends React.Component {
     }
 }
 
-// export default Home;
+export default Home;

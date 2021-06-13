@@ -5,7 +5,7 @@ import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 
 import { TermAndClasses } from './CanvasAndSelector.js';
 
-import { useTerm } from './contexts/terms.js';
+import { useTerm, useAllTerm } from './contexts/terms.js';
 
 /**
  * Function component to represent the form. State is governed by the higher order component 'Home'.
@@ -13,7 +13,6 @@ import { useTerm } from './contexts/terms.js';
  * @param {arr} props.classes all classes to display due to the users search
  * @param {obj} props.classesSelected all classes the user has selected
  * @param {func} props.handleChange onChange function to update state
- * @param {obj} props.termsSelected all terms to select from and their truthy/falsy state
  * @param {obj} props.checkboxes state of each checkbox in the form (so that it can be a 'controlled' form)
  * @param {obj} props.size of the users screen
  * @param {obj} props.terms the term codes to use in ClassInfo name scheme
@@ -21,7 +20,8 @@ import { useTerm } from './contexts/terms.js';
  */
 export function SearchState(props) {
 
-    const { term, setTerm, allTerms, setAllTerms } = useTerm();
+    // const { term, setTerm, allTerms, setAllTerms } = useTerm();
+    let termCtx = useTerm();
 
     const data = props.classes;
 
@@ -96,17 +96,19 @@ export function SearchState(props) {
                 classesToDisplay={props.classesSelected}
                 />
 
-            {/* <TermSelect handleChange={props.handleChange} terms={props.termsSelected} />
-
-            <DisplayState
-                classes={classesToDisplay}
-                width={props.size.width}
-                height={props.size.height} /> */}
-
             <div className="classes">
                 {data.map((cls) => {
-                    let term_str = `${cls.term} ${cls.year}`;
-                    let term_code = props.terms[term_str];
+                    //TODO: remove if
+                    //TODO: is this showing all classes or just ones this term??
+                    // if (classesToDisplay === undefined) { 
+                    //     return;
+                    // }
+
+                    //TODO: now term stuff is different
+                    // let term_str = `${cls.term} ${cls.year}`;
+                    // let term_code = props.terms[term_str];
+
+                    let term_code = termCtx.allTerms[termCtx.term];
 
                     if (String(term_code).length == 1) {
                         term_code = "0" + String(term_code);
@@ -114,9 +116,12 @@ export function SearchState(props) {
 
                     {/* String concatonation */}
                     let name = term_code + cls.crn;
+                    // console.log("name=", name);
 
+                    // Just in case
+                    let checked = (classesToDisplay === undefined) ? false : classesToDisplay[cls.crn];
                     return <ClassInfo name={name} data={cls} handleChange={props.handleChange}
-                        checked={classesToDisplay[cls.crn]} />
+                        checked={checked} />
                 })}
             </div>
         </div>
