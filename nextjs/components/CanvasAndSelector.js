@@ -40,6 +40,8 @@ export function TermAndClasses(props) {
         classesThisTerm = (classesThisTerm == undefined ? {} : classesThisTerm);
     }
 
+    console.log("this term", classesThisTerm);
+
     return (
         <>
             <TermSelect handleChange={handleChange} term={term} terms={allTerms} />

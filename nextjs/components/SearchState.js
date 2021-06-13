@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckboxDay, ClassInfo, TermSelect } from './other_components.js';
+import { CheckboxDay, ClassInfo} from './other_components.js';
 import { DisplayState } from './DisplayState.js'
 import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
 
@@ -98,15 +98,6 @@ export function SearchState(props) {
 
             <div className="classes">
                 {data.map((cls) => {
-                    //TODO: remove if
-                    //TODO: is this showing all classes or just ones this term??
-                    // if (classesToDisplay === undefined) { 
-                    //     return;
-                    // }
-
-                    //TODO: now term stuff is different
-                    // let term_str = `${cls.term} ${cls.year}`;
-                    // let term_code = props.terms[term_str];
 
                     let term_code = termCtx.allTerms[termCtx.term];
 
@@ -114,13 +105,12 @@ export function SearchState(props) {
                         term_code = "0" + String(term_code);
                     }
 
-                    {/* String concatonation */}
-                    let name = term_code + cls.crn;
-                    // console.log("name=", name);
+                    {/* String concatonation not add*/}
+                    let name = term_code + String(cls.crn);
 
                     // Just in case
                     let checked = (classesToDisplay === undefined) ? false : classesToDisplay[cls.crn];
-                    return <ClassInfo name={name} data={cls} handleChange={props.handleChange}
+                    return <ClassInfo key={name} name={name} data={cls} handleChange={props.handleChange}
                         checked={checked} />
                 })}
             </div>

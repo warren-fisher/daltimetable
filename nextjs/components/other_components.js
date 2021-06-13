@@ -19,7 +19,7 @@ export function CheckboxDay(props) {
  * Functional component representing each class to select for query purposes.
  *
  * @param {obj} props.data data about the class
- * @param {str} props.name what to name the class
+ * @param {str} props.name what to name the class (term code concat with crn) eg "05" + 14831
  * @param {bool} props.checked whether or not this class is selected
  * @param {func} props.handleChange onChange function to update state
  */
@@ -27,52 +27,12 @@ export function ClassInfo(props) {
     const d = props.data;
     //TODO: fix
     //TODO: crn not unique id for div
+    //TODO: do name calculation in here
     return (
-        <div className="class_" id={d.crn}>
+        <div className="class_" id={"div-" +props.name}>
             <label htmlFor={props.name}></label>
             <input type='checkbox' id={props.name} name={props.name} onChange={props.handleChange} checked={props.checked} />
-        CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}
+            CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}
         </div>
     );
-}
-
-
-/**
- * Class component representing a toggle switch with many options to select what term to choose.
- *
- *TODO: move / remove
- *
- * @param {obj} props.terms all terms to select from and their truthy/falsy state
- * @param {func} props.handleChange onChange function to update state
- */
-export class TermSelect extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidUpdate(prevProps) {
-
-        console.log("update succesful");
-        // Do this so that component re-renders on update
-        if (this.props.terms !== prevProps.terms) {
-            this.setState({change: true});
-        }
-    }
-
-    render() {
-        if (this.props.terms === undefined) {
-            return null;
-        } else {
-            const terms = Object.keys(this.props.terms);
-            return (<div id="term-selector">
-                {terms.map((term) =>
-                    <div name={term} onClick={this.props.handleChange}
-                        className={this.props.terms[term] ? 'term mark-selected' : 'term mark-deselected'}>
-                        <p>{term}</p>
-                    </div>
-                )}
-            </div>);
-        }
-    }
 }
