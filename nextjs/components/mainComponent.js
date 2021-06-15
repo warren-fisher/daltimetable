@@ -17,8 +17,13 @@ import { TermWrapper } from '../components/contexts/terms.js';
 class Home extends React.Component {
     constructor(props) {
         super(props);
+
+        // Bind functions passed down
         this.handleChange = this.handleChange.bind(this);
         this.getTermState = this.getTermState.bind(this);
+        this.getApiState = this.getApiState.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
+
         this.state = {
             classes: [],
             checkboxes: DAYS.reduce((options, option) => ({
@@ -30,18 +35,6 @@ class Home extends React.Component {
             size: { width: 1, height: 1 },
             terms: {}
         }
-
-        // // TODO: will this reset stuff
-        // for (let name in this.props.termCtx.allTerms) {
-        //     let term_code = termData[name];
-        //     console.log("for = ", term_code);
-        //     this.setState({
-        //         classesSelected: {
-        //             ...this.state.classesSelected,
-        //             [term_code]: {}
-        //         }
-        //     });
-        // }
     }
 
     /**
@@ -199,6 +192,7 @@ class Home extends React.Component {
      * If not used then it would search with outdated information.
      */
     handleUpdate() {
+        console.log("update state", this.getApiState());
         let [search, start, end, days, crn, dept, term_code] = this.getApiState();
         let resp = masterQuery(search, crn, dept, days, start, end, term_code);
         resp.then(result => {
@@ -236,6 +230,9 @@ class Home extends React.Component {
 
     /**
      * Get isNull state of every parameter in the search query.
+     * todo:: not working
+     * TODO:: time_end, time_start, string_seach have hyphens in state
+     * TODO: were CRN, DEPT ever used????
      */
     getApiState() {
         let search = this.isNull(this.state.string_search);
@@ -250,15 +247,14 @@ class Home extends React.Component {
 
     /**
      * Return the term code of the term selected, or null if no term is selected.
+     * 
+     * TODO: this gets called soooooo many times on reload
      */
     getTermState() {
 
+
         console.log("hefdasldfdasf", this.props.termCtx);
         let termCtx = this.props.termCtx;
-
-        if (termCtx === undefined) {
-            return null;
-        }
 
         // Happens at the start when the API response to the getting terms has not been received
         if (termCtx.term === undefined) {
@@ -301,6 +297,7 @@ class Home extends React.Component {
                         size={this.state.size}
                         terms={this.state.terms}
                         getTermState={this.getTermState}
+                        handleTermUpdate={this.handleUpdate}
                     />
                 </div>
             </>

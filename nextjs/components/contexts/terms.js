@@ -9,6 +9,11 @@ export function TermWrapper({ children }) {
     const [term, setTerm] = useState('');
     const [allTerms, setAllTerms] = useState({});
 
+    React.useEffect(() => {
+        const t = term;
+        console.log("curr term", term);
+    }, [term])
+
 
     return (
         <TermContext.Provider value={{term, setTerm, allTerms, setAllTerms}}>

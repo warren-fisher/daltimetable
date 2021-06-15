@@ -1,13 +1,15 @@
 # Bugs
-## Undefined crash
-1. Go to fall 2021 select Monday, choose crn=14831 should be first
-2. Go to winter 2021 select Monday, choose crn=14831 should be first
-3. crash
-4. Class with crn 14831 does not exist in winter
-5. If you change search parameters, it updates and doesnt see that class anymore
-6. Analysis: changing term doesnt change search results until 1 more update
 
-## Changing uncontrolled to controlled input
-1. In classInfo
-2. Reload page, choose monday and select something
-3. Stack trace in console
+
+## Search doesnt work
+1. Search for anything, it doesnt update properly
+2. The like %% operators
+3. The term buttons don't update search
+4. Search might be delayed by 1 refresh?? (think fixed)
+5. Search term updates 1-2 refresh later?
+6. Confirmed, clicking term button does not refresh search state
+7. Once the button is changed then it updates on next getApiState()
+8. Passed down handleUpdate, now it calls it but state is 1 refresh behind
+
+SearchState is not passed right classes selected arr
+apiGetResponse state or whatever in mainComp not working

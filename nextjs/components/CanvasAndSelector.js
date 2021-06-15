@@ -17,6 +17,7 @@ import {useTerm} from '../components/contexts/terms.js';
  * @param {num} props.width Horizontal width of the users screen
  * @param {num} props.height Vertical height of the users screen
  * @param {obj} props.classesToDisplay the classes to show
+ * @param {func} props.handleTermUpdate the callback to update the search state
  */
 export function TermAndClasses(props) {
 
@@ -28,6 +29,11 @@ export function TermAndClasses(props) {
             setTerm(target.value);
         }
     }
+
+    // Use effect monitor term to update search parameters
+    useEffect(() => {
+        props.handleTermUpdate();
+    }, [term]);
 
     let classesThisTerm = {};
 
@@ -44,7 +50,7 @@ export function TermAndClasses(props) {
 
     return (
         <>
-            <TermSelect handleChange={handleChange} term={term} terms={allTerms} />
+            <TermSelect handleChange={handleChange} term={term} terms={allTerms} handleTermUpdate={props.handleTermUpdate}/>
 
             <DisplayState
                 classes={classesThisTerm}
