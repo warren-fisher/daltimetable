@@ -417,9 +417,9 @@ def store_district(name, code):
     with open('database.sql', 'a') as f:
         f.write(sql)
 
-terms = {"2020 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202030&s_crn=&s_subj=",
-        "2020 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202110&s_subj=",
-        "2021 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202120&s_subj="}
+terms = {"2021 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202130&s_subj=",
+         "2021 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202210&s_subj=",
+         "2022 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202220&s_subj="}
 
 districts = {
     "Halifax": 100,
