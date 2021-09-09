@@ -17,7 +17,9 @@ input {
     width: 50vw;
 }
 
-form {
+#search_form {
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
     display: flex;
     flex-direction: column;
 }
@@ -87,23 +89,27 @@ footer {
 
 #term-selector {
     display: flex;
-    flex-flow: wrap;
     flex-direction: row;
 }
-/* .term-div {
-    width: 33vw;
-} */
 
-/* .term {
-    display: none;
-} */
-
-/* .term {
+.term {
     border-radius: 10px;
-    padding: 10px;
     margin: 10px 10px 10px 10px;
     background-color: var(--button);
-} */
+}
+
+/* Make label fit div so that can be clicked*/
+.term label {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: inline-block;
+}
+
+.term-radio 
+{
+    display: none;
+}
 
 .term:active {
     background-color: var(--button-down);

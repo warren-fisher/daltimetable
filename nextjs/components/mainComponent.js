@@ -68,15 +68,15 @@ class Home extends React.Component {
             let firstTerm = undefined;
             let terms = {};
 
+            let classesSelected = this.state.classesSelected;
+
             for (let term_code in res) 
             {
                 let name = res[term_code];
                 terms[name] = term_code;
 
-                this.setState({classesSelected: {
-                    ...this.state.classesSelected,
-                    [term_code]: {}
-                }})
+                classesSelected = {...classesSelected,
+                    [term_code]: {}};
 
                 if (firstTerm === undefined) 
                 {
@@ -85,7 +85,8 @@ class Home extends React.Component {
             }
 
             termCtx.setAllTerms(terms);
-            this.setState({terms: terms});
+            this.setState({terms: terms,
+                           classesSelected: classesSelected});
             // changing the termCtx name will be monitored as a useEffect in CanvasAndSelector.js and will update search state
             // this is why we do it last
             termCtx.setTerm(firstTerm);
@@ -126,8 +127,6 @@ class Home extends React.Component {
         const target = e.target;
         const name = target.name;
         const val = target.value;
-        const terms = this.props.termCtx.allTerms;
-        const innerText = target.innerText;
 
         // If this is a selection box for a day you want
         if (DAYS.includes(name)) {
@@ -236,8 +235,6 @@ class Home extends React.Component {
 
     /**
      * Get isNull state of every parameter in the search query.
-     * todo:: not working
-     * TODO:: time_end, time_start, string_seach have hyphens in state
      * TODO: were CRN, DEPT ever used????
      */
     getApiState() {

@@ -36,6 +36,9 @@ export function SearchState(props) {
                         [term]: selectedCRNs};
     }
 
+    // props.classesSelected = object of class objects per term, selectedClasses = object of arrays of class crn per term
+    console.log("props.classesSelected=", props.classesSelected, "vs created selectedClasses=", selectedClasses);
+
     // TODO: fixme for higher base & optimize crn??
     const base36_code = storeClassesAsId(selectedClasses);
     console.log('base36', base36_code);
@@ -46,27 +49,34 @@ export function SearchState(props) {
             <h2>How to use this app</h2>
             <p>0. Select the term you want to create a schedule for. This button is below the form and above the schedule image.</p>
             <p>1. Enter your search parameters in this form</p>
-            <p>2. The search will automatically happen once parameters are entered. If you scroll below the empty schedule there will be a long list of classes</p>
+            <p>2. The classes for your search will update. If you scroll below the empty schedule there will be a list of classes</p>
             <p>3. The more specific your search is the better, since less classes will appear! Only classes which meet all search parameters are shown.</p>
             <p>4. Click on the checkbox to the left of a class to add it to your schedule</p>
             <p>5. The schedule image will change and display your newly chosen class in the appropriate spot</p>
-            <p>6. Once you have selected all the classes you can click the "copy link to share with your friends button"</p>
-            <p>7. This link will store your schedule in the URL (no account neccesary). Save the link and visit it when needed.</p>
+            <p>6. You can add classes for multiple terms by clicking the button for Summer, Fall or Winter. This will save your current selection 
+                for that term, and once you switch back to the old term no information will be lost. </p>
+            <p>7. Once you have selected all the classes you can click the "copy link to share with your friends button"</p>
+            <p>8. This link will store your schedule in the URL (no account neccesary). Save the link and visit it when needed.</p>
 
             </div>
 
-            <form>
+            <form id="search_form">
                 {/* TODO: what is props.value?? */}
-                <label htmlFor="string-search">Search by class for name</label>
-                <input type='text' id="string-search" name="string-search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
+                <label htmlFor="string_search">Search for a class by name</label>
+                <input type='text' id="string_search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
 
-                <label htmlFor="time">Search by class within time slot</label>
+                <label htmlFor="time">Search for a class within the time interval.</label>
+                <p>Input your times like: 23 for 23:00, 2359 for 23:59, or 7 for 07:00</p>
                 <div id="time">
-                    <input type='text' id='time-start' name='time-start' placeholder='start time' onChange={props.handleChange} value={props.value} />
-                    <input type='text' id='time-end' name='time-end' placeholder='end time' onChange={props.handleChange} value={props.value} />
+                    <input type='text' id='time_start' name='time_start' placeholder='start time' onChange={props.handleChange} value={props.value} />
+                    <input type='text' id='time_end' name='time_end' placeholder='end time' onChange={props.handleChange} value={props.value} />
                 </div>
 
                 <div id="days">
+                    <p>Select the day(s) you want classes on. It will only include classes that are on days you selected. 
+                       For example, if you select only Friday it will not show any class with lectures on Wednesday and Friday. 
+                       You must select Wednesday and Friday (and potentially more days) to see that. By default if no days are selected 
+                       then it is treated as if you do not care which day a class is on. </p>
                     {DAYS.map((day) => {
                         let checked = props.checkboxes[day];
                         return <CheckboxDay key={day} day={day} checked={checked} handleChange={props.handleChange} />

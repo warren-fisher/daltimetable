@@ -11,6 +11,7 @@ const apiURL = "http://localhost:5000";
      * @param {string} days
      * @param {string} start
      * @param {string} end
+     * @param {number} term_code
      */
 export async function masterQuery(search, crn, dept, days, start, end, term_code) {
     const response = await fetch(`${apiURL}/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {

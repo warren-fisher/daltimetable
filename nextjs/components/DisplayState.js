@@ -109,14 +109,11 @@ export class DisplayState extends React.Component {
             ctx.fillText(str, 25, y + yOffset, xOffset - 10);
         }
 
-        console.log(this.props.classes);
-
         let keys = Object.keys(this.props.classes);
         for (const name of keys) {
             if (this.props.classes[name] === false) {
                 continue;
             }
-            console.log(name);
             this.drawClass(ctx, this.props.classes[name]);
         }
     }
