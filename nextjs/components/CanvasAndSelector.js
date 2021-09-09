@@ -30,12 +30,14 @@ export function TermAndClasses(props) {
         }
     }
 
-    // Use effect monitor term to update search parameters
+    // Use effect monitor term to update search parameters on any term change
     useEffect(() => {
         props.handleTermUpdate();
     }, [term]);
 
     let classesThisTerm = {};
+
+    console.log("props.classesToDisplay", props.classesToDisplay);
 
     //TODO: whats this do
     //TODO: make better?
@@ -46,11 +48,11 @@ export function TermAndClasses(props) {
         classesThisTerm = (classesThisTerm == undefined ? {} : classesThisTerm);
     }
 
-    console.log("this term", classesThisTerm);
+    console.log("classes this term", classesThisTerm);
 
     return (
         <>
-            <TermSelect handleChange={handleChange} term={term} terms={allTerms} handleTermUpdate={props.handleTermUpdate}/>
+            <TermSelect handleChange={handleChange} handleTermUpdate={props.handleTermUpdate}/>
 
             <DisplayState
                 classes={classesThisTerm}

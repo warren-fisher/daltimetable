@@ -16,13 +16,10 @@ import { useTerm, useAllTerm } from './contexts/terms.js';
  * @param {obj} props.checkboxes state of each checkbox in the form (so that it can be a 'controlled' form)
  * @param {obj} props.size of the users screen
  * @param {obj} props.terms the term codes to use in ClassInfo name scheme
- * @param {func} props.getTermState to get the currently selected term //TODO: not used
- * @param {func} props.handleTermUpdate the callback to use once the term button is updated //todo: not used
+ * @param {func} props.getTermState to get the currently selected term
+ * @param {func} props.handleTermUpdate the callback to use once the term button is updated //todo: used for prop drilling
  */
 export function SearchState(props) {
-
-    let termCtx = useTerm();
-
     const data = props.classes;
 
     //TODO: redundant with classesSelected
@@ -92,7 +89,7 @@ export function SearchState(props) {
 
             <div className="classes">
                 {data.map((cls) => {
-                    let term_code = termCtx.allTerms[termCtx.term];
+                    let term_code = props.getTermState();
 
                     let checked = props.classesSelected[term_code][cls.crn];
 

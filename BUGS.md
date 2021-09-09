@@ -13,3 +13,15 @@
 
 SearchState is not passed right classes selected arr
 apiGetResponse state or whatever in mainComp not working
+
+
+# loading crash
+### Fixed
+
+1. load new site in page
+2. summer 2021 selected probably
+3. select first class: it crashes (perhaps might be class from another term)
+4. if you switch to fall and back then you can properly select
+5. Using refresh gets it back into broken state
+    6. where it is CRN=21348 as first option for summer 2021 which is not a summer class I believe
+    7. investigated and this is a winter class, so why is it appearing?

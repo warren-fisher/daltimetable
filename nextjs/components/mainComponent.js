@@ -61,35 +61,34 @@ class Home extends React.Component {
 
         //TODO: mega OPTIMIZE
 
-        let terms = {};
         let resp = getTerms();
         resp.then(res => {
             console.log("result", res);
 
-            let tempAllTerms = {}
-            let first = true;
+            let firstTerm = undefined;
+            let terms = {};
 
-            for (let term_code in res) {
+            for (let term_code in res) 
+            {
                 let name = res[term_code];
-                tempAllTerms[name] = term_code;
-
-                //TODO: set outside loop
-                termCtx.setAllTerms(tempAllTerms);
+                terms[name] = term_code;
 
                 this.setState({classesSelected: {
                     ...this.state.classesSelected,
                     [term_code]: {}
                 }})
 
-                if (first) {
-                    termCtx.setTerm(name);
-                    console.log(name);
-                    first = false;
+                if (firstTerm === undefined) 
+                {
+                    firstTerm = name;
                 }
-
-                terms[name] = term_code;
             }
+
+            termCtx.setAllTerms(terms);
             this.setState({terms: terms});
+            // changing the termCtx name will be monitored as a useEffect in CanvasAndSelector.js and will update search state
+            // this is why we do it last
+            termCtx.setTerm(firstTerm);
         }).catch(() => (console.log("fail")));
     }
 
@@ -194,8 +193,15 @@ class Home extends React.Component {
     handleUpdate() {
         console.log("update state", this.getApiState());
         let [search, start, end, days, crn, dept, term_code] = this.getApiState();
+        if (term_code === "!")
+        {
+            console.error("Refusing to get classes of an unselected term; skipping");
+            return;
+        }
+
         let resp = masterQuery(search, crn, dept, days, start, end, term_code);
         resp.then(result => {
+            console.log("resp to update", result);
             this.apiResponseState(result);
         }).catch(() => { console.log('fail') })
     }
@@ -251,16 +257,14 @@ class Home extends React.Component {
      * TODO: this gets called soooooo many times on reload
      */
     getTermState() {
-
-
-        console.log("hefdasldfdasf", this.props.termCtx);
-        let termCtx = this.props.termCtx;
+        const termCtx = this.props.termCtx;
 
         // Happens at the start when the API response to the getting terms has not been received
-        if (termCtx.term === undefined) {
+        if (termCtx === undefined || termCtx.term === undefined) {
+            console.error("termCtx or termCtx.terms is undefined");
             return null;
         }
-        return termCtx.allTerms[termCtx.term];
+        return this.state.terms[termCtx.term];
     }
 
     /**

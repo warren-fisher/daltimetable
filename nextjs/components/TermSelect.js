@@ -5,23 +5,19 @@ import {useTerm} from './contexts/terms.js';
 /**
  * Class component representing a toggle switch with many options to select what term to choose.
  *
- * @param {obj} props.terms all terms to select from
- * @param {string} props.term the selected term
  * @param {func} props.handleChange onChange function to update state
  */
 export function TermSelect(props) {
+    const {term, setTerm, allTerms, setAllTerms} = useTerm();
 
-    // TODO: termHandle change not working
-
-    const terms = props.terms;
     let index = 1;
     return (
 
         <div id="term-selector">
-            {Object.keys(terms).map((term) =>
+            {Object.keys(allTerms).map((thisTerm) =>
                 <div key={index++} className="term-div">
-                <input type="radio" className="term" checked={term == props.term} value={term} id={term} onChange={props.handleChange}/>
-                <label htmlFor={term}>{term}</label>
+                <input type="radio" className="term" checked={term == thisTerm} value={thisTerm} id={thisTerm} onChange={props.handleChange}/>
+                <label htmlFor={thisTerm}>{thisTerm}</label>
                 </div>
             )}
         </div>
