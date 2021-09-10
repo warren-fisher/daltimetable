@@ -30,9 +30,8 @@ export function ClassInfo(props) {
     //TODO: do name calculation in here
     return (
         <div className="class_" id={"div-" +props.name}>
-            <label htmlFor={props.name}></label>
             <input type='checkbox' id={props.name} name={props.name} onChange={props.handleChange} checked={props.checked} />
-            CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}
+            <label htmlFor={props.name}>CRN={d.crn} dept={d.department} name={d.name} start={d.start_time} end={d.end_time} days={d.dates}</label>
         </div>
     );
 }
