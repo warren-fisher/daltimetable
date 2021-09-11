@@ -234,8 +234,10 @@ def raw_query_helper(results):
     return data
 
 def get_all_crn():
-    s = text("""SELECT C_CRN, T_CODE FROM classInfo""")
-
+    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
+            C_CREDIT_HRS, YR, TERM, T_CODE FROM classInfo JOIN department USING(D_CODE)
+            JOIN terms USING(T_CODE)""")
+    
     result = engine.connect().execute(s)
     if result is None:
         return {}
@@ -243,9 +245,9 @@ def get_all_crn():
 
         data = {}
         for res in result:
-            d = {'crn': res[0], 't_code': res[1]}
+            d = format_class(res)
             # Each name unique since term-crn pair is unique
-            name = f"{d['t_code']}-{d['crn']}"
+            name = f"{res[10]}-{res[0]}"
             data[name] = d
         return data
 

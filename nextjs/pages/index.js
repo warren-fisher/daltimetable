@@ -1,17 +1,14 @@
 import React from 'react';
 
-import { TermWrapper } from '../components/contexts/terms.js';
-
 import Home from '../components/mainComponent.js';
 
-import HighOrder from '../components/highOrderComp.js';
+import { useTerm } from '../components/contexts/terms.js';
 
 function Main() {
+    const termCtx = useTerm();
     return (
-        <TermWrapper>
-            <HighOrder/>
-        </TermWrapper>
-    )
+        <Home termCtx={termCtx}/>
+    );
 }
 
 export default Main;

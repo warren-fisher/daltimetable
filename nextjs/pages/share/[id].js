@@ -1,13 +1,13 @@
 import {getClassesFromId} from '../../components/helpers.js';
 
-import {DisplayState} from '../../components/DisplayState.js';
-import {TermSelect} from '../../components/other_components.js';
+import { useTerm } from '../../components/contexts/terms.js';
+
+import { getTerms } from '../../components/api/api.js';
 
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/router';
 
 import {TermAndClasses} from '../../components/CanvasAndSelector.js';
-import { TermWrapper } from '../../components/contexts/terms.js';
 
 /**
  * Intermediary function used by react-router to render DisplayState without setting the state of the form.
@@ -36,21 +36,42 @@ function RenderTable(props) {
 
     const [classes, setClasses] = useState({});
 
-    const [term, setTerm] = useState({'Summer': true, 'Fall': false});
+    const termCtx = useTerm();
 
-    const changeTerm = (x) => {
-        let newState;
-        if (x == 0) {
-            let newState = { 'Summer': true, 'Fall': false }
-        } else if (x == 1) {
-            let newState = { 'Summer': false, 'Fall': true }
-        }
-    }
+    // TODO: both these useEffect's can be abstracted away from similar stuff in mainComponent.js
 
+    // Get the terms as a useEffect only on initial load
+    useEffect(()=>
+        {
+        let resp = getTerms();
+        resp.then(res => {
+            console.log("result", res);
+    
+            let firstTerm = undefined;
+            let terms = {};
+    
+            for (let term_code in res) 
+            {
+                let name = res[term_code];
+                terms[name] = term_code;
+    
+                if (firstTerm === undefined) 
+                {
+                    firstTerm = name;
+                }
+            }
+    
+            termCtx.setAllTerms(terms);
+            // changing the termCtx name will be monitored as a useEffect in CanvasAndSelector.js and will update search state
+            // this is why we do it last
+            termCtx.setTerm(firstTerm);
+        }).catch(() => (console.log("fail")));
+        }, []);
+
+
+    // Get the classes from the ID
     useEffect(() => {
         async function getClass() {
-
-
             // This logic is similar to that in SearchState, probably can push it into the DisplayState component?
             // by putting the term selector in there
             let all_classes = await getClassesFromId(id);
@@ -65,14 +86,13 @@ function RenderTable(props) {
         // TODO: proper height, width
         <div id='share-link-main'>
             <h3>ID: {id}</h3>
-            <TermWrapper>
-                <TermAndClasses
-                    width={1000}
-                    height={1000}
-                    classesToDisplay={classes}
-                />
-            </TermWrapper>
-
+            <TermAndClasses
+                width={1000}
+                height={1000}
+                classesToDisplay={classes}
+                // Don't need to update the searched for classes or anything on termUpdate
+                handleTermUpdate={()=>{}}
+            />
         </div>
     );
 }
