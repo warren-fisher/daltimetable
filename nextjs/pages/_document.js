@@ -6,11 +6,11 @@ class MyDocument extends Document {
             <Html lang="en">
                 <Head>
                     <meta charSet="utf-8"/>
+                    
                     <meta name="theme-color" content="#000000" />
                     <meta
                         name="description"
-                        content="Dalhouise schedule picker"
-                    />
+                        content="Dalhouise schedule picker"/>
                 </Head>
                 <body>
                     <Main />

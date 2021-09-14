@@ -190,7 +190,7 @@ class Home extends React.Component {
         let [search, start, end, days, crn, dept, term_code] = this.getApiState();
         if (term_code === "!")
         {
-            console.error("Refusing to get classes of an unselected term; skipping");
+            console.debug("Refusing to get classes of an unselected term; skipping");
             return;
         }
 
