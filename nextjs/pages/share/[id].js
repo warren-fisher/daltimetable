@@ -38,6 +38,23 @@ function RenderTable(props) {
 
     const termCtx = useTerm();
 
+    // Set our initial state. Window cannot be accessed here.
+    const [dimensions, setDimensions] = useState({height: 1000, width: 1000});
+
+    useEffect(() => {
+        const handleResize = () => {
+            setDimensions({
+                height: window.innerHeight,
+                width: window.innerWidth});
+        }
+        window.addEventListener('resize', handleResize);
+
+        // Update our window size state now. This is ok to do since useEffect is client side.
+        handleResize();
+        // On leave remove resize monitor
+        return () => window.removeEventListener('resize', handleResize)
+        }, []);
+
     // TODO: both these useEffect's can be abstracted away from similar stuff in mainComponent.js
 
     // Get the terms as a useEffect only on initial load
@@ -87,8 +104,8 @@ function RenderTable(props) {
         <div id='share-link-main'>
             <h3>ID: {id}</h3>
             <TermAndClasses
-                width={1000}
-                height={1000}
+                width={dimensions.width}
+                height={dimensions.height}
                 classesToDisplay={classes}
                 // Don't need to update the searched for classes or anything on termUpdate
                 handleTermUpdate={()=>{}}

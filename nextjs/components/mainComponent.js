@@ -1,15 +1,11 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { DisplayState } from '../components/DisplayState.js';
 import { SearchState } from '../components/SearchState.js';
 import { DAYS, storeClassesAsId, getClassesFromId } from '../components/helpers.js';
-import { TermSelect } from '../components/other_components';
 
 import {Link} from 'next/link';
 
 import {masterQuery, getTerms, getSearch,
         getCRN, getMultipleCRN} from '../components/api/api.js';
-import { TermWrapper } from '../components/contexts/terms.js';
 
 /**
  * Main react component that governs state of the form, as well as navigation of the app.
