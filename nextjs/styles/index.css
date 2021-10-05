@@ -139,6 +139,7 @@ footer {
 #contribute a {
     text-decoration: none;
     text-decoration-color: blue;
+    color: blue;
 }
 
 #contribute a:hover {

@@ -1,12 +1,6 @@
 import requests as reqs
 import re
-import sys
 import time
-import base64
-
-#TODO: classroom location data (building/campus)
-#TODO: professor data (link with rate my teacher?)
-#TODO: class size/spots open/waitlist spots open/waitlist size
 
 def clean(s):
     """
@@ -60,34 +54,6 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
 <td CLASS="dett."NOWRAP>(.*?(\d*)-(\d*)|(C/D))</td>)""", re.MULTILINE)
 
-#TODO: better matcher
-# matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
-# <td CLASS="dett(.)">(.*)</td>
-# <td CLASS="dett."><b>(.*)</b></td>
-# <td CLASS="dett.">(.*)</td>
-# <td CLASS="dett.">(.*)</td>
-# <td CLASS="dett.">(.*)</td>
-# <td CLASS="dett.">(.*)</td>
-# <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="centeraligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP>.*?(\d*)-(\d*)</td>)
-# <td CLASS="dett."NOWRAP>.*<br />(.*)</td>
-# <td CLASS="dett."NOWRAP><p class="rightaligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="rightaligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="rightaligntext">(.*)</p></td>
-# <td CLASS="dett."NOWRAP><p class="rightaligntext">(.*)</p></td>""", re.MULTILINE)
-
-
-#TODO: parse this for waitlist/class size data
-"""
-<td class="dettl" nowrap=""><p class="rightaligntext">OPEN (55)<br> CSCI  (45)<br> APCS  (10)</p></td>
-<td class="dettl" nowrap=""><p class="rightaligntext">54<br>51<br>8</p></td>
-<td class="dettl" nowrap=""><p class="rightaligntext">1<br>-6<br>2</p></td>
-"""
-
 # Match groups for regex
 # 1 = match first regex
 # 2 = match department code
@@ -112,19 +78,26 @@ matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 # 19 = end time
 # 20 = matches asynchronous class therefore has no time
 
-#TODO: these
-# 19 = location
-# 20 = class size(need to parse)
-# 21 = number registered
-# 22 = spaces left
-
 class ClassInfo():
     """
     Object to store all the lectures and tutorials/labs that a class has.
     Must be careful because sometimes only certain labs/tutorials are valid with certain lecture times.
     """
-
+    
     def __init__(self, name, code, lectures, department, term_code, dis_code, labs=None, tutorials=None):
+        """
+        Initiate an object representing a single course.
+
+        Args:
+            name (string): the course's name
+            code (int): the course code, eg. 3172 for CSCI 3172
+            lectures (array): all the different lectures for this course
+            department (string): the department code, eg. CSCI for CSCI 3172
+            term_code (int): the code (eg. 8) associated with the term this course is in
+            dis_code (int): the code (eg. 400) associated with the district this course is in
+            labs (array, optional): The labs associated with this course. Defaults to None.
+            tutorials (array, optional): The tutorials associated with this course. Defaults to None.
+        """
         self.name = name
         self.code = code
         self.district_code = dis_code
@@ -139,6 +112,9 @@ class ClassInfo():
             self.tutorials = tutorials
 
     def __str__(self):
+        """
+        Generically create a string representing all the lectures and labs associated with a single course.
+        """
         s = f"{self.department} {self.code} {self.name}\n"
         for class_ in self.lectures:
             s += str(class_) + "\n"
@@ -147,7 +123,9 @@ class ClassInfo():
         return s
 
     def store(self):
-        # Store the information of each lecture, lab and tutorial in this class
+        """
+        Store all the information about this course (lectures, labs) in the generated SQL file.
+        """
         # DO NOT nest these because then there will be duplicated labs for each different lecture
         for lecture in self.lectures:
             lecture.store()
@@ -177,23 +155,51 @@ class Timeslot():
     """
 
     def __init__(self, name, term_code, code, type_, crn, identifier, credit_hours, days, start_time, end_time, department):
-            self.name = escape_sql(name)
-            self.term_code = term_code
-            self.code = escape_sql(code)
-            self.type_ = escape_sql(type_)
-            self.crn = escape_sql(crn)
-            self.identifier = escape_sql(identifier)
-            self.credit_hours = escape_sql(credit_hours)
-            self.days = escape_sql(days)
-            self.start_time = escape_sql(start_time)
-            self.end_time = escape_sql(end_time)
-            self.department = escape_sql(department)
+        """
+        Store generic information about something happening at a certain time
+
+        Args:
+            name (string): the name of this thing
+            term_code (string): The code for the term this is in
+            code (int): the course code, eg. 3172 for CSCI 3172
+            type_ (string): where it is a lecture, lab or tutorial
+            crn (string): the course registration number, often 5 digits eg. 25193
+            identifier (string): the identifier for this, eg. T01 for Tutorial 1, L03 for Lab 3
+            credit_hours (int): the number of credit hours, eg. 3 is regular for a class
+            days (string): what days this class is on, eg MWF
+            start_time (string): the start time, eg. 1135
+            end_time (string): the end time, eg 1235
+            department (string): the department this is in
+        """
+        self.name = escape_sql(name)
+        self.term_code = term_code
+        self.code = escape_sql(code)
+        self.type_ = escape_sql(type_)
+        self.crn = escape_sql(crn)
+        self.identifier = escape_sql(identifier)
+        self.credit_hours = escape_sql(credit_hours)
+        self.days = escape_sql(days)
+        self.start_time = escape_sql(start_time)
+        self.end_time = escape_sql(end_time)
+        self.department = escape_sql(department)
 
     def __str__(self):
+        """
+        Generically create a string to output to console.
+        """
         return f"{self.department=} {self.code=} {self.name=} {self.identifier=} {self.type_=} {self.crn=} {self.days=} {self.start_time=}-{self.end_time=} {self.credit_hours=}"
 
     @staticmethod
     def time_convert(time):
+        """
+        Convert a time string eg. 1159 to the neccesary SQL to convert from a string to MySQL date column.
+
+        Args:
+            time (string): the time string eg 1159
+
+        Returns:
+            (string): the neccesary SQL that will result in a valid MySQL date
+        """
         return f"TIME(STR_TO_DATE('{time}', '%k%i'))"
 
 
@@ -212,6 +218,9 @@ class LabInfo(Timeslot):
 
 
     def _sql(self):
+        """
+        Store this lab or tutorial in the SQL.
+        """
         if self.tutorial:
             is_tutorial = 1
         else:
@@ -225,6 +234,9 @@ class LabInfo(Timeslot):
         return sql
 
     def store(self):
+        """
+        Store this Lab or Tutorial in the SQL file.
+        """
         with open('database.sql', 'a') as f:
             f.write(self._sql())
 
@@ -238,6 +250,9 @@ class LectureInfo(Timeslot):
         super().__init__(**kwargs)
 
     def _sql(self):
+        """
+        Generate the SQL relating to this lecture.
+        """
         sql = f"""\nINSERT INTO classInfo (C_CRN, T_CODE, C_CODE, C_NAME, D_CODE, C_DAYS, C_TIMESTART,
         C_TIMEEND, C_CREDIT_HRS, DIS_CODE) VALUES ({self.crn}, {self.term_code}, '{self.code}', '{self.name}', '{self.department}', '{self.days}',
         {Timeslot.time_convert(self.start_time)}, {Timeslot.time_convert(self.end_time)}, {self.credit_hours}, {self.district_code});\n"""
@@ -245,6 +260,9 @@ class LectureInfo(Timeslot):
         return sql
 
     def store(self):
+        """
+        Write the SQL relating to this lecture in the database file.
+        """
         with open('database.sql', 'a') as f:
             f.write(self._sql())
 
@@ -417,10 +435,12 @@ def store_district(name, code):
     with open('database.sql', 'a') as f:
         f.write(sql)
 
+# The start of the links for the different terms. We will append to them to specify query parameters.
 terms = {"2021 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202130&s_subj=",
          "2021 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202210&s_subj=",
          "2022 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202220&s_subj="}
 
+# Our district codes
 districts = {
     "Halifax": 100,
     "Truro": 200,
@@ -433,24 +453,32 @@ database_sql = ""
 with open('template.sql', 'r') as f:
     database_sql = f.read()
 
+# Write it in the output file
 with open('database.sql', 'a') as f:
     f.write(database_sql)
 
+# Store all the terms at the start to ensure foreign key constraints.
 for key in terms:
     year, term = key.split()
     store_term(year, term)
 
+# Store all the districts next to ensure foreign key constraints.
 for name, code in districts.items():
     store_district(name, code)
 
+# For every department, get all their classes
 for dept, name in get_all_dept().items():
     print(dept)
+    # Store the department first to ensure foreign key constrain.
     with open('database.sql', 'a') as f:
         f.write(dept_sql(dept, name))
+    # For all the terms, get the classes from this department
     for key in terms:
         year, term = key.split()
         link = terms[key]
+        # Get all the classes from this department for this term
         for class_ in get_classes_by_dept(dept, link, year, term):
             print(class_)
             class_.store()
+        # Sleep to be nice to their website
         time.sleep(1)
