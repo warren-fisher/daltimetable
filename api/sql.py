@@ -8,20 +8,6 @@ engine = create_engine(
     f"mysql+pymysql://{credentials['username']}:{credentials['password']}@localhost/daltimetable",
      echo=True)
 
-# TODO: not used?
-def class_helper(res):
-    return {
-            'crn': res[0],
-            'year': res[1],
-            'term': res[2],
-            'name': res[3],
-            'code': res[4],
-            'department': res[5],
-            'dates': res[6],
-            'start_time': res[7].strftime('%H%M'),
-            'end_time': res[8].strftime('%H%M')
-        }
-
 def crn_query(crn, term):
     s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
@@ -233,6 +219,20 @@ def raw_query_helper(results):
         data[d['name']] = d
     return data
 
-if __name__ == "__main__":
-    s = get_terms()
-    print(s)
+def get_all_crn():
+    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
+            C_CREDIT_HRS, YR, TERM, T_CODE FROM classInfo JOIN department USING(D_CODE)
+            JOIN terms USING(T_CODE)""")
+    
+    result = engine.connect().execute(s)
+    if result is None:
+        return {}
+    else:
+
+        data = {}
+        for res in result:
+            d = format_class(res)
+            # Each name unique since term-crn pair is unique
+            name = f"{res[10]}-{res[0]}"
+            data[name] = d
+        return data

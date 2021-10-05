@@ -1,5 +1,6 @@
 import React from 'react';
-import './index.css';
+
+// TODO: classes can start at 8:05 (or earlier?)
 
 /**
  * Class component to draw the entire table of classes. Receives props from SearchState or RenderTable.
@@ -182,6 +183,12 @@ export class DisplayState extends React.Component {
      * @param {object} cls
      */
     drawClass(ctx, cls) {
+        if (cls == undefined || cls == {}) {
+            console.error("err drawing");
+            return;
+        }
+        console.log("drawing", cls);
+
         const start = cls.start_time;
         const end = cls.end_time;
 

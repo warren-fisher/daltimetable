@@ -1,3 +1,11 @@
+:root {
+    --button-down: grey;
+    --button: rgb(180, 180, 180);
+    --button-border: rgb(214, 214, 214);
+    --header-color: #1F2016;
+    --header-text: #E2E3C5;
+}
+
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 20px;
@@ -17,7 +25,9 @@ input {
     width: 50vw;
 }
 
-form {
+#search_form {
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
     display: flex;
     flex-direction: column;
 }
@@ -37,9 +47,29 @@ form {
     width: 20px;
 }
 
+
+/* Style check + label as a button */
 .class_ input {
-    width: 20px;
+    display: none;
 }
+
+.class_ label 
+{
+    display: inline-block;
+    border: solid 5px var(--button-border);
+    border-radius: 10px;
+    background-color: var(--button);
+    padding: 3px;
+    margin: 3px;
+}
+
+/* Style label based on if adjacent checkbox is selected */
+.class_ input:checked ~ label 
+{
+    background-color: var(--button-down);
+}
+
+/* Style canvas & body? */
 
 #canvas {
     display: block;
@@ -49,14 +79,10 @@ body {
     margin: 0;
 }
 
-/* Header */
+/* Header & footer */
 
-:root {
-    --header-color: #1F2016;
-    --header-text: #E2E3C5;
-}
-
-header {
+header,
+footer {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -71,38 +97,37 @@ header a {
     color: var(--header-text);
 }
 
-/* Term tri-select feature css */
-
-:root {
-    --button-down: grey;
-    --button: rgb(180, 180, 180);
-    --button-border: rgb(214, 214, 214);
+footer {
+    margin-top: 2vh;
+    margin-bottom: 0;
 }
+
+/* Term tri-select feature css */
 
 #term-selector {
     display: flex;
     flex-direction: row;
 }
 
-.term {
+/* Style label to be a button */
+.term label {
+    display: inline-block;
+    border: solid 5px var(--button-border);
     border-radius: 10px;
-    padding: 10px;
-    margin: 10px 10px 10px 10px;
     background-color: var(--button);
+    padding: 3px;
+    margin: 3px;
 }
 
-.term:active {
+/* Style label adjacent to invisible checkbox to change colour based on checkmark */
+.term input:checked ~ label 
+{
     background-color: var(--button-down);
 }
 
-.mark-selected {
-    background-color: var(--button-down);
-    border: 5px solid var(--button-border);
-}
-
-.mark-deselected {
-    border: 5px solid var(--button-border);
-    background-color: var(--button);
+.term-radio 
+{
+    display: none;
 }
 
 /* Contribute page */
@@ -120,4 +145,3 @@ header a {
     text-decoration:underline;
     text-decoration-color: red;
 }
-

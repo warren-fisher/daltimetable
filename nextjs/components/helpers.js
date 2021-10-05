@@ -1,3 +1,4 @@
+import {getMultipleCRN} from './api/api.js';
 
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -71,15 +72,3 @@ export async function getClassesFromId(link_id) {
     }
 }
 
-/**
- * Query the database for multiple CRNs from one term.
- *
- * @param {string} crns each crn is concactonated together into one string
- * @param {number} term_code of the term selected
- */
-async function getMultipleCRN(crns, term_code) {
-    const response = await fetch(`https://api.warrenfisher.net/api/get/crns/${term_code}/${crns}`, {
-        method: 'GET',
-    });
-    return await response.json();
-}
