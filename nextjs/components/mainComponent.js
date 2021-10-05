@@ -2,7 +2,6 @@ import React from 'react';
 import { SearchState } from '../components/SearchState.js';
 import { DAYS, storeClassesAsId, getClassesFromId } from '../components/helpers.js';
 
-import {Link} from 'next/link';
 
 import {masterQuery, getTerms, getSearch,
         getCRN, getMultipleCRN} from '../components/api/api.js';

@@ -28,34 +28,6 @@ export async function getTerms() {
 }
 
 /**
- * Query the database based on a start and end time.
- * Refer to api/sql.py for acceptable string formats.
- * !not used
- *
- * @param {string} start
- * @param {string} end
- */
-export async function getTime(start, end) {
-    const response = await fetch(`${apiURL}/api/time/${start}/${end}`, {
-        method: 'GET',
-    });
-    return await response.json();
-}
-
-/**
- * Query the database based on a string query.
- * !not used
- *
- * @param {string} search
- */
-export async function getSearch(search) {
-    const response = await fetch(`${apiURL}/api/search/${search}`, {
-        method: 'GET',
-    });
-    return await response.json();
-}
-
-/**
  * Query the database based on the Course Registration Number.
  *
  * @param {number} crn

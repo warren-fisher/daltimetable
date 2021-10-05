@@ -8,20 +8,6 @@ engine = create_engine(
     f"mysql+pymysql://{credentials['username']}:{credentials['password']}@localhost/daltimetable",
      echo=True)
 
-# TODO: not used?
-def class_helper(res):
-    return {
-            'crn': res[0],
-            'year': res[1],
-            'term': res[2],
-            'name': res[3],
-            'code': res[4],
-            'department': res[5],
-            'dates': res[6],
-            'start_time': res[7].strftime('%H%M'),
-            'end_time': res[8].strftime('%H%M')
-        }
-
 def crn_query(crn, term):
     s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
@@ -250,7 +236,3 @@ def get_all_crn():
             name = f"{res[10]}-{res[0]}"
             data[name] = d
         return data
-
-if __name__ == "__main__":
-    s = get_terms()
-    print(s)

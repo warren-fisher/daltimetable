@@ -7,29 +7,12 @@ import sql
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "https://test.warrenfisher.net", "https://timetable.warrenfisher.net"]}})
 
-@app.route('/')
-def index():
-    return "hello"
+
 
 # TODO: make all things /api/v1/get or whatever to standardize
 @app.route('/api/crn/<int:crn>/<int:term>', methods=["GET"])
 def get_crn(crn, term):
     result = sql.crn_query(crn, term)
-    return jsonify(result)
-
-@app.route('/api/search/<string:search>', methods=["GET"])
-def get_search(search):
-    result = sql.name_query(search)
-    return jsonify(result)
-
-@app.route('/api/time/<string:timestart>/<string:timeend>')
-def get_time(timestart, timeend):
-    result = sql.time_query(timestart, timeend)
-    return jsonify(result)
-
-@app.route('/api/search_time/<string:search>/<string:timestart>/<string:timeend>')
-def get_time_and_search(search, timestart, timeend):
-    result = sql.time_and_search_query(search, timestart, timeend)
     return jsonify(result)
 
 @app.route('/api/get/master/<string:name>/<string:crn>/<string:dept>/<string:days>/<string:starttime>/<string:endtime>/<string:term_code>')

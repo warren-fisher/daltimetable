@@ -1,6 +1,3 @@
-
-import {getTerms} from './api/api.js';
-
 import {TermSelect} from '../components/TermSelect.js';
 import {DisplayState} from '../components/DisplayState.js';
 
