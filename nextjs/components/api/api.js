@@ -1,5 +1,4 @@
-const apiURL = "https://api.warrenfisher.net";
-
+const apiURL = "http://localhost:5000";
 
 /**
      * A master query that can query the database based on many different inputs.
@@ -20,6 +19,9 @@ export async function masterQuery(search, crn, dept, days, start, end, term_code
     return await response.json();
 }
 
+/**
+ * Get the currently available terms.
+ */
 export async function getTerms() {
     const response = await fetch(`${apiURL}/api/get/terms`, {
         method: 'GET',
@@ -34,7 +36,7 @@ export async function getTerms() {
  * @param {number} term_code
  */
 export async function getCRN(crn, term_code) {
-    const response = await fetch(`${apiURL}/api/crn/${crn}/${term_code}`, {
+    const response = await fetch(`${apiURL}/api/get/crn/${crn}/${term_code}`, {
         method: 'GET',
     });
     return await response.json();
@@ -55,8 +57,6 @@ export async function getMultipleCRN(crns, term_code) {
 
 /**
  * Query the database for all classes over all terms
- *
- * @returns
  */
 export async function getAllClasses() {
     const response = await fetch(`${apiURL}/api/get/allclasses`, {method:'GET'});

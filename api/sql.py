@@ -8,7 +8,21 @@ engine = create_engine(
     f"mysql+pymysql://{credentials['username']}:{credentials['password']}@localhost/daltimetable",
      echo=True)
 
+# TODO: make it so select statements all use a common SELECT cols string so they 
+# neccesarily have to be the same
+
 def crn_query(crn, term):
+    """
+    Query the database for a specific class in a specific term.
+    
+    Args:
+        crns (int): The course registration number
+        term (int): the term code
+
+    Returns:
+        dictionary: A dictionary mapping the CRN to it's class data
+    
+    """
     s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
             C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE C_CRN LIKE :x AND T_CODE LIKE :z""")
@@ -21,7 +35,18 @@ def crn_query(crn, term):
         return format_class(result)
 
 def multiple_crn_query(crns, term):
-    # CRNS is a long string (containing only digits), where every group of 5 is a crn to return
+    """
+    Query the database for information about multiple CRNs in the same term.
+    
+    To note, CRNs are always 5 digits and do not lead with a zero.
+
+    Args:
+        crns (string): A string containing only digits, where every group of 5 is a CRN to return
+        term (int): the term code
+
+    Returns:
+        dictionary: A dictionary mapping the CRN to it's class data
+    """
 
     length = len(crns)
     result = {}
@@ -120,6 +145,8 @@ def master_query(name, crn, dept, days, start, end, term_code):
     end_time = time_helper(end)
     crn_search = '%' + crn + '%'
     dept_search = '%' + dept + '%'
+    
+    # Days query and matches will be empty if there are no days
     days_query, matches = permute_days(days)
 
     sql_text = """SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
@@ -129,6 +156,7 @@ def master_query(name, crn, dept, days, start, end, term_code):
             AND T_CODE LIKE :f """ + days_query
     s = text(sql_text)
 
+    # **matches since it is a dictionary of prepared statement letter (eg. q for :q) -> user input (eg 'W')
     result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time,
                                       e=end_time, f=term_code, **matches)
     return raw_query_helper(result)
@@ -151,6 +179,13 @@ def permute_days(days):
     """
     Helper function to return a raw SQL string matching possible day combinations.
     The SQL matches anything that only contains the specified days.
+    
+    Args:
+        days (string): A string representing the days, eg MWTF
+
+    Returns:
+        tuple: The SQL string generated and a dictionary of prepared statement letters used.
+               The string generated will be empty, or of the format AND NOT (...)
     """
 
     possible_days = ['M', 'T', 'W', 'R', 'F']
@@ -166,18 +201,32 @@ def permute_days(days):
     # Reusable SQL
     sql = 'C_DAYS LIKE'
 
+    # What we do is say user gives us MWF
+    # This does not mean they want classes on all of MWF
+    # Instead, this means they want classes which only have lectures on M, W, or F
+    # So, we can treat this as AND NOT (Tuesday(T) or Thursday(R))
+    
+    # Index to keep track of which prepared statement letter we can use next
     i = 0
     for day in possible_days:
         if day not in desired_days:
+            # Do not allow anything with %F% if the user did not allow Friday
             day_search = '%' + day + '%'
+            # Use the prepared statement letter
             matches[variables_to_use[i]] = day_search
+            # Not the first, so add an OR
             if i != 0:
                 s += f" OR {sql} :{variables_to_use[i]}"
+            # First, so no leading OR
             else:
                 s += f"{sql} :{variables_to_use[i]}"
+            # Increment the prepared statement letter so we do not use it again
             i += 1
+    
+    # Dont forget to close open bracket
     s += ")"
 
+    # This means we have no SQL generated and should ignore this part
     if s == "AND NOT ()":
         return ('', {})
     return (s, matches)
@@ -199,6 +248,15 @@ def time_helper(time):
     return None
 
 def format_class(res):
+    """
+    Format the class data in a regular way
+
+    Args:
+        res (array): standard SQL column order as indices
+
+    Returns:
+        dictionary: contains the neccesary class data
+    """
     return {
             'crn': res[0],
             'name': res[1],
