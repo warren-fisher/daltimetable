@@ -11,11 +11,28 @@ First you must store your database credentials in `cred_mysql.py` as a dictionar
 It is very important to note that this file is included in the .gitignore so no one accidentally uploads database credentials to git.
 
 Once you have initiated your database using the generated `database.sql` file you may start the API by running `app.py`.
-The API is not finalized, however it should be safe to run. It should not be vulnerable to SQL injection due to using SQL Alchemy instead of a
-custom designed SQL engine.
+Make sure that you run the generated `database.sql` file in your
+database of choice (it is designed for MySQL/MariaDB).
+The API is not finalized, however it should be safe to run. It should not be vulnerable to SQL injection due to using SQL Alchemy 
+preparred statements.
 
 ## Extra notes
 
-`dalonline_display_schedule.html` is used to extract the departments using regex for the scrapping script.
-Ideally this could be better automated, however their is no direct link to the list of all departments on the academic timetable.
-Perhaps it is possible to automate this with selenium, however I have not looked into it.
+### Database schema
+Here is a diagram of the MySQL database: 
+
+![My Database diagram](database_schema.png)
+
+A quick summary of the tables is: 
+- department
+    - All available departments and their 4 character code
+- districts
+    - All available districts (eg. Halifax, Truro) and their character code
+- terms 
+    - All availabe terms and their year
+- classInfo
+    - All information about a specific class lecture
+- labInfo 
+    - All information about a specific class lab/tutorial (they are the same pretty much)
+- classLabs
+    - Relationship between classes and labs in a specific term
