@@ -11,10 +11,6 @@ import {TermAndClasses} from '../../components/CanvasAndSelector.js';
 
 /**
  * Intermediary function used by react-router to render DisplayState without setting the state of the form.
- * TODO: probably dont even need this function, also it doesnt work right now due to changes (multiple terms)
- *
- * @param {num} props.width Horizontal width of the users screen
- * @param {num} props.height Vertical height of the users screen
  * @param {func} props.handleChange onChange function to update state
  * @param {obj} props.terms all terms to select from and their truthy/falsy state
  * @param {func} props.getTermState to get the currently selected term
@@ -22,25 +18,16 @@ import {TermAndClasses} from '../../components/CanvasAndSelector.js';
 function RenderTable(props) {
 
     // Get the dynamic portion of the URL
-    // TODO: Its acting weird
     const router = useRouter();
 
-    // If link slug hasnt been found yet, loading data (so no errors)
-    if (router.isFallback){
-        return <div>Loading...</div>
-    }
-
-    console.log("props=", props)
-
     const { id } = router.query;
-
-    const [classes, setClasses] = useState({});
 
     const termCtx = useTerm();
 
     // Set our initial state. Window cannot be accessed here.
     const [dimensions, setDimensions] = useState({height: 1000, width: 1000});
 
+    // Handle our window dimensions
     useEffect(() => {
         const handleResize = () => {
             setDimensions({
@@ -55,15 +42,11 @@ function RenderTable(props) {
         return () => window.removeEventListener('resize', handleResize)
         }, []);
 
-    // TODO: both these useEffect's can be abstracted away from similar stuff in mainComponent.js
-
     // Get the terms as a useEffect only on initial load
     useEffect(()=>
         {
         let resp = getTerms();
-        resp.then(res => {
-            console.log("result", res);
-    
+        resp.then(res => {    
             let firstTerm = undefined;
             let terms = {};
     
@@ -85,28 +68,18 @@ function RenderTable(props) {
         }).catch(() => (console.log("fail")));
         }, []);
 
-
-    // Get the classes from the ID
-    useEffect(() => {
-        async function getClass() {
-            // This logic is similar to that in SearchState, probably can push it into the DisplayState component?
-            // by putting the term selector in there
-            let all_classes = await getClassesFromId(id);
-            console.log('hello', all_classes);
-
-            setClasses(all_classes);
-        }
-        getClass();
-    }, []);
+    // If link slug hasnt been found yet, loading data (so no errors)
+    if (router.isFallback){
+        return <div>Loading...</div>
+    }
 
     return (
-        // TODO: proper height, width
         <div id='share-link-main'>
             <h3>ID: {id}</h3>
             <TermAndClasses
                 width={dimensions.width}
                 height={dimensions.height}
-                classesToDisplay={classes}
+                classesToDisplay={props.all_classes}
                 // Don't need to update the searched for classes or anything on termUpdate
                 handleTermUpdate={()=>{}}
             />

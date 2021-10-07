@@ -193,7 +193,7 @@ class Home extends React.Component {
             return;
         }
 
-        let resp = masterQuery(search, crn, dept, days, start, end, term_code);
+        let resp = masterQuery(search, days, start, end, term_code);
         resp.then(result => {
             console.log("resp to update", result);
             this.apiResponseState(result);

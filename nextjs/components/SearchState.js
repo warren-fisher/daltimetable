@@ -1,11 +1,8 @@
 import React from 'react';
 import { CheckboxDay, ClassInfo} from './other_components.js';
-import { DisplayState } from './DisplayState.js'
-import { DAYS, storeClassesAsId, getClassesFromId } from './helpers.js'
+import { DAYS, storeClassesAsId } from './helpers.js'
 
 import { TermAndClasses } from './CanvasAndSelector.js';
-
-import { useTerm, useAllTerm } from './contexts/terms.js';
 
 /**
  * Function component to represent the form. State is governed by the higher order component 'Home'.
@@ -22,7 +19,6 @@ import { useTerm, useAllTerm } from './contexts/terms.js';
 export function SearchState(props) {
     const data = props.classes;
 
-    //TODO: redundant with classesSelected
     // This was used for hex data
     let selectedClasses = {};
     for (let term in props.classesSelected) {
@@ -37,11 +33,10 @@ export function SearchState(props) {
     }
 
     // props.classesSelected = object of class objects per term, selectedClasses = object of arrays of class crn per term
-    console.log("props.classesSelected=", props.classesSelected, "vs created selectedClasses=", selectedClasses);
+    // console.log("props.classesSelected=", props.classesSelected, "vs created selectedClasses=", selectedClasses);
 
     // TODO: fixme for higher base & optimize crn??
     const base36_code = storeClassesAsId(selectedClasses);
-    console.log('base36', base36_code);
 
     return (
         <div id='main'>
@@ -62,7 +57,7 @@ export function SearchState(props) {
 
             <form id="search_form">
                 {/* TODO: what is props.value?? */}
-                <label htmlFor="string_search">Search for a class by name</label>
+                <label htmlFor="string_search">Search for a class by name, CRN, or department</label>
                 <input type='text' id="string_search" name="string_search" placeholder='Search...' onChange={props.handleChange} value={props.value} />
 
                 <label htmlFor="time">Search for a class within the time interval.</label>
@@ -85,7 +80,7 @@ export function SearchState(props) {
                 </div>
             </form>
             <div>
-                Unique ID :
+                Schedule ID :
                 <strong> {base36_code} </strong>
                 <button onClick={() => { navigator.clipboard.writeText(`${document.URL}share/${base36_code}`) }}>Copy link to share with your friends</button>
             </div>

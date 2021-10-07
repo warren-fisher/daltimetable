@@ -5,15 +5,13 @@ const apiURL = "http://localhost:5000";
      * If a input is an exclamation point it is ignored in the query based on the API.
      *
      * @param {string} search
-     * @param {number} crn
-     * @param {string} dept
      * @param {string} days
      * @param {string} start
      * @param {string} end
      * @param {number} term_code
      */
-export async function masterQuery(search, crn, dept, days, start, end, term_code) {
-    const response = await fetch(`${apiURL}/api/get/master/${search}/${crn}/${dept}/${days}/${start}/${end}/${term_code}`, {
+export async function masterQuery(search, days, start, end, term_code) {
+    const response = await fetch(`${apiURL}/api/get/master/search=${search}&days=${days}&start=${start}&end=${end}&term=${term_code}`, {
         method: 'GET',
     });
     return await response.json();

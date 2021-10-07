@@ -18,6 +18,14 @@ preparred statements.
 
 ## Extra notes
 
+### Scrapping website diagram
+Here is the process used to generate the `database.sql` file containing class info
+![My scrapping diagram](generating_database.png)
+
+### Website diagram 
+Here is an example of how the website works
+![My website diagram](server_diagram.png)
+
 ### Database schema
 Here is a diagram of the MySQL database: 
 

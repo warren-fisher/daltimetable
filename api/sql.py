@@ -8,8 +8,8 @@ engine = create_engine(
     f"mysql+pymysql://{credentials['username']}:{credentials['password']}@localhost/daltimetable",
      echo=True)
 
-# TODO: make it so select statements all use a common SELECT cols string so they 
-# neccesarily have to be the same
+# Common start to almost all select statements to ensure column order.
+common_columns = "SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND, C_CREDIT_HRS, YR, TERM"
 
 def crn_query(crn, term):
     """
@@ -23,8 +23,7 @@ def crn_query(crn, term):
         dictionary: A dictionary mapping the CRN to it's class data
     
     """
-    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+    s = text(f"""{common_columns} FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE C_CRN LIKE :x AND T_CODE LIKE :z""")
 
     # Not possible to get a duplicate since the (CRN, term) pair is unique
@@ -81,8 +80,7 @@ def name_query(search):
     Raw SQL query for if trying to match a string
     """
     search = '%' + search + '%'
-    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+    s = text(f"""{common_columns} FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE C_NAME LIKE :x""")
     result = engine.connect().execute(s, x=search)
     return raw_query_helper(result)
@@ -94,8 +92,7 @@ def time_query(start_time, end_time):
     start_time = time_helper(start_time)
     end_time = time_helper(end_time)
 
-    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+    s = text(f"""{common_columns} FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE C_TIMESTART > :x AND C_TIMEEND < :y""")
     result = engine.connect().execute(s, x=start_time, y=end_time)
     return raw_query_helper(result)
@@ -108,8 +105,7 @@ def time_and_search_query(search, start_time, end_time):
     start_time = time_helper(start_time)
     end_time = time_helper(end_time)
 
-    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+    s = text(f"""{common_columns} FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE C_TIMESTART > :x AND C_TIMEEND < :y AND C_NAME LIKE :z""")
     result = engine.connect().execute(s, x=start_time, y=end_time, z=search)
     return raw_query_helper(result)
@@ -118,18 +114,13 @@ convert = {'S': 'Summer',
            'F': 'Fall',
            'W': 'Winter'}
 
-
-def master_query(name, crn, dept, days, start, end, term_code):
+def master_query(name, days, start, end, term_code):
     """
     A master raw SQL query for matching by class name, crn, department code or name, the days, semester and classtime.
     """
     # Set default values if a ! is detected
     if name == '!':
         name = ''
-    if crn == '!':
-        crn = ''
-    if dept == '!':
-        dept = ''
     if days == '!':
         days = 'MTWRF'
     if start == '!':
@@ -137,27 +128,25 @@ def master_query(name, crn, dept, days, start, end, term_code):
     if end == '!':
         end = '23'
     if term_code == '!':
-        term_code = '%'
+        # This is not allowed
+        return {}
 
     # Set search parameters
     name_search = '%' + name + '%'
     start_time = time_helper(start)
     end_time = time_helper(end)
-    crn_search = '%' + crn + '%'
-    dept_search = '%' + dept + '%'
     
     # Days query and matches will be empty if there are no days
     days_query, matches = permute_days(days)
-
-    sql_text = """SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM FROM classInfo JOIN department USING(D_CODE)
+    
+    sql_text = f"""{common_columns} FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE) WHERE
-            C_NAME LIKE :a AND C_CRN LIKE :b AND (D_CODE LIKE :c OR D_NAME LIKE :c) AND C_TIMESTART > :d AND C_TIMEEND < :e
+            (C_NAME LIKE :a OR C_CRN LIKE :a OR D_CODE LIKE :a OR D_NAME LIKE :a) AND C_TIMESTART > :d AND C_TIMEEND < :e
             AND T_CODE LIKE :f """ + days_query
     s = text(sql_text)
 
     # **matches since it is a dictionary of prepared statement letter (eg. q for :q) -> user input (eg 'W')
-    result = engine.connect().execute(s, a=name_search, b=crn_search, c=dept_search, d=start_time,
+    result = engine.connect().execute(s, a=name_search, d=start_time,
                                       e=end_time, f=term_code, **matches)
     return raw_query_helper(result)
 
@@ -273,13 +262,12 @@ def raw_query_helper(results):
     data = {}
     for res in results:
         d = format_class(res)
-        # TODO: d['name'] can have duplicates (even crn could)
-        data[d['name']] = d
+        # A CRN is unique within its term.
+        data[d['crn']] = d
     return data
 
 def get_all_crn():
-    s = text("""SELECT C_CRN, C_NAME, C_CODE, D_CODE, C_DAYS, C_TIMESTART, C_TIMEEND,
-            C_CREDIT_HRS, YR, TERM, T_CODE FROM classInfo JOIN department USING(D_CODE)
+    s = text(f"""{common_columns}, T_CODE FROM classInfo JOIN department USING(D_CODE)
             JOIN terms USING(T_CODE)""")
     
     result = engine.connect().execute(s)

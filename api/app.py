@@ -20,19 +20,13 @@ def get_crn(crn, term):
     result = sql.crn_query(crn, term)
     return jsonify(result)
 
-@app.route('/api/get/master/<string:name>/<string:crn>/<string:dept>/<string:days>/<string:starttime>/<string:endtime>/<string:term_code>')
-def get_master_search(name, crn, dept, days, starttime, endtime, term_code):
+@app.route('/api/get/master/search=<string:name>&days=<string:days>&start=<string:starttime>&end=<string:endtime>&term=<string:term_code>')
+def get_master_search(name, days, starttime, endtime, term_code):
     """
     Get all the classes which match the parameters.
 
-    TODO: CRN is unique so doesn't belong
-    TODO: dept is never used in search
-    TODO: name should perhaps search for some other stuff?
-
     Args:
-        name (string): search for this name
-        crn (string): the course registration number
-        dept (string): search in this department
+        name (string): search for this course name, department, department acronym or CRN
         days (string): the days the class is on, eg. MWTF
         starttime (string): represents the earliest time allowed. Either in HH or HHMM. 24 hours time
         endtime (string): represents the lastest time allowed. Either in HH or HHMM. 24 hours time
@@ -41,7 +35,7 @@ def get_master_search(name, crn, dept, days, starttime, endtime, term_code):
     Returns:
         string: JSON object mapping the CRN to its course information.
     """
-    result = sql.master_query(name, crn, dept, days, starttime, endtime, term_code)
+    result = sql.master_query(name, days, starttime, endtime, term_code)
     return jsonify(result)
 
 @app.route('/api/get/terms')
