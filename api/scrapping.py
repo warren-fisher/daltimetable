@@ -2,6 +2,9 @@ import requests as reqs
 import re
 import time
 
+# Use for escaping strings which are put directly into a file.
+import pymysql as mysql 
+
 def clean(s):
     """
     Remove unnecesary junk from match (eg. &agb&adfadsf) that means nothing
@@ -29,16 +32,18 @@ def decode_type(t):
     if t == 's':
         return 'study'
 
-"""
-Its fine to custom bake a solution here because this is not user facing,
-meaning it is not vulnerable to SQL injection
-"""
 def escape_sql(s):
-    try:
-        s = str(s)
-        return s.replace("'", "\\'")
-    except ValueError:
-        return ''
+    """
+    Escape this SQL string so no SQL injection occurs.
+
+    Args:
+        s (string): string to escape
+
+    Returns:
+        string: string with characters escaped per MySQL
+    """
+    return mysql.escape_string(s)
+
 
 matcher = re.compile("""<b>(([A-Z]{4}) (\d*[^<]*))|(
 <td CLASS="dett(.)">(.*)</td>
@@ -172,12 +177,17 @@ class Timeslot():
             department (string): the department this is in
         """
         self.name = escape_sql(name)
+        # Don't need to escape integer
         self.term_code = term_code
-        self.code = escape_sql(code)
+        self.code = code
+        
         self.type_ = escape_sql(type_)
         self.crn = escape_sql(crn)
         self.identifier = escape_sql(identifier)
-        self.credit_hours = escape_sql(credit_hours)
+        
+        # Don't need to escape integer
+        self.credit_hours = credit_hours
+        
         self.days = escape_sql(days)
         self.start_time = escape_sql(start_time)
         self.end_time = escape_sql(end_time)
@@ -375,35 +385,24 @@ def get_classes_by_dept(department, link, year, term):
             i += 1
     return classes
 
-def get_all_dept():
+def get_all_dept(link):   
     """
-    Get all the names and acronyms of the Dalhousie departments (all campus)
-    TODO: the regex can be cleaner
-    TODO: only gets classes that the department has active courses in fall/winter
-        because of matching based off of downloaded html
-    """
-    text = open("dalonline_display_schedule.html", 'r').read()
+    Get all the names and acronyms of the Dalhousie departments displayed from this link. 
+    Normally, the link shows all the departments in a specific term ie Winter
+
+    Args:
+        link (raw string): the link to view departments for this term
+
+    Returns:
+        dictionary: Maps department acronym to its full name.
+    """     
+    resp = reqs.get(link)
     dept_matcher = re.compile("""<a href="fysktime\.P_DisplaySchedule\?s_term=(.*)&s_subj=([A-Za-z]{4})&s_district=All">(.*)</a>""")
     depts = {}
-    for match in dept_matcher.finditer(text):
+    for match in dept_matcher.finditer(resp.text):
         depts[match.group(2)]=match.group(3)
 
-    print(depts)
     return depts
-
-def dept_sql(dept, name):
-    """
-    Function for writing the department code and name to sql, along with adding a comment
-    so that the sql is easier to read.
-    """
-    s = f'###################### {escape_sql(name)} ######################\n'
-    sql = '\n'
-    # Subtract one because of adding newline char at end
-    sql += '#'*(len(s)-1) + '\n'
-    sql += s
-    sql += '#'*(len(s)-1) + '\n'
-    sql += f"INSERT INTO department VALUES ('{escape_sql(dept)}','{escape_sql(name)}');\n"
-    return sql
 
 def get_term_code(yr, term):
     """
@@ -415,12 +414,17 @@ def get_term_code(yr, term):
     term_code = (int(yr) - 2019) * 3 + term_ids[term]
     return term_code
 
+##
+## Functions to store some basic SQL 
+##
+
 def store_term(yr, term):
     """
     Store the term code into the database SQL file.
     """
     term_code = get_term_code(yr, term)
-
+    
+    # All of the inserted values are hardcoded and need not be escaped
     sql = f"""\nINSERT INTO terms (T_CODE, YR, TERM) VALUES ({term_code}, {yr}, '{term}');\n"""
 
     with open('database.sql', 'a') as f:
@@ -430,10 +434,34 @@ def store_district(name, code):
     """
     Store the term code into the database SQL file.
     """
-    sql = f"""\nINSERT INTO districts (DIS_CODE, DIS_NAME) VALUES ({code}, '{name}');\n"""
+    
+    # Code is an integer and need not be escaped
+    sql = f"""\nINSERT INTO districts (DIS_CODE, DIS_NAME) VALUES ({code}, '{escape_sql(name)}');\n"""
 
+    # We append since the database.sql file already has some of the DDL SQL in it.
     with open('database.sql', 'a') as f:
         f.write(sql)
+        
+def store_dept(dept, name):
+    """
+    Function for writing the department code and name to sql, along with adding a comment
+    so that the sql is easier to read.
+    """
+    s = f'###################### "{escape_sql(name)}" ######################\n'
+    sql = '\n'
+    # Subtract one because of adding newline char at end
+    sql += '#'*(len(s)-1) + '\n'
+    sql += s
+    sql += '#'*(len(s)-1) + '\n'
+    sql += f"INSERT INTO department VALUES ('{escape_sql(dept)}','{escape_sql(name)}');\n"
+    
+    with open('database.sql', 'a') as f:
+        f.write(sql)
+
+# The links of the department list for each term
+getTermDept = {"2021 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202130&s_district=All",
+               "2021 Fall": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202210&s_district=All",
+               "2022 Winter": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202220&s_district=All"}
 
 # The start of the links for the different terms. We will append to them to specify query parameters.
 terms = {"2021 Summer": r"https://dalonline.dal.ca/PROD/fysktime.P_DisplaySchedule?s_term=202130&s_subj=",
@@ -454,7 +482,8 @@ with open('template.sql', 'r') as f:
     database_sql = f.read()
 
 # Write it in the output file
-with open('database.sql', 'a') as f:
+# Use write mode because we fully want to replace whatever was there before
+with open('database.sql', 'w') as f:
     f.write(database_sql)
 
 # Store all the terms at the start to ensure foreign key constraints.
@@ -466,19 +495,33 @@ for key in terms:
 for name, code in districts.items():
     store_district(name, code)
 
-# For every department, get all their classes
-for dept, name in get_all_dept().items():
-    print(dept)
+# Get all the departments for each term
+all_depts = {}
+# Get all the departments merged into one dictionary
+merge_depts = {}
+for term_name, link in getTermDept.items():
+    depts = get_all_dept(link)
+    all_depts[term_name] = depts
+    # Merge them together
+    merge_depts = {**merge_depts, **depts}
+
+# Store the DDL SQL of all districts
+for dept, name in merge_depts.items():
     # Store the department first to ensure foreign key constrain.
-    with open('database.sql', 'a') as f:
-        f.write(dept_sql(dept, name))
-    # For all the terms, get the classes from this department
-    for key in terms:
-        year, term = key.split()
-        link = terms[key]
-        # Get all the classes from this department for this term
+    store_dept(dept, name)
+
+# For each term store all classes from the departments in that term
+for term_name in terms: 
+    year, term = term_name.split()
+    # Get class link 
+    link = terms[term_name]
+    
+    # Get all departments in this term
+    for dept, name in all_depts[term_name].items():
+        # Get all classes in this department
         for class_ in get_classes_by_dept(dept, link, year, term):
             print(class_)
             class_.store()
+            
         # Sleep to be nice to their website
         time.sleep(1)
